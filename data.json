@@ -235,16 +235,16 @@
     "name_default": "",
     "name_lv": "",
     "name_en": "",
-    "material": "",
+    "material": "wood",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "wiki_desc_en": "Wooden milk churn stand with churns in Muktupāveli. In 2023 was still in active use.",
+    "wiki_desc_lv": "Piena galds ar kannām Muktupāvelos. Vēl 2023. gadā tika aktīvi lietots piena nodošanai",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Milk_churn_stand_in_Muktup%C4%81veli.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Muktup%C4%81veli.jpg",
+    "commons_title": "File:Milk churn stand in Muktupāveli.jpg",
+    "image_source_tag": "wikimedia_commons"
   },
   {
     "osm_type": "node",
