@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Milk Churn Stands in Latvia</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; color: #333; }
+        /* Default Desktop Layout (Side by Side) */
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; flex-direction: row; height: 100vh; color: #333; }
         #map { flex: 7; height: 100%; }
         #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         
@@ -19,6 +20,14 @@
         .intro-text { margin-bottom: 20px; font-size: 14px; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
         .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
+
+        /* MOBILE LAYOUT (Stacked Vertically) */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            #map { flex: none; height: 50vh; width: 100%; } /* Map takes top half */
+            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; } /* Sidebar takes bottom half */
+            h2 { font-size: 20px; margin-top: 0; }
+        }
     </style>
 </head>
 <body>
@@ -84,16 +93,13 @@
         let lastClickedStand = null;
 
         // --- Map Initialization ---
-        
-        // 1. Define your Base Layers
         const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         });
 
-        // NEW: Standard OpenStreetMap Layer
         const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; OpenStreetMap contributors'
         });
 
         const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
@@ -103,44 +109,32 @@
             attribution: "&copy; LVM GEO / LĢIA"
         });
 
-        // 2. Initialize the map and specify which layer shows up first
         const map = L.map('map', {
             center: [56.8796, 24.6032],
             zoom: 7,
-            layers: [cartoLight] // The map will still start with the clean Carto Light map
+            layers: [cartoLight]
         });
 
-        // 3. Create the Layer Control menu (Now with 3 options!)
         const baseMaps = {
             "Gaišā karte (Carto)": cartoLight,
             "Standarta OSM (Krāsaina)": osmStandard,
             "Ortofoto (LVM GEO)": lvmOrto
         };
 
-        // 4. Add the menu to the top right corner of the map
         L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
-        // We use a LayerGroup so we can clear and redraw markers instantly when language changes
         const markerLayer = L.layerGroup().addTo(map);
 
         // --- Core Functions ---
         function changeLanguage(lang) {
             currentLang = lang;
-            
-            // 1. Update static UI text
             document.getElementById('ui-title').innerText = TEXT[lang].title;
             document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
             document.getElementById('ui-green').innerHTML = TEXT[lang].green;
             document.getElementById('ui-blue').innerHTML = TEXT[lang].blue;
             document.getElementById('ui-click').innerText = TEXT[lang].click;
-
-            // 2. Redraw map markers (so tooltips translate)
             drawMarkers();
-
-            // 3. Update the sidebar if a stand is currently selected
-            if (lastClickedStand) {
-                showDetails(lastClickedStand);
-            }
+            if (lastClickedStand) showDetails(lastClickedStand);
         }
 
         function drawMarkers() {
@@ -155,17 +149,36 @@
                     weight: 1, fillOpacity: hasImage ? 0.9 : 0.7
                 });
 
-                // Determine correct name based on language
                 const standName = stand[`name_${currentLang}`] || stand.name_default || TEXT[currentLang].default_name;
+                const material = stand.material || TEXT[currentLang].unknown;
+                
+                // Add Hover Tooltip (useful for desktop)
                 marker.bindTooltip(standName);
 
-                marker.on('click', () => showDetails(stand));
+                // Add Click Popup (useful for both desktop and mobile)
+                let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
+                popupHtml += `<span style="font-size:12px;color:#666;">${TEXT[currentLang].material}: ${material}</span>`;
+                if (stand.image) {
+                    popupHtml += `<br><img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                }
+                popupHtml += `</div>`;
+                marker.bindPopup(popupHtml);
+
+                // When clicked, also update the sidebar
+                marker.on('click', () => {
+                    showDetails(stand);
+                    // On mobile, automatically scroll down to the details when a marker is tapped
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').scrollTop = 0;
+                    }
+                });
+
                 markerLayer.addLayer(marker);
             });
         }
 
         function showDetails(stand) {
-            lastClickedStand = stand; // Save state
+            lastClickedStand = stand;
             const t = TEXT[currentLang];
             const detailsDiv = document.getElementById('details');
             
@@ -187,7 +200,6 @@
                 html += `<p style="color: #888;"><em>${t.no_img}</em></p>`;
             }
 
-            // Get the correct language description
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             const wikiDesc = stand[`wiki_desc_${currentLang}`];
 
