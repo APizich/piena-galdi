@@ -1398,12 +1398,12 @@
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "wiki_desc_en": "Milk churn stand in Stabulnieki, Jaunā street",
+    "wiki_desc_lv": "Milk churn stand in Stabulnieki, Jaunā street",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/9/96/Milk_churn_stand_in_Stabulnieki%2C_Jaun%C4%81_street.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Stabulnieki,_Jaun%C4%81_street.jpg",
+    "commons_title": "File:Milk churn stand in Stabulnieki, Jaunā street.jpg",
+    "image_source_tag": "wikimedia_commons"
   },
   {
     "osm_type": "node",
@@ -2505,6 +2505,25 @@
     "image": "https://upload.wikimedia.org/wikipedia/commons/0/03/Piena_galds_Sermuksli_Radzelos.jpg",
     "commons_page": "https://commons.wikimedia.org/wiki/File:Piena_galds_Sermuksli_Radzelos.jpg",
     "commons_title": "File:Piena galds Sermuksli Radzelos.jpg",
+    "image_source_tag": "wikimedia_commons"
+  },
+  {
+    "osm_type": "node",
+    "osm_id": 13735834927,
+    "lat": 56.4222477,
+    "lon": 26.8585678,
+    "name_default": "Piena galds Makarovkā",
+    "name_lv": "",
+    "name_en": "",
+    "material": "wood",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "Milk churn stand with pos tbox in Makarovka. Old Believers' prayer house is visible in the background  (green with yellow and red roof).",
+    "wiki_desc_lv": "Milk churn stand with pos tbox in Makarovka. Old Believers' prayer house is visible in the background  (green with yellow and red roof).",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Milk_churn_stand_in_Makarovka.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Makarovka.jpg",
+    "commons_title": "File:Milk churn stand in Makarovka.jpg",
     "image_source_tag": "wikimedia_commons"
   },
   {
