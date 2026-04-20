@@ -2565,6 +2565,25 @@
     "image_source_tag": "wikimedia_commons"
   },
   {
+    "osm_type": "node",
+    "osm_id": 13746460657,
+    "lat": 57.1846169,
+    "lon": 22.8554324,
+    "name_default": "",
+    "name_lv": "Piena galds pie \"Sniķeru\" mājām Balgales pagastā",
+    "name_en": "Milk churn stand in Balgales parish, \"Sniķeri\"",
+    "material": "wood",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "Milk churn stand in Balgales parish, \"Sniķeri\"",
+    "wiki_desc_lv": "Piena galds (Kurzemē biežāk saukts par piena steķi) pie Balgales pagasta \"Sniķeru\" mājām.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Milk_churn_stand_in_Balgales_parish%2C_%22Sni%C4%B7eri%22.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Balgales_parish,_%22Sni%C4%B7eri%22.jpg",
+    "commons_title": "File:Milk churn stand in Balgales parish, \"Sniķeri\".jpg",
+    "image_source_tag": "wikimedia_commons"
+  },
+  {
     "osm_type": "way",
     "osm_id": 1174165133,
     "lat": 56.3102706,
