@@ -2584,6 +2584,25 @@
     "image_source_tag": "wikimedia_commons"
   },
   {
+    "osm_type": "node",
+    "osm_id": 13750407600,
+    "lat": 57.8531594,
+    "lon": 25.3213439,
+    "name_default": "",
+    "name_lv": "Piena galds Jeru pagasta \"Klimpās\"",
+    "name_en": "",
+    "material": "wood",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "Milk churn stand in Jeru parish \"Klimpas\". Also used as an address sign.",
+    "wiki_desc_lv": "Piena galds Jeru pagasta \"Klimpās\". Apvienots ar māju/zemnieku saimniecības nosaukuma norādi.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Milk_churn_stand_in_Jeru_parish_%22Klimpas%22.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Jeru_parish_%22Klimpas%22.jpg",
+    "commons_title": "File:Milk churn stand in Jeru parish \"Klimpas\".jpg",
+    "image_source_tag": "wikimedia_commons"
+  },
+  {
     "osm_type": "way",
     "osm_id": 1174165133,
     "lat": 56.3102706,
