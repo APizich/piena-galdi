@@ -33,7 +33,7 @@
     <div id="sidebar">
         <!-- Title and Custom Icon -->
         <h2 style="display: flex; align-items: center; margin-top: 0;">
-            <img src="Milk_churn_stands_image.jpg" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
+            <img src="Milk_churn_stand_image.jpg" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
             <span id="ui-title">Piena galdi Latvijā</span>
         </h2>
         
@@ -41,13 +41,6 @@
             <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
             <p><span id="ui-green">🟢 <strong>Zaļie punkti</strong> = ar Wikimedia attēlu</span><br>
                <span id="ui-blue">🔵 <strong>Zilie punkti</strong> = bez attēla</span></p>
-            
-            <!-- Instagram Icon Button -->
-            <div style="margin-top: 25px;">
-                <a href="https://www.instagram.com/pina_golds/" target="_blank" title="Instagram">
-                    <img src="Instagram_icon.png" alt="Instagram" style="width: 35px; height: 35px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                </a>
-            </div>
         </div>
         
         <div id="details"></div>
@@ -62,6 +55,7 @@
         let lastClickedStand = null;
         let greenCount = 0;
         let blueCount = 0;
+        let layerControl = null; // Variable to hold the layer control so we can update it
 
         // --- Translations Dictionary ---
         const TEXT = {
@@ -116,25 +110,52 @@
             layers: [cartoLight]
         });
 
-        const baseMaps = {
-            "Gaišā karte (Carto)": cartoLight,
-            "Standarta OSM (Krāsaina)": osmStandard,
-            "Ortofoto (LĢIA, LVM GEO)": lvmOrto
-        };
-
-        L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
-
-        // --- Custom Language Map Control ---
-        const langControl = L.control({position: 'bottomleft'});
-        langControl.onAdd = function () {
+        // --- Custom Combined Language & Instagram Map Control ---
+        const actionControl = L.control({position: 'bottomleft'});
+        actionControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-            // This styling exactly matches standard Leaflet controls
-            div.innerHTML = `<a href="#" id="langBtn" style="display: block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; background-color: #fff;" onclick="toggleLanguage(); return false;">LV</a>`;
+            div.style.display = 'flex';
+            div.style.backgroundColor = '#fff';
+            
+            // Standard Leaflet buttons but aligned horizontally
+            div.innerHTML = `
+                <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
+                <a href="https://www.instagram.com/pina_golds/" target="_blank" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
+                    <img src="Instagram_icon.png" alt="Instagram" style="width: 20px; height: 20px;">
+                </a>
+            `;
             return div;
         };
-        langControl.addTo(map);
+        actionControl.addTo(map);
 
         const markerLayer = L.layerGroup().addTo(map);
+
+        // --- Dynamic Layer Control Updater ---
+        function updateLayerControl(lang) {
+            // Remove the existing layer control if it exists
+            if (layerControl) {
+                map.removeControl(layerControl);
+            }
+
+            // Define layer names based on current language
+            let baseMaps;
+            if (lang === 'en') {
+                baseMaps = {
+                    "Light map (OSM)": cartoLight,
+                    "Standard OSM (colored)": osmStandard,
+                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
+                };
+            } else {
+                baseMaps = {
+                    "Gaišā karte (OSM)": cartoLight,
+                    "Standarta OSM": osmStandard,
+                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
+                };
+            }
+
+            // Create and add the newly translated layer control
+            layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        }
 
         // --- Core Functions ---
         function toggleLanguage() {
@@ -155,6 +176,9 @@
             // Execute the functions to get the formatted text with the counts
             document.getElementById('ui-green').innerHTML = TEXT[lang].green();
             document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
+            
+            // Update the map layer language names
+            updateLayerControl(lang);
             
             drawMarkers();
             if (lastClickedStand) showDetails(lastClickedStand);
