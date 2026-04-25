@@ -33,7 +33,7 @@
     <div id="sidebar">
         <!-- Title and Custom Icon -->
         <h2 style="display: flex; align-items: center; margin-top: 0;">
-            <img src="Milk_churn_stand_image.jpg" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
+            <img src="Milk_churn_stands_icon.png" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
             <span id="ui-title">Piena galdi Latvijā</span>
         </h2>
         
@@ -64,10 +64,9 @@
                 intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
                 green: () => `🟢 <strong>Green dots (${greenCount})</strong> = with Wikimedia image`,
                 blue: () => `🔵 <strong>Blue dots (${blueCount})</strong> = no image`,
-                material: "Material",
-                unknown: "Unknown",
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
+                picture_date: "Picture date",
                 osm_desc: "OSM Description",
                 wiki_desc: "Wikimedia Description",
                 default_name: "Milk churn stand"
@@ -77,10 +76,9 @@
                 intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
                 green: () => `🟢 <strong>Zaļie punkti (${greenCount})</strong> = ar Wikimedia attēlu`,
                 blue: () => `🔵 <strong>Zilie punkti (${blueCount})</strong> = bez attēla`,
-                material: "Materiāls",
-                unknown: "Nav zināms",
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
+                picture_date: "Attēla datums",
                 osm_desc: "OSM apraksts",
                 wiki_desc: "Wikimedia apraksts",
                 default_name: "Piena galds"
@@ -197,16 +195,19 @@
                 });
 
                 const standName = stand[`name_${currentLang}`] || stand.name_default || TEXT[currentLang].default_name;
-                const material = stand.material || TEXT[currentLang].unknown;
                 
                 // Add Hover Tooltip (useful for desktop)
                 marker.bindTooltip(standName);
 
                 // Add Click Popup (useful for both desktop and mobile)
                 let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
-                popupHtml += `<span style="font-size:12px;color:#666;">${TEXT[currentLang].material}: ${material}</span>`;
+                
                 if (stand.image) {
-                    popupHtml += `<br><img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                    popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                    // Check if Python script provided a date
+                    if (stand.image_date) {
+                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${TEXT[currentLang].picture_date}:</strong> ${stand.image_date}</span>`;
+                    }
                 }
                 popupHtml += `</div>`;
                 marker.bindPopup(popupHtml);
@@ -230,18 +231,22 @@
             const detailsDiv = document.getElementById('details');
             
             const standName = stand[`name_${currentLang}`] || stand.name_default || t.default_name;
-            const material = stand.material || t.unknown;
             
             let html = `<h3>${standName}</h3>`;
-            html += `<p><strong>${t.material}:</strong> ${material}</p>`;
             
             if (stand.image) {
                 html += `
                 <div class="image-container">
                     <a href="${stand.commons_page || stand.image}" target="_blank">
                         <img src="${stand.image}" alt="Image">
-                    </a>
-                    <p style="font-size: 11px; text-align: center; color: #666;">${t.click_img}</p>
+                    </a>`;
+                
+                // Check if Python script provided a date
+                if (stand.image_date) {
+                    html += `<p style="font-size: 13px; text-align: center; color: #333; margin: 8px 0 0 0;"><strong>${t.picture_date}:</strong> ${stand.image_date}</p>`;
+                }
+                
+                html += `<p style="font-size: 11px; text-align: center; color: #666; margin-top: 5px;">${t.click_img}</p>
                 </div>`;
             } else {
                 html += `<p style="color: #888;"><em>${t.no_img}</em></p>`;
