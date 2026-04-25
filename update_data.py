@@ -56,12 +56,12 @@ def normalize_commons_title(raw_value: str) -> str:
 
 def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
     if not title:
-        return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description": ""}
+        return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description": "", "image_date": ""}
 
     params = {
         "action": "query", "titles": title, "prop": "imageinfo",
         "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
-        "iiextmetadatafilter": "ImageDescription", "format": "json",
+        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
     }
     try:
         response = requests.get(COMMONS_API_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=20)
@@ -70,15 +70,17 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
         for page_info in pages.values():
             info = page_info.get("imageinfo", [{}])[0]
             desc = clean_html(info.get("extmetadata", {}).get("ImageDescription", {}).get("value", ""))
+            date = clean_html(info.get("extmetadata", {}).get("DateTimeOriginal", {}).get("value", ""))
             return {
                 "image_url": info.get("url", ""),
                 "commons_page": info.get("descriptionurl", ""),
                 "commons_title": page_info.get("title", title),
                 "wiki_description": desc,
+                "image_date": date,
             }
     except requests.RequestException:
         pass
-    return {"image_url": "", "commons_page": "", "commons_title": title, "wiki_description": ""}
+    return {"image_url": "", "commons_page": "", "commons_title": title, "wiki_description": "", "image_date": ""}
 
 def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict[str, str]:
     if not category_title.startswith("Category:"):
@@ -88,7 +90,7 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
         "action": "query", "generator": "categorymembers", "gcmtitle": category_title,
         "gcmtype": "file", "gcmlimit": 5, "prop": "imageinfo",
         "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
-        "iiextmetadatafilter": "ImageDescription", "format": "json",
+        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
     }
     try:
         response = requests.get(COMMONS_API_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=20)
@@ -99,15 +101,17 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
             info = page_info.get("imageinfo", [{}])[0]
             if info:
                 desc = clean_html(info.get("extmetadata", {}).get("ImageDescription", {}).get("value", ""))
+                date = clean_html(info.get("extmetadata", {}).get("DateTimeOriginal", {}).get("value", ""))
                 return {
                     "image_url": info.get("url", ""),
                     "commons_page": info.get("descriptionurl", ""),
                     "commons_title": page_info.get("title", ""),
                     "wiki_description": desc,
+                    "image_date": date,
                 }
     except requests.RequestException:
         pass
-    return {"image_url": "", "commons_page": "", "commons_title": category_title, "wiki_description": ""}
+    return {"image_url": "", "commons_page": "", "commons_title": category_title, "wiki_description": "", "image_date": ""}
 
 def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
     # We fetch descriptions in both EN and LV so the frontend map can switch between them easily!
@@ -130,7 +134,7 @@ def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
             res_en["wiki_description_lv"] = res_lv.get("wiki_description", "")
             return res_en
 
-    return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description_en": "", "wiki_description_lv": "", "source_tag": ""}
+    return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description_en": "", "wiki_description_lv": "", "source_tag": "", "image_date": ""}
 
 def fetch_osm_elements() -> Tuple[List[Dict], Dict[str, str]]:
     # We use a slightly faster query structure here using standard areas
@@ -188,13 +192,13 @@ def build_places_list(elements: List[Dict]) -> List[Dict]:
             "name_default": first_non_empty(tags.get("name")),
             "name_lv": first_non_empty(tags.get("name:lv")),
             "name_en": first_non_empty(tags.get("name:en")),
-            "material": first_non_empty(tags.get("material")),
             "osm_desc_default": first_non_empty(tags.get("description"), tags.get("note"), tags.get("fixme")),
             "osm_desc_lv": first_non_empty(tags.get("description:lv"), tags.get("note:lv")),
             "osm_desc_en": first_non_empty(tags.get("description:en"), tags.get("note:en")),
             "wiki_desc_en": commons.get("wiki_description_en", ""),
             "wiki_desc_lv": commons.get("wiki_description_lv", ""),
             "image": commons.get("image_url", ""),
+            "image_date": commons.get("image_date", ""),
             "commons_page": commons.get("commons_page", ""),
             "commons_title": commons.get("commons_title", ""),
             "image_source_tag": commons.get("source_tag", ""),
