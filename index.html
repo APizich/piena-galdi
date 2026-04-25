@@ -13,9 +13,22 @@
         #map { flex: 7; height: 100%; }
         #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         
-        /* Language Toggle Switch */
-        .lang-switch { background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; }
-        .lang-switch label { margin-right: 15px; cursor: pointer; font-weight: bold; }
+        /* Map Language Toggle Button */
+        .map-lang-btn {
+            position: absolute;
+            top: 15px;
+            right: 60px; /* Shifted left to avoid overlapping Leaflet's layer control */
+            z-index: 1000;
+            padding: 6px 12px;
+            background: white;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+        }
+        .map-lang-btn:hover { background: #f4f4f4; }
         
         .intro-text { margin-bottom: 20px; font-size: 14px; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
@@ -32,21 +45,28 @@
 </head>
 <body>
 
+    <!-- Language Button Placed over the Map -->
+    <button id="langBtn" class="map-lang-btn" onclick="toggleLanguage()">LV</button>
     <div id="map"></div>
 
     <div id="sidebar">
-        <div class="lang-switch">
-            <label><input type="radio" name="lang" value="en" onchange="changeLanguage('en')"> English</label>
-            <label><input type="radio" name="lang" value="lv" onchange="changeLanguage('lv')" checked> Latviešu</label>
-        </div>
-
-        <h2 id="ui-title">🥛 Piena galdi Latvijā</h2>
+        <!-- Title and Custom Icon -->
+        <h2 style="display: flex; align-items: center; margin-top: 0;">
+            <img src="image_3ffa6f.jpg" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
+            <span id="ui-title">Piena galdi Latvijā</span>
+        </h2>
+        
         <div class="intro-text">
-            <p id="ui-intro">Šajā kartē ir redzami <strong>man_made=milk_churn_stand</strong> objekti Latvijā.</p>
+            <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
             <p><span id="ui-green">🟢 <strong>Zaļie punkti</strong> = ar Wikimedia attēlu</span><br>
                <span id="ui-blue">🔵 <strong>Zilie punkti</strong> = bez attēla</span></p>
-            <hr>
-            <p><em id="ui-click">Noklikšķini uz jebkura marķiera kartē, lai šeit redzētu tā informāciju.</em></p>
+            
+            <!-- Instagram Button -->
+            <div style="margin-top: 25px;">
+                <a href="https://www.instagram.com/pina_golds/" target="_blank" style="display: inline-block; padding: 10px 15px; background-color: #E1306C; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: sans-serif;">
+                    Instagram
+                </a>
+            </div>
         </div>
         
         <div id="details"></div>
@@ -55,14 +75,20 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+        // --- State Variables ---
+        let currentLang = 'lv';
+        let mapData = [];
+        let lastClickedStand = null;
+        let greenCount = 0;
+        let blueCount = 0;
+
         // --- Translations Dictionary ---
         const TEXT = {
             "en": {
-                title: "🥛 Milk Churn Stands in Latvia",
-                intro: "This map shows <strong>man_made=milk_churn_stand</strong> objects within Latvia.",
-                green: "🟢 <strong>Green dots</strong> = with Wikimedia image",
-                blue: "🔵 <strong>Blue dots</strong> = no image",
-                click: "Click any marker on the map to view its details here.",
+                title: "Milk Churn Stands in Latvia",
+                intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
+                green: () => `🟢 <strong>Green dots (${greenCount})</strong> = with Wikimedia image`,
+                blue: () => `🔵 <strong>Blue dots (${blueCount})</strong> = no image`,
                 material: "Material",
                 unknown: "Unknown",
                 no_img: "No Wikimedia Commons image found.",
@@ -72,11 +98,10 @@
                 default_name: "Milk churn stand"
             },
             "lv": {
-                title: "🥛 Piena galdi Latvijā",
-                intro: "Šajā kartē ir redzami <strong>man_made=milk_churn_stand</strong> objekti Latvijā.",
-                green: "🟢 <strong>Zaļie punkti</strong> = ar Wikimedia attēlu",
-                blue: "🔵 <strong>Zilie punkti</strong> = bez attēla",
-                click: "Noklikšķini uz jebkura marķiera kartē, lai šeit redzētu tā informāciju.",
+                title: "Piena galdi Latvijā",
+                intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
+                green: () => `🟢 <strong>Zaļie punkti (${greenCount})</strong> = ar Wikimedia attēlu`,
+                blue: () => `🔵 <strong>Zilie punkti (${blueCount})</strong> = bez attēla`,
                 material: "Materiāls",
                 unknown: "Nav zināms",
                 no_img: "Wikimedia attēls nav pieejams.",
@@ -86,11 +111,6 @@
                 default_name: "Piena galds"
             }
         };
-
-        // --- State Variables ---
-        let currentLang = 'lv';
-        let mapData = [];
-        let lastClickedStand = null;
 
         // --- Map Initialization ---
         const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -118,7 +138,7 @@
         const baseMaps = {
             "Gaišā karte (Carto)": cartoLight,
             "Standarta OSM (Krāsaina)": osmStandard,
-            "Ortofoto (LVM GEO)": lvmOrto
+            "Ortofoto (LĢIA, LVM GEO)": lvmOrto
         };
 
         L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
@@ -126,13 +146,24 @@
         const markerLayer = L.layerGroup().addTo(map);
 
         // --- Core Functions ---
+        function toggleLanguage() {
+            if (currentLang === 'lv') {
+                changeLanguage('en');
+                document.getElementById('langBtn').innerText = 'EN';
+            } else {
+                changeLanguage('lv');
+                document.getElementById('langBtn').innerText = 'LV';
+            }
+        }
+
         function changeLanguage(lang) {
             currentLang = lang;
             document.getElementById('ui-title').innerText = TEXT[lang].title;
             document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
-            document.getElementById('ui-green').innerHTML = TEXT[lang].green;
-            document.getElementById('ui-blue').innerHTML = TEXT[lang].blue;
-            document.getElementById('ui-click').innerText = TEXT[lang].click;
+            // Execute the functions to get the formatted text with the counts
+            document.getElementById('ui-green').innerHTML = TEXT[lang].green();
+            document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
+            
             drawMarkers();
             if (lastClickedStand) showDetails(lastClickedStand);
         }
@@ -219,7 +250,13 @@
             .then(response => response.json())
             .then(data => {
                 mapData = data;
-                drawMarkers();
+                
+                // Calculate counts based on data.json
+                greenCount = mapData.filter(s => s.image !== "").length;
+                blueCount = mapData.length - greenCount;
+                
+                // Initialize the interface using computed counts
+                changeLanguage(currentLang);
             })
             .catch(error => console.error('Error loading data.json:', error));
 
