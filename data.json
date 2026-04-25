@@ -2660,6 +2660,25 @@
     "image_source_tag": "wikimedia_commons"
   },
   {
+    "osm_type": "node",
+    "osm_id": 13760305867,
+    "lat": 56.3451646,
+    "lon": 26.1583409,
+    "name_default": "",
+    "name_lv": "Piena galds Dignājas pagasta \"Rinduļu\" pagalmā",
+    "name_en": "",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "Milk churn stand in Dignājas parish, \"Rinduļi\" yard. \"Rinduļi\" has two milk churn stands - one is located near road, second one is located in the yard of the house. It is easier for the farmers if the milk car comes after milk closer to the house/cowshed, but sometimes it is not possible, especially in spring or fall when the dirt roads are muddy.",
+    "wiki_desc_lv": "Piena galds Dignājas pagasta \"Rinduļu\" pagalmā. \"Rinduļu\" mājām ir divi piena galdi - viens ir novietots pie ceļa, otrs - mājas pagalmā pie pašas Daugavas. Saimnieki priecājas, ja piena mašīna var iebraukt pēc piena pagalmā, jo tad saimniekiem nav jāved piens līdz ceļam. Taču tas ne vienmēr ir iespējams, jo pavasaros un rudeņos zemesceļi, kas ved līdz mājām, nereti ir pārāk dubļaini, lai piena mašīna varētu iebraukt bez grūtībām.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Milk_churn_stand_in_Dign%C4%81jas_parish%2C_%22Rindu%C4%BCi%22_yard.jpg",
+    "image_date": "2023-04-22 15:08:28",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Dign%C4%81jas_parish,_%22Rindu%C4%BCi%22_yard.jpg",
+    "commons_title": "File:Milk churn stand in Dignājas parish, \"Rinduļi\" yard.jpg",
+    "image_source_tag": "wikimedia_commons"
+  },
+  {
     "osm_type": "way",
     "osm_id": 1174165133,
     "lat": 56.3102706,
