@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Milk Churn Stands in Latvia</title>
     
+    <!-- Default title set to Latvian for initial load -->
+    <title>Piena galdi Latvijā</title>
+    
+    <!-- Meta tag for search engines (SEO) -->
+    <meta name="description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
+    
+    <!-- Open Graph tags for social media (WhatsApp, Messenger, Facebook, etc.) -->
+    <meta property="og:title" content="Piena galdi Latvijā | Milk Churn Stands in Latvia">
+    <meta property="og:description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
+    <meta property="og:image" content="https://www.piena-galdi.lv/Milk_churn_stand_icon.png">
+    <meta property="og:url" content="https://www.piena-galdi.lv">
+    <meta property="og:type" content="website">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
@@ -167,24 +179,24 @@
         }
 
         function changeLanguage(lang) {
-    currentLang = lang;
-    
-    // Add this line to change the browser tab name dynamically:
-    document.title = TEXT[lang].title; 
-    
-    document.getElementById('ui-title').innerText = TEXT[lang].title;
-    document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
-    
-    // Execute the functions to get the formatted text with the counts
-    document.getElementById('ui-green').innerHTML = TEXT[lang].green();
-    document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
-    
-    // Update the map layer language names
-    updateLayerControl(lang);
-    
-    drawMarkers();
-    if (lastClickedStand) showDetails(lastClickedStand);
-}
+            currentLang = lang;
+            
+            // Dynamically update the browser tab title
+            document.title = TEXT[lang].title;
+            
+            document.getElementById('ui-title').innerText = TEXT[lang].title;
+            document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
+            
+            // Execute the functions to get the formatted text with the counts
+            document.getElementById('ui-green').innerHTML = TEXT[lang].green();
+            document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
+            
+            // Update the map layer language names
+            updateLayerControl(lang);
+            
+            drawMarkers();
+            if (lastClickedStand) showDetails(lastClickedStand);
+        }
 
         function drawMarkers() {
             markerLayer.clearLayers();
