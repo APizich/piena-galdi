@@ -167,20 +167,24 @@
         }
 
         function changeLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('ui-title').innerText = TEXT[lang].title;
-            document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
-            
-            // Execute the functions to get the formatted text with the counts
-            document.getElementById('ui-green').innerHTML = TEXT[lang].green();
-            document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
-            
-            // Update the map layer language names
-            updateLayerControl(lang);
-            
-            drawMarkers();
-            if (lastClickedStand) showDetails(lastClickedStand);
-        }
+    currentLang = lang;
+    
+    // Add this line to change the browser tab name dynamically:
+    document.title = TEXT[lang].title; 
+    
+    document.getElementById('ui-title').innerText = TEXT[lang].title;
+    document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
+    
+    // Execute the functions to get the formatted text with the counts
+    document.getElementById('ui-green').innerHTML = TEXT[lang].green();
+    document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
+    
+    // Update the map layer language names
+    updateLayerControl(lang);
+    
+    drawMarkers();
+    if (lastClickedStand) showDetails(lastClickedStand);
+}
 
         function drawMarkers() {
             markerLayer.clearLayers();
