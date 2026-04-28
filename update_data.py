@@ -15,10 +15,6 @@ OVERPASS_ENDPOINTS = [
     "https://overpass.openstreetmap.fr/api/interpreter",
 ]
 
-# Set up a session to reuse connections and be polite to Wikimedia
-session = requests.Session()
-session.headers.update({"User-Agent": USER_AGENT})
-
 # --- Helper functions --------------------------------------------------------
 def clean_html(raw_html: str) -> str:
     if not raw_html:
@@ -58,23 +54,6 @@ def normalize_commons_title(raw_value: str) -> str:
         return value
     return f"File:{value}"
 
-def fetch_wikimedia_with_retry(params: Dict) -> Dict:
-    """Helper to fetch from Wikimedia and handle rate limits safely."""
-    for attempt in range(3):
-        try:
-            response = session.get(COMMONS_API_URL, params=params, timeout=20)
-            if response.status_code == 429: # Too Many Requests error
-                print("  [!] Rate limited by Wikimedia. Sleeping for 2 seconds...")
-                time.sleep(2)
-                continue
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
-            if attempt == 2:
-                print(f"  [!] Wikimedia request failed: {e}")
-            time.sleep(1)
-    return {}
-
 def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
     if not title:
         return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description": "", "image_date": ""}
@@ -84,13 +63,12 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
         "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
         "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
     }
-    
-    data = fetch_wikimedia_with_retry(params)
-    pages = data.get("query", {}).get("pages", {})
-    
-    for page_info in pages.values():
-        info = page_info.get("imageinfo", [{}])[0]
-        if info:
+    try:
+        response = requests.get(COMMONS_API_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=20)
+        response.raise_for_status()
+        pages = response.json().get("query", {}).get("pages", {})
+        for page_info in pages.values():
+            info = page_info.get("imageinfo", [{}])[0]
             desc = clean_html(info.get("extmetadata", {}).get("ImageDescription", {}).get("value", ""))
             date = clean_html(info.get("extmetadata", {}).get("DateTimeOriginal", {}).get("value", ""))
             return {
@@ -100,7 +78,8 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
                 "wiki_description": desc,
                 "image_date": date,
             }
-            
+    except requests.RequestException:
+        pass
     return {"image_url": "", "commons_page": "", "commons_title": title, "wiki_description": "", "image_date": ""}
 
 def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict[str, str]:
@@ -113,27 +92,29 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
         "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
         "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
     }
-    
-    data = fetch_wikimedia_with_retry(params)
-    pages = data.get("query", {}).get("pages", {})
-    sorted_pages = sorted(pages.values(), key=lambda p: p.get("title", ""))
-    
-    for page_info in sorted_pages:
-        info = page_info.get("imageinfo", [{}])[0]
-        if info:
-            desc = clean_html(info.get("extmetadata", {}).get("ImageDescription", {}).get("value", ""))
-            date = clean_html(info.get("extmetadata", {}).get("DateTimeOriginal", {}).get("value", ""))
-            return {
-                "image_url": info.get("url", ""),
-                "commons_page": info.get("descriptionurl", ""),
-                "commons_title": page_info.get("title", ""),
-                "wiki_description": desc,
-                "image_date": date,
-            }
-            
+    try:
+        response = requests.get(COMMONS_API_URL, params=params, headers={"User-Agent": USER_AGENT}, timeout=20)
+        response.raise_for_status()
+        pages = response.json().get("query", {}).get("pages", {})
+        sorted_pages = sorted(pages.values(), key=lambda p: p.get("title", ""))
+        for page_info in sorted_pages:
+            info = page_info.get("imageinfo", [{}])[0]
+            if info:
+                desc = clean_html(info.get("extmetadata", {}).get("ImageDescription", {}).get("value", ""))
+                date = clean_html(info.get("extmetadata", {}).get("DateTimeOriginal", {}).get("value", ""))
+                return {
+                    "image_url": info.get("url", ""),
+                    "commons_page": info.get("descriptionurl", ""),
+                    "commons_title": page_info.get("title", ""),
+                    "wiki_description": desc,
+                    "image_date": date,
+                }
+    except requests.RequestException:
+        pass
     return {"image_url": "", "commons_page": "", "commons_title": category_title, "wiki_description": "", "image_date": ""}
 
 def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
+    # We fetch descriptions in both EN and LV so the frontend map can switch between them easily!
     candidates = [("wikimedia_commons", tags.get("wikimedia_commons", "")), ("image", tags.get("image", ""))]
 
     for source_tag, raw_value in candidates:
@@ -156,15 +137,13 @@ def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
     return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description_en": "", "wiki_description_lv": "", "source_tag": "", "image_date": ""}
 
 def fetch_osm_elements() -> Tuple[List[Dict], Dict[str, str]]:
-    # Updated query to include both regular AND demolished lifecycle tags
+    # We use a slightly faster query structure here using standard areas
     query = """
     [out:json][timeout:90];
     area["ISO3166-1"="LV"]["admin_level"="2"]->.latvia;
     (
       node["man_made"="milk_churn_stand"](area.latvia);
       way["man_made"="milk_churn_stand"](area.latvia);
-      node["demolished:man_made"="milk_churn_stand"](area.latvia);
-      way["demolished:man_made"="milk_churn_stand"](area.latvia);
     );
     out center tags;
     """
@@ -176,9 +155,10 @@ def fetch_osm_elements() -> Tuple[List[Dict], Dict[str, str]]:
             response.raise_for_status()
             data = response.json()
             
+            # Check if Overpass returned a hidden error message because it is busy
             if "remark" in data:
                 print(f"  [!] Server is busy/error: {data['remark']}")
-                continue
+                continue # Skip to the next server in the list
                 
             elements = data.get("elements", [])
             
@@ -203,9 +183,6 @@ def build_places_list(elements: List[Dict]) -> List[Dict]:
         if lat is None or lon is None: continue
 
         commons = resolve_wikimedia_image(tags)
-        
-        # Check both the explicit 'demolished=yes' tag, and the lifecycle 'demolished:man_made' tag
-        is_demolished = "yes" if ("demolished" in tags and tags["demolished"] == "yes") or "demolished:man_made" in tags else "no"
 
         places.append({
             "osm_type": element.get("type", ""),
@@ -225,7 +202,6 @@ def build_places_list(elements: List[Dict]) -> List[Dict]:
             "commons_page": commons.get("commons_page", ""),
             "commons_title": commons.get("commons_title", ""),
             "image_source_tag": commons.get("source_tag", ""),
-            "demolished": is_demolished,
         })
     return places
 
