@@ -130,7 +130,7 @@
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt / Search...',
-            collapsed: false // <--- THIS LINE KEEPS IT OPEN AS A BAR
+            collapsed: false // Keeps it open as a bar
         }).on('markgeocode', function(e) {
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
@@ -210,6 +210,11 @@
             if (lastClickedStand) showDetails(lastClickedStand);
         }
 
+        // Helper function to check if the demolished tag is "yes"
+        function isDemolished(stand) {
+            return stand.demolished && stand.demolished.toString().toLowerCase() === "yes";
+        }
+
         function drawMarkers() {
             markerLayer.clearLayers();
             
@@ -228,8 +233,8 @@
 
                 let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
                 
-                // Add Demolished status to the marker popup
-                if (stand.demolished == 1 || stand.demolished === "1") {
+                // Add Demolished status to the marker popup if "yes"
+                if (isDemolished(stand)) {
                     popupHtml += `<span style="color: #777; font-size: 11px;">${TEXT[currentLang].demolished}</span><br>`;
                 }
                 
@@ -262,8 +267,8 @@
             
             let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
             
-            // Add Demolished status to the sidebar details
-            if (stand.demolished == 1 || stand.demolished === "1") {
+            // Add Demolished status to the sidebar details if "yes"
+            if (isDemolished(stand)) {
                 html += `<div style="color: #888; font-size: 12px; margin-bottom: 15px;">${t.demolished}</div>`;
             } else {
                 html += `<div style="margin-bottom: 15px;"></div>`; // Spacing if not demolished
