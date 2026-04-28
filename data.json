@@ -16,26 +16,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
-  },
-  {
-    "osm_type": "node",
-    "osm_id": 10940304079,
-    "lat": 56.2909173,
-    "lon": 27.440544,
-    "name_default": "",
-    "name_lv": "",
-    "name_en": "",
-    "osm_desc_default": "",
-    "osm_desc_lv": "",
-    "osm_desc_en": "small wooden milk churn stand",
-    "wiki_desc_en": "Piena galds Lipuškos, Rāznas un Annas ielu krustojumā.",
-    "wiki_desc_lv": "Piena galds Lipuškos, Rāznas un Annas ielu krustojumā.",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Lipu%C5%A1ki_piena_galds_2022-06-26.jpg",
-    "image_date": "Taken on 26 June 2022",
-    "commons_page": "https://commons.wikimedia.org/wiki/File:Lipu%C5%A1ki_piena_galds_2022-06-26.jpg",
-    "commons_title": "File:Lipuški piena galds 2022-06-26.jpg",
-    "image_source_tag": "wikimedia_commons"
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -54,7 +36,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -73,26 +56,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 10940804882,
-    "lat": 56.250049,
-    "lon": 26.718343,
-    "name_default": "Piena galds Gribuškās, \"Ķirbēnos\"",
+    "osm_id": 10940304079,
+    "lat": 56.2909173,
+    "lon": 27.440544,
+    "name_default": "",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
     "osm_desc_lv": "",
-    "osm_desc_en": "",
-    "wiki_desc_en": "Milk churn stand with milk churn in Gribuški, \"Ķirbēni\".",
-    "wiki_desc_lv": "Piena galds ar piena kannu Gribuškās, pie \"Ķirbēnu\" mājām. Piena kanna ir sasegta ar segu, lai pasargātu pienu no aukstuma.",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/Milk_churn_stand_in_Gribu%C5%A1ki%2C_%22%C4%B6irb%C4%93ni%22.jpg",
-    "image_date": "2022-12-06",
-    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Gribu%C5%A1ki,_%22%C4%B6irb%C4%93ni%22.jpg",
-    "commons_title": "File:Milk churn stand in Gribuški, \"Ķirbēni\".jpg",
-    "image_source_tag": "wikimedia_commons"
+    "osm_desc_en": "small wooden milk churn stand",
+    "wiki_desc_en": "Piena galds Lipuškos, Rāznas un Annas ielu krustojumā.",
+    "wiki_desc_lv": "Piena galds Lipuškos, Rāznas un Annas ielu krustojumā.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Lipu%C5%A1ki_piena_galds_2022-06-26.jpg",
+    "image_date": "Taken on 26 June 2022",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Lipu%C5%A1ki_piena_galds_2022-06-26.jpg",
+    "commons_title": "File:Lipuški piena galds 2022-06-26.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Lipuški piena galds 2022-06-26.jpg"
   },
   {
     "osm_type": "node",
@@ -111,7 +96,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -130,7 +116,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -149,7 +136,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -168,7 +156,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -187,7 +176,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -206,7 +196,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -225,26 +216,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11006054821,
-    "lat": 56.3473793,
-    "lon": 26.3142373,
-    "name_default": "",
+    "osm_id": 10940804882,
+    "lat": 56.250049,
+    "lon": 26.718343,
+    "name_default": "Piena galds Gribuškās, \"Ķirbēnos\"",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "Wooden milk churn stand with churns in Muktupāveli. In 2023 was still in active use.",
-    "wiki_desc_lv": "Piena galds ar kannām Muktupāvelos. Vēl 2023. gadā tika aktīvi lietots piena nodošanai",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Milk_churn_stand_in_Muktup%C4%81veli.jpg",
-    "image_date": "2023-03-20 21:37:27",
-    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Muktup%C4%81veli.jpg",
-    "commons_title": "File:Milk churn stand in Muktupāveli.jpg",
-    "image_source_tag": "wikimedia_commons"
+    "wiki_desc_en": "Milk churn stand with milk churn in Gribuški, \"Ķirbēni\".",
+    "wiki_desc_lv": "Piena galds ar piena kannu Gribuškās, pie \"Ķirbēnu\" mājām. Piena kanna ir sasegta ar segu, lai pasargātu pienu no aukstuma.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/Milk_churn_stand_in_Gribu%C5%A1ki%2C_%22%C4%B6irb%C4%93ni%22.jpg",
+    "image_date": "2022-12-06",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Gribu%C5%A1ki,_%22%C4%B6irb%C4%93ni%22.jpg",
+    "commons_title": "File:Milk churn stand in Gribuški, \"Ķirbēni\".jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Gribuški, \"Ķirbēni\".jpg"
   },
   {
     "osm_type": "node",
@@ -263,7 +256,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -282,7 +276,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -301,7 +296,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -320,7 +316,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -339,7 +336,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -358,7 +356,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -377,26 +376,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11026793149,
-    "lat": 56.3218326,
-    "lon": 26.421658,
-    "name_default": "Piena galds Sutru pagasta Promos",
+    "osm_id": 11006054821,
+    "lat": 56.3473793,
+    "lon": 26.3142373,
+    "name_default": "",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "Wooden milk churn stand in Promi, Latvia.",
-    "wiki_desc_lv": "Wooden milk churn stand in Promi, Latvia.",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Milk_churn_stand_in_Promi.jpg",
-    "image_date": "2024-08-15",
-    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Promi.jpg",
-    "commons_title": "File:Milk churn stand in Promi.jpg",
-    "image_source_tag": "wikimedia_commons"
+    "wiki_desc_en": "Wooden milk churn stand with churns in Muktupāveli. In 2023 was still in active use.",
+    "wiki_desc_lv": "Piena galds ar kannām Muktupāvelos. Vēl 2023. gadā tika aktīvi lietots piena nodošanai",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Milk_churn_stand_in_Muktup%C4%81veli.jpg",
+    "image_date": "2023-03-20 21:37:27",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Muktup%C4%81veli.jpg",
+    "commons_title": "File:Milk churn stand in Muktupāveli.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk_churn_stand_in_Muktupāveli.jpg"
   },
   {
     "osm_type": "node",
@@ -415,7 +416,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -434,7 +436,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -453,7 +456,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -472,7 +476,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -491,7 +496,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -510,7 +516,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -529,7 +536,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -548,7 +556,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -567,7 +576,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -586,7 +596,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -605,7 +616,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -624,7 +636,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -643,7 +656,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -662,7 +676,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -681,7 +696,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -700,7 +716,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -719,7 +736,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -738,7 +756,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -757,7 +776,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -776,7 +796,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -795,26 +816,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11181761037,
-    "lat": 56.4218168,
-    "lon": 26.7752049,
-    "name_default": "Piena galds Kalna Gudļevskos",
-    "name_lv": "Piena galds Kalna Gudļevskos",
-    "name_en": "Milk churn stand in Kalna Gudļevski",
+    "osm_id": 11026793149,
+    "lat": 56.3218326,
+    "lon": 26.421658,
+    "name_default": "Piena galds Sutru pagasta Promos",
+    "name_lv": "",
+    "name_en": "",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "wiki_desc_en": "Wooden milk churn stand in Promi, Latvia.",
+    "wiki_desc_lv": "Wooden milk churn stand in Promi, Latvia.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Milk_churn_stand_in_Promi.jpg",
+    "image_date": "2024-08-15",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Promi.jpg",
+    "commons_title": "File:Milk churn stand in Promi.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Promi.jpg"
   },
   {
     "osm_type": "node",
@@ -833,7 +856,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -852,7 +876,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -871,7 +896,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -890,7 +916,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -909,7 +936,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -928,7 +956,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -947,7 +976,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -966,7 +996,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -985,7 +1016,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1004,7 +1036,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1023,7 +1056,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1042,7 +1076,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1061,7 +1096,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1074,13 +1110,14 @@
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
+    "wiki_desc_en": "Milk churn stand in Galēni park",
     "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "image": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Milk_churn_stand_in_Gal%C4%93ni.jpg",
+    "image_date": "2026-01-26 11:30:51",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Gal%C4%93ni.jpg",
+    "commons_title": "File:Milk churn stand in Galēni.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk_churn_stand_in_Galēni.jpg"
   },
   {
     "osm_type": "node",
@@ -1099,7 +1136,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1118,7 +1156,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1137,7 +1176,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1156,7 +1196,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1175,7 +1216,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1194,7 +1236,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1213,7 +1256,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1232,26 +1276,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11184288009,
-    "lat": 56.440653,
-    "lon": 26.7298282,
-    "name_default": "",
-    "name_lv": "",
-    "name_en": "",
+    "osm_id": 11181761037,
+    "lat": 56.4218168,
+    "lon": 26.7752049,
+    "name_default": "Piena galds Kalna Gudļevskos",
+    "name_lv": "Piena galds Kalna Gudļevskos",
+    "name_en": "Milk churn stand in Kalna Gudļevski",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
+    "wiki_desc_en": "Milk churn stand with churns in Kalna Gudļevski. Modern milk cars collect milk by pumping it from the churn straight into the tank. The intermediary - milk churn stand - is therefore no longer necessary.",
     "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "image": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Milk_churn_stand_with_churns_in_Kalna_Gud%C4%BCevski.jpg",
+    "image_date": "2022-05-29 11:42:47",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_with_churns_in_Kalna_Gud%C4%BCevski.jpg",
+    "commons_title": "File:Milk churn stand with churns in Kalna Gudļevski.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand with churns in Kalna Gudļevski.jpg|"
   },
   {
     "osm_type": "node",
@@ -1270,7 +1316,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1289,14 +1336,15 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11184329721,
-    "lat": 56.4129558,
-    "lon": 26.7825587,
-    "name_default": "Piena galds Stabulniekos, Dārzu ielā",
+    "osm_id": 11184288009,
+    "lat": 56.440653,
+    "lon": 26.7298282,
+    "name_default": "",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
@@ -1308,7 +1356,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Wooden milk churn stand.jpg"
   },
   {
     "osm_type": "node",
@@ -1327,7 +1376,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1346,7 +1396,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1365,7 +1416,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1384,7 +1436,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
+  },
+  {
+    "osm_type": "node",
+    "osm_id": 11184329721,
+    "lat": 56.4129558,
+    "lon": 26.7825587,
+    "name_default": "Piena galds Stabulniekos, Dārzu ielā",
+    "name_lv": "",
+    "name_en": "",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "",
+    "wiki_desc_lv": "",
+    "image": "",
+    "image_date": "",
+    "commons_page": "",
+    "commons_title": "",
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Stabulnieki,_Dārzu_street.jpg"
   },
   {
     "osm_type": "node",
@@ -1403,26 +1476,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
-  },
-  {
-    "osm_type": "node",
-    "osm_id": 11184379702,
-    "lat": 56.5248211,
-    "lon": 26.9115074,
-    "name_default": "",
-    "name_lv": "",
-    "name_en": "",
-    "osm_desc_default": "",
-    "osm_desc_lv": "",
-    "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Stabulnieki,_Jaunā_street.jpg"
   },
   {
     "osm_type": "node",
@@ -1441,7 +1496,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1460,7 +1516,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1479,7 +1536,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1498,7 +1556,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1517,7 +1576,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1536,7 +1596,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1555,7 +1616,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1574,14 +1636,15 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11186670417,
-    "lat": 57.23934,
-    "lon": 24.6724784,
-    "name_default": "Piena galds Bīriņos pie \"Kalnozolu\" mājām",
+    "osm_id": 11184379702,
+    "lat": 56.5248211,
+    "lon": 26.9115074,
+    "name_default": "",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
@@ -1593,7 +1656,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Kūkoji.jpg"
   },
   {
     "osm_type": "node",
@@ -1612,7 +1676,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1631,7 +1696,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1650,7 +1716,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1669,7 +1736,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1688,7 +1756,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1707,14 +1776,15 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11203445357,
-    "lat": 56.5802836,
-    "lon": 26.7990721,
-    "name_default": "",
+    "osm_id": 11186670417,
+    "lat": 57.23934,
+    "lon": 24.6724784,
+    "name_default": "Piena galds Bīriņos pie \"Kalnozolu\" mājām",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
@@ -1726,7 +1796,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Bīriņi, \"Kalnozoli\".jpg"
   },
   {
     "osm_type": "node",
@@ -1745,7 +1816,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1764,7 +1836,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1783,7 +1856,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1802,7 +1876,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1821,7 +1896,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1840,7 +1916,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1859,7 +1936,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1878,7 +1956,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1897,7 +1976,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1916,7 +1996,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1935,7 +2016,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1954,7 +2036,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1973,7 +2056,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -1992,7 +2076,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2011,7 +2096,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2030,7 +2116,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2049,14 +2136,15 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 11802832242,
-    "lat": 57.3480379,
-    "lon": 22.7886549,
-    "name_default": "Piena galds Dārtes \"Papardēs\"",
+    "osm_id": 11203445357,
+    "lat": 56.5802836,
+    "lon": 26.7990721,
+    "name_default": "",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
@@ -2068,7 +2156,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Stiukas,_Riekstiņi.jpg"
   },
   {
     "osm_type": "node",
@@ -2087,7 +2176,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2106,7 +2196,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2125,7 +2216,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2144,7 +2236,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2163,7 +2256,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2182,7 +2276,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2201,7 +2296,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2220,7 +2316,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2239,7 +2336,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2258,7 +2356,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2277,7 +2376,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2296,7 +2396,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2315,7 +2416,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2334,7 +2436,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2353,7 +2456,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2372,7 +2476,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2391,7 +2496,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2410,7 +2516,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2429,14 +2536,15 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
-    "osm_id": 13722934455,
-    "lat": 56.5378533,
-    "lon": 26.6341662,
-    "name_default": "Bojāru-Eriņu piena galds",
+    "osm_id": 11802832242,
+    "lat": 57.3480379,
+    "lon": 22.7886549,
+    "name_default": "Piena galds Dārtes \"Papardēs\"",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
@@ -2448,7 +2556,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Dārte, \"Papardes\".jpg"
   },
   {
     "osm_type": "node",
@@ -2467,7 +2576,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "node",
@@ -2486,7 +2596,28 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
+  },
+  {
+    "osm_type": "node",
+    "osm_id": 13722934455,
+    "lat": 56.5378533,
+    "lon": 26.6341662,
+    "name_default": "Bojāru-Eriņu piena galds",
+    "name_lv": "",
+    "name_en": "",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "",
+    "wiki_desc_lv": "",
+    "image": "",
+    "image_date": "",
+    "commons_page": "",
+    "commons_title": "",
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Bojāri-Eriņi.jpg"
   },
   {
     "osm_type": "node",
@@ -2505,7 +2636,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Piena_galds_Sermuksli_Radzelos.jpg"
   },
   {
     "osm_type": "node",
@@ -2524,7 +2656,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Makarovka.jpg"
   },
   {
     "osm_type": "node",
@@ -2543,7 +2676,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Vecružina.jpg"
   },
   {
     "osm_type": "node",
@@ -2562,7 +2696,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk_churn_stand_in_Piziči.jpg"
   },
   {
     "osm_type": "node",
@@ -2581,7 +2716,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Balgales parish, \"Sniķeri\".jpg"
   },
   {
     "osm_type": "node",
@@ -2600,7 +2736,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Jeru parish \"Klimpas\".jpg"
   },
   {
     "osm_type": "node",
@@ -2619,7 +2756,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Vilzēni, \"Liepas\".jpg"
   },
   {
     "osm_type": "node",
@@ -2638,7 +2776,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Valmiera.jpg"
   },
   {
     "osm_type": "node",
@@ -2657,7 +2796,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Dignājas parish, \"Rinduļi\" road.jpg"
   },
   {
     "osm_type": "node",
@@ -2676,7 +2816,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Dignājas parish, \"Rinduļi\" yard.jpg"
   },
   {
     "osm_type": "node",
@@ -2695,7 +2836,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Gārsenes parish \"Lapas\".jpg"
   },
   {
     "osm_type": "node",
@@ -2714,7 +2856,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Prodes parish \"Pazares\".jpg"
   },
   {
     "osm_type": "node",
@@ -2733,7 +2876,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Staburaga parish \"Viļņi\".jpg"
   },
   {
     "osm_type": "node",
@@ -2752,26 +2896,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
-  },
-  {
-    "osm_type": "node",
-    "osm_id": 13764524509,
-    "lat": 56.7171664,
-    "lon": 27.0580931,
-    "name_default": "Piena galds Vilnauces \"Bitītēs\"",
-    "name_lv": "",
-    "name_en": "",
-    "osm_desc_default": "",
-    "osm_desc_lv": "",
-    "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": "File:Milk churn stand in Bērzpils parish Beļauski.jpg"
   },
   {
     "osm_type": "node",
@@ -2784,32 +2910,34 @@
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "wiki_desc_en": "Milk churn stand in Vīksnas parish Miezāji",
+    "wiki_desc_lv": "Piena galds ar soliņu Vīksnas pagasta Miezājos",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Milk_churn_stand_in_V%C4%ABksnas_parish_Miez%C4%81ji.jpg",
+    "image_date": "2023",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_V%C4%ABksnas_parish_Miez%C4%81ji.jpg",
+    "commons_title": "File:Milk churn stand in Vīksnas parish Miezāji.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Vīksnas parish Miezāji.jpg"
   },
   {
     "osm_type": "node",
-    "osm_id": 13764662045,
-    "lat": 57.2095442,
-    "lon": 27.4313499,
-    "name_default": "Piena galds Vīksnas pagasta Pokuļevā",
+    "osm_id": 13764524509,
+    "lat": 56.7171664,
+    "lon": 27.0580931,
+    "name_default": "Piena galds Vilnauces \"Bitītēs\"",
     "name_lv": "",
     "name_en": "",
     "osm_desc_default": "",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": ""
+    "wiki_desc_en": "Milk churn stand with churns in Gaigalavas parish Vilnauce",
+    "wiki_desc_lv": "Piena galds ar kannām Gaigalavas pagasta Vilnaucē",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/da/Milk_churn_stand_in_Gaigalavas_parish_Vilnauce.jpg",
+    "image_date": "2023-05-14",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Gaigalavas_parish_Vilnauce.jpg",
+    "commons_title": "File:Milk churn stand in Gaigalavas parish Vilnauce.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Gaigalavas parish Vilnauce.jpg"
   },
   {
     "osm_type": "way",
@@ -2828,7 +2956,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2847,7 +2976,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2866,7 +2996,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2885,7 +3016,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2904,7 +3036,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2923,7 +3056,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2942,7 +3076,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2961,7 +3096,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2980,7 +3116,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -2999,7 +3136,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3018,7 +3156,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3037,7 +3176,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3056,7 +3196,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3075,7 +3216,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3094,7 +3236,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3113,7 +3256,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3132,7 +3276,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3151,7 +3296,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3170,7 +3316,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3189,7 +3336,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3208,7 +3356,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3227,7 +3376,8 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
   },
   {
     "osm_type": "way",
@@ -3246,6 +3396,27 @@
     "image_date": "",
     "commons_page": "",
     "commons_title": "",
-    "image_source_tag": ""
+    "image_source_tag": "",
+    "raw_image_tag": ""
+  },
+  {
+    "osm_type": "node",
+    "osm_id": 13764662045,
+    "lat": 57.2095442,
+    "lon": 27.4313499,
+    "name_default": "Piena galds Vīksnas pagasta Pokuļevā",
+    "name_lv": "",
+    "name_en": "",
+    "osm_desc_default": "",
+    "osm_desc_lv": "",
+    "osm_desc_en": "",
+    "wiki_desc_en": "Milk churn stand in Vīksnas parish Pokuļeva",
+    "wiki_desc_lv": "Piena galds Vīksnas pagasta Pokuļevā",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/0/01/Milk_churn_stand_in_V%C4%ABksnas_parish_Poku%C4%BCeva.jpg",
+    "image_date": "2023-07-27",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_V%C4%ABksnas_parish_Poku%C4%BCeva.jpg",
+    "commons_title": "File:Milk churn stand in Vīksnas parish Pokuļeva.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "Milk churn stand in Vīksnas parish Pokuļeva.jpg"
   }
 ]
