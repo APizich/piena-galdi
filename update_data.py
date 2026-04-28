@@ -202,6 +202,7 @@ def build_places_list(elements: List[Dict]) -> List[Dict]:
             "commons_page": commons.get("commons_page", ""),
             "commons_title": commons.get("commons_title", ""),
             "image_source_tag": commons.get("source_tag", ""),
+            "demolished": tags.get("demolished", "no"), # <--- ADDED THIS LINE HERE
         })
     return places
 
