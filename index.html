@@ -83,7 +83,7 @@
                 osm_desc: "OSM Description",
                 wiki_desc: "Wikimedia Description",
                 default_name: "Milk churn stand",
-                demolished: "Demolished" // Added demolished translation
+                demolished: "Demolished"
             },
             "lv": {
                 title: "Piena galdi Latvijā",
@@ -96,7 +96,7 @@
                 osm_desc: "OSM apraksts",
                 wiki_desc: "Wikimedia apraksts",
                 default_name: "Piena galds",
-                demolished: "Nojaukts" // Added demolished translation
+                demolished: "Nojaukts"
             }
         };
 
@@ -130,6 +130,7 @@
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt / Search...',
+            collapsed: false // <--- THIS LINE KEEPS IT OPEN AS A BAR
         }).on('markgeocode', function(e) {
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
