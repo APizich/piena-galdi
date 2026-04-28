@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- Default title set to Latvian for initial load -->
     <title>Piena galdi Latvijā</title>
     
-    <!-- Favicon tags for browser tabs and small URL icons (WhatsApp, etc.) -->
     <link rel="icon" type="image/png" href="Milk_churn_stand_icon.png">
     <link rel="apple-touch-icon" href="Milk_churn_stand_icon.png">
     
-    <!-- Meta tag for search engines (SEO) -->
     <meta name="description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
     
-    <!-- Open Graph tags for social media (WhatsApp, Messenger, Facebook, etc.) -->
     <meta property="og:title" content="Piena galdi Latvijā | Milk Churn Stands in Latvia">
     <meta property="og:description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
     <meta property="og:image" content="https://www.piena-galdi.lv/Milk_churn_stand_icon.png">
@@ -22,6 +18,7 @@
     <meta property="og:type" content="website">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
     <style>
         /* Default Desktop Layout (Side by Side) */
@@ -47,7 +44,6 @@
     <div id="map"></div>
 
     <div id="sidebar">
-        <!-- Title and Custom Icon -->
         <h2 style="display: flex; align-items: center; margin-top: 0;">
             <img src="Milk_churn_stand_icon.png" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
             <span id="ui-title">Piena galdi Latvijā</span>
@@ -63,6 +59,7 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     
     <script>
         // --- State Variables ---
@@ -71,7 +68,7 @@
         let lastClickedStand = null;
         let greenCount = 0;
         let blueCount = 0;
-        let layerControl = null; // Variable to hold the layer control so we can update it
+        let layerControl = null;
 
         // --- Translations Dictionary ---
         const TEXT = {
@@ -85,7 +82,8 @@
                 picture_date: "Picture date",
                 osm_desc: "OSM Description",
                 wiki_desc: "Wikimedia Description",
-                default_name: "Milk churn stand"
+                default_name: "Milk churn stand",
+                demolished: "Demolished" // Added demolished translation
             },
             "lv": {
                 title: "Piena galdi Latvijā",
@@ -97,7 +95,8 @@
                 picture_date: "Attēla datums",
                 osm_desc: "OSM apraksts",
                 wiki_desc: "Wikimedia apraksts",
-                default_name: "Piena galds"
+                default_name: "Piena galds",
+                demolished: "Nojaukts" // Added demolished translation
             }
         };
 
@@ -121,8 +120,23 @@
         const map = L.map('map', {
             center: [56.8796, 24.6032],
             zoom: 7,
-            layers: [osmStandard]
+            layers: [osmStandard],
+            zoomControl: false // Disabled default zoom to control the order manually
         });
+
+        // --- Search Engine (Geocoder) ---
+        // Added before zoom so it appears at the very top left
+        const geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false,
+            position: 'topleft',
+            placeholder: 'Meklēt / Search...',
+        }).on('markgeocode', function(e) {
+            map.fitBounds(e.geocode.bbox);
+        }).addTo(map);
+
+        // --- Zoom Control ---
+        // Added after the search engine so it sits underneath it
+        L.control.zoom({ position: 'topleft' }).addTo(map);
 
         // --- Custom Combined Language & Instagram Map Control ---
         const actionControl = L.control({position: 'bottomleft'});
@@ -146,12 +160,10 @@
 
         // --- Dynamic Layer Control Updater ---
         function updateLayerControl(lang) {
-            // Remove the existing layer control if it exists
             if (layerControl) {
                 map.removeControl(layerControl);
             }
 
-            // Define layer names based on current language
             let baseMaps;
             if (lang === 'en') {
                 baseMaps = {
@@ -167,7 +179,6 @@
                 };
             }
 
-            // Create and add the newly translated layer control
             layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
         }
 
@@ -185,17 +196,13 @@
         function changeLanguage(lang) {
             currentLang = lang;
             
-            // Dynamically update the browser tab title
             document.title = TEXT[lang].title;
-            
             document.getElementById('ui-title').innerText = TEXT[lang].title;
             document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
             
-            // Execute the functions to get the formatted text with the counts
             document.getElementById('ui-green').innerHTML = TEXT[lang].green();
             document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
             
-            // Update the map layer language names
             updateLayerControl(lang);
             
             drawMarkers();
@@ -216,15 +223,17 @@
 
                 const standName = stand[`name_${currentLang}`] || stand.name_default || TEXT[currentLang].default_name;
                 
-                // Add Hover Tooltip (useful for desktop)
                 marker.bindTooltip(standName);
 
-                // Add Click Popup (useful for both desktop and mobile)
                 let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
+                
+                // Add Demolished status to the marker popup
+                if (stand.demolished == 1 || stand.demolished === "1") {
+                    popupHtml += `<span style="color: #777; font-size: 11px;">${TEXT[currentLang].demolished}</span><br>`;
+                }
                 
                 if (stand.image) {
                     popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
-                    // Check if Python script provided a date
                     if (stand.image_date) {
                         popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${TEXT[currentLang].picture_date}:</strong> ${stand.image_date}</span>`;
                     }
@@ -232,10 +241,8 @@
                 popupHtml += `</div>`;
                 marker.bindPopup(popupHtml);
 
-                // When clicked, also update the sidebar
                 marker.on('click', () => {
                     showDetails(stand);
-                    // On mobile, automatically scroll down to the details when a marker is tapped
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
                     }
@@ -252,7 +259,14 @@
             
             const standName = stand[`name_${currentLang}`] || stand.name_default || t.default_name;
             
-            let html = `<h3>${standName}</h3>`;
+            let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
+            
+            // Add Demolished status to the sidebar details
+            if (stand.demolished == 1 || stand.demolished === "1") {
+                html += `<div style="color: #888; font-size: 12px; margin-bottom: 15px;">${t.demolished}</div>`;
+            } else {
+                html += `<div style="margin-bottom: 15px;"></div>`; // Spacing if not demolished
+            }
             
             if (stand.image) {
                 html += `
@@ -261,7 +275,6 @@
                         <img src="${stand.image}" alt="Image">
                     </a>`;
                 
-                // Check if Python script provided a date
                 if (stand.image_date) {
                     html += `<p style="font-size: 13px; text-align: center; color: #333; margin: 8px 0 0 0;"><strong>${t.picture_date}:</strong> ${stand.image_date}</p>`;
                 }
@@ -292,11 +305,9 @@
             .then(data => {
                 mapData = data;
                 
-                // Calculate counts based on data.json
                 greenCount = mapData.filter(s => s.image !== "").length;
                 blueCount = mapData.length - greenCount;
                 
-                // Initialize the interface using computed counts
                 changeLanguage(currentLang);
             })
             .catch(error => console.error('Error loading data.json:', error));
