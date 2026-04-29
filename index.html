@@ -30,6 +30,11 @@
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
         .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
 
+        /* --- THE CSS FIX FOR WHITE BACKGROUNDS --- */
+        /* 'multiply' blends the white away so the map beneath shows through */
+        .transparent-hack { mix-blend-mode: multiply; }
+        .intro-text img { mix-blend-mode: multiply; }
+
         /* MOBILE LAYOUT (Stacked Vertically) */
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -73,21 +78,23 @@
         let layerControl = null;
 
         // --- Custom Icons Setup ---
-        // Looks for these images in the GitHub root directory
+        // Added className: 'transparent-hack' to apply the CSS fix
         const iconWithImage = L.icon({
             iconUrl: 'piena-kanna-1.png',
-            iconSize: [24, 24], // Adjust size if needed
+            iconSize: [24, 24], 
             iconAnchor: [12, 24],
             popupAnchor: [0, -24],
-            tooltipAnchor: [12, -12]
+            tooltipAnchor: [12, -12],
+            className: 'transparent-hack'
         });
 
         const iconNoImage = L.icon({
             iconUrl: 'piena-kanna-2.png',
-            iconSize: [24, 24], // Adjust size if needed
+            iconSize: [24, 24], 
             iconAnchor: [12, 24],
             popupAnchor: [0, -24],
-            tooltipAnchor: [12, -12]
+            tooltipAnchor: [12, -12],
+            className: 'transparent-hack'
         });
 
         // --- Translations Dictionary ---
