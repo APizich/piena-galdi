@@ -29,15 +29,12 @@
         .intro-text { margin-bottom: 20px; font-size: 14px; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
         .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
-        
-        /* CSS Filter to make the blue icon look white/muted */
-        .icon-no-image { filter: grayscale(100%) opacity(70%) brightness(150%); }
 
         /* MOBILE LAYOUT (Stacked Vertically) */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            #map { flex: none; height: 50vh; width: 100%; }
-            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; }
+            #map { flex: none; height: 50vh; width: 100%; } /* Map takes top half */
+            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; } /* Sidebar takes bottom half */
             h2 { font-size: 20px; margin-top: 0; }
         }
     </style>
@@ -54,14 +51,8 @@
         
         <div class="intro-text">
             <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
-            <p style="display: flex; align-items: center; margin-bottom: 5px;">
-               <img src="piena-kanna.png" style="height: 24px; margin-right: 8px;"> 
-               <span id="ui-green"><strong>Ar Wikimedia attēlu</strong></span>
-            </p>
-            <p style="display: flex; align-items: center; margin-top: 5px;">
-               <img src="piena-kanna.png" style="height: 20px; margin-right: 12px; margin-left: 2px; filter: grayscale(100%) opacity(70%) brightness(150%);">
-               <span id="ui-blue"><strong>Bez attēla</strong></span>
-            </p>
+            <p><span id="ui-green">🟢 <strong>Ar Wikimedia attēlu</strong></span><br>
+               <span id="ui-blue">🔵 <strong>Bez attēla</strong></span></p>
         </div>
         
         <div id="details"></div>
@@ -79,34 +70,13 @@
         let blueCount = 0;
         let layerControl = null;
 
-        // --- Custom Icons Setup ---
-        // Yellow icon for stands WITH images
-        const iconWithImage = L.icon({
-            iconUrl: 'piena-kanna.png',
-            iconSize: [32, 32], 
-            iconAnchor: [16, 32], 
-            popupAnchor: [0, -32], 
-            tooltipAnchor: [16, -16]
-        });
-
-        // Muted/White icon for stands WITHOUT images
-        // We apply the CSS class "icon-no-image" defined in the <style> block
-        const iconNoImage = L.icon({
-            iconUrl: 'piena-kanna.png',
-            iconSize: [24, 24], // Slightly smaller to signify "empty"
-            iconAnchor: [12, 24],
-            popupAnchor: [0, -24],
-            tooltipAnchor: [12, -12],
-            className: 'icon-no-image' 
-        });
-
         // --- Translations Dictionary ---
         const TEXT = {
             "en": {
                 title: "Milk Churn Stands in Latvia",
                 intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
-                green: () => `<strong>With Wikimedia image (${greenCount})</strong>`,
-                blue: () => `<strong>No image (${blueCount})</strong>`,
+                green: () => `🟢 <strong>With Wikimedia image (${greenCount})</strong>`,
+                blue: () => `🔵 <strong>No image (${blueCount})</strong>`,
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
                 picture_date: "Picture date",
@@ -118,8 +88,8 @@
             "lv": {
                 title: "Piena galdi Latvijā",
                 intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                green: () => `<strong>Ar Wikimedia attēlu (${greenCount})</strong>`,
-                blue: () => `<strong>Bez attēla (${blueCount})</strong>`,
+                green: () => `🟢 <strong>Ar Wikimedia attēlu (${greenCount})</strong>`,
+                blue: () => `🔵 <strong>Bez attēla (${blueCount})</strong>`,
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
                 picture_date: "Attēla datums",
@@ -151,26 +121,32 @@
             center: [56.8796, 24.6032],
             zoom: 7,
             layers: [osmStandard],
-            zoomControl: false 
+            zoomControl: false // Disabled default zoom to control the order manually
         });
 
+        // --- Search Engine (Geocoder) ---
+        // Added before zoom so it appears at the very top left
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt / Search...',
-            collapsed: false
+            collapsed: false // Keeps it open as a bar
         }).on('markgeocode', function(e) {
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
 
+        // --- Zoom Control ---
+        // Added after the search engine so it sits underneath it
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
+        // --- Custom Combined Language & Instagram Map Control ---
         const actionControl = L.control({position: 'bottomleft'});
         actionControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             div.style.display = 'flex';
             div.style.backgroundColor = '#fff';
             
+            // Standard Leaflet buttons but aligned horizontally
             div.innerHTML = `
                 <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
                 <a href="https://www.instagram.com/pina_golds/" target="_blank" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
@@ -183,6 +159,7 @@
 
         const markerLayer = L.layerGroup().addTo(map);
 
+        // --- Dynamic Layer Control Updater ---
         function updateLayerControl(lang) {
             if (layerControl) {
                 map.removeControl(layerControl);
@@ -206,6 +183,7 @@
             layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
         }
 
+        // --- Core Functions ---
         function toggleLanguage() {
             if (currentLang === 'lv') {
                 changeLanguage('en');
@@ -232,6 +210,7 @@
             if (lastClickedStand) showDetails(lastClickedStand);
         }
 
+        // Helper function to check if the demolished tag is "yes"
         function isDemolished(stand) {
             return stand.demolished && stand.demolished.toString().toLowerCase() === "yes";
         }
@@ -241,10 +220,11 @@
             
             mapData.forEach(stand => {
                 const hasImage = stand.image !== "";
-                
-                // Use the custom icons instead of L.circleMarker
-                const marker = L.marker([stand.lat, stand.lon], {
-                    icon: hasImage ? iconWithImage : iconNoImage
+                const marker = L.circleMarker([stand.lat, stand.lon], {
+                    radius: hasImage ? 8 : 5,
+                    fillColor: hasImage ? "#28B463" : "#1E90FF",
+                    color: hasImage ? "#145A32" : "#154360",
+                    weight: 1, fillOpacity: hasImage ? 0.9 : 0.7
                 });
 
                 const standName = stand[`name_${currentLang}`] || stand.name_default || TEXT[currentLang].default_name;
@@ -253,6 +233,7 @@
 
                 let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
                 
+                // Add Demolished status to the marker popup if "yes"
                 if (isDemolished(stand)) {
                     popupHtml += `<span style="color: #777; font-size: 11px;">${TEXT[currentLang].demolished}</span><br>`;
                 }
@@ -286,10 +267,11 @@
             
             let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
             
+            // Add Demolished status to the sidebar details if "yes"
             if (isDemolished(stand)) {
                 html += `<div style="color: #888; font-size: 12px; margin-bottom: 15px;">${t.demolished}</div>`;
             } else {
-                html += `<div style="margin-bottom: 15px;"></div>`; 
+                html += `<div style="margin-bottom: 15px;"></div>`; // Spacing if not demolished
             }
             
             if (stand.image) {
