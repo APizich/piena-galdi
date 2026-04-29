@@ -217,11 +217,11 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
     # Check what the raw image tag is currently on OpenStreetMap
     raw_image_tag_value = tags.get("wikimedia_commons") or tags.get("image") or ""
 
-    # SAFEGUARD LOGIC: Did the image tag change?
+    # SAFEGUARD LOGIC: Did the image tag change? AND did we actually get an image last time?
     old_record = old_data.get(unique_id)
     
-    if old_record and old_record.get("raw_image_tag") == raw_image_tag_value:
-        # The tag hasn't changed! Instantly reuse the old Wikimedia data.
+    if old_record and old_record.get("raw_image_tag") == raw_image_tag_value and old_record.get("image"):
+        # The tag hasn't changed and the image exists! Instantly reuse the old Wikimedia data.
         commons = {
             "wiki_description_en": old_record.get("wiki_desc_en", ""),
             "wiki_description_lv": old_record.get("wiki_desc_lv", ""),
@@ -232,7 +232,7 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
             "source_tag": old_record.get("image_source_tag", "")
         }
     else:
-        # It's a new location, OR the image tag changed. Query Wikimedia.
+        # It's a new location, the image tag changed, OR the cache was empty. Query Wikimedia.
         commons = resolve_wikimedia_image(tags)
 
     return {
