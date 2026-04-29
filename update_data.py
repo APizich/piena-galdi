@@ -222,6 +222,7 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
     else:
         commons = resolve_wikimedia_image(tags)
 
+    # --- ADDED: material, demolished, and raw description are now explicitly saved to the JSON ---
     return {
         "osm_type": osm_type,
         "osm_id": osm_id,
@@ -230,6 +231,9 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
         "name_default": first_non_empty(tags.get("name")),
         "name_lv": first_non_empty(tags.get("name:lv")),
         "name_en": first_non_empty(tags.get("name:en")),
+        "material": tags.get("material", ""),               
+        "demolished": tags.get("demolished", ""),           
+        "description": tags.get("description", ""),         
         "osm_desc_default": first_non_empty(tags.get("description"), tags.get("note"), tags.get("fixme")),
         "osm_desc_lv": first_non_empty(tags.get("description:lv"), tags.get("note:lv")),
         "osm_desc_en": first_non_empty(tags.get("description:en"), tags.get("note:en")),
