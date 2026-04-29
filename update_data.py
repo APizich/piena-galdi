@@ -4,7 +4,6 @@ import re
 import time
 import urllib.parse
 from typing import Dict, List, Optional, Tuple
-import concurrent.futures
 
 import requests
 
@@ -27,21 +26,17 @@ session.headers.update({"User-Agent": USER_AGENT})
 
 # --- Helper functions --------------------------------------------------------
 def load_existing_data() -> Dict[str, Dict]:
-    """Loads the existing data.json so we can skip unchanged images."""
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Create a dictionary keyed by OSM ID for instant lookups
             return {f"{item['osm_type']}_{item['osm_id']}": item for item in data}
     except (FileNotFoundError, json.JSONDecodeError):
         print("No existing data.json found. Building from scratch...")
         return {}
 
 def clean_html(raw_html: str) -> str:
-    if not raw_html:
-        return ""
-    cleanr = re.compile(r"<.*?>")
-    return re.sub(cleanr, "", raw_html).strip()
+    if not raw_html: return ""
+    return re.sub(re.compile(r"<.*?>"), "", raw_html).strip()
 
 def first_non_empty(*values: Optional[str]) -> str:
     for value in values:
@@ -50,15 +45,11 @@ def first_non_empty(*values: Optional[str]) -> str:
     return ""
 
 def normalize_commons_title(raw_value: str) -> str:
-    if not raw_value:
-        return ""
+    if not raw_value: return ""
     value = raw_value.split(";", 1)[0].strip()
-    if not value:
-        return ""
+    if not value: return ""
 
     lower_value = value.lower()
-    
-    # FILTER JUNK TAGS
     if lower_value in ["yes", "no"] or lower_value.startswith(("mapillary", "flickr", "google", "http://mapillary", "https://mapillary")):
         return ""
 
@@ -66,26 +57,20 @@ def normalize_commons_title(raw_value: str) -> str:
         if "commons.wikimedia.org/wiki/" in value:
             title = value.split("/wiki/", 1)[1]
             title = urllib.parse.unquote(title.split("?", 1)[0].split("#", 1)[0])
-            if title.startswith(("File:", "Category:")):
-                return title
-            return f"File:{title}"
+            return title if title.startswith(("File:", "Category:")) else f"File:{title}"
         if "upload.wikimedia.org/" in value:
             filename = urllib.parse.unquote(value.rsplit("/", 1)[-1])
-            if filename:
-                return filename if filename.startswith("File:") else f"File:{filename}"
+            if filename: return filename if filename.startswith("File:") else f"File:{filename}"
         return ""
 
     value = urllib.parse.unquote(value)
-    if value.startswith(("File:", "Category:")):
-        return value
-    return f"File:{value}"
+    return value if value.startswith(("File:", "Category:")) else f"File:{value}"
 
 def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
     if not title:
         return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description": "", "image_date": ""}
 
-    # RATE LIMIT PROTECTOR: Give Wikimedia breathing room between requests
-    time.sleep(0.5)
+    time.sleep(1.0) # 1-second delay for sequential processing
 
     params = {
         "action": "query", "titles": title, "prop": "imageinfo",
@@ -96,6 +81,11 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
         response = session.get(COMMONS_API_URL, params=params, timeout=20)
         response.raise_for_status()
         pages = response.json().get("query", {}).get("pages", {})
+        
+        # Check if page is missing
+        if "-1" in pages:
+            print(f"\n  [!] Wikimedia says file does not exist: {title}")
+            
         for page_info in pages.values():
             info = page_info.get("imageinfo", [{}])[0]
             if info:
@@ -108,15 +98,16 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
                     "wiki_description": desc,
                     "image_date": date,
                 }
-    except requests.RequestException:
-        pass
+    except requests.RequestException as e:
+        print(f"\n  [!] API Error fetching {title}: {e}")
+        
     return {"image_url": "", "commons_page": "", "commons_title": title, "wiki_description": "", "image_date": ""}
 
 def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict[str, str]:
     if not category_title.startswith("Category:"):
         return get_commons_file_data(category_title, lang)
 
-    time.sleep(0.5) # Rate limit protector
+    time.sleep(1.0)
 
     params = {
         "action": "query", "generator": "categorymembers", "gcmtitle": category_title,
@@ -141,8 +132,9 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
                     "wiki_description": desc,
                     "image_date": date,
                 }
-    except requests.RequestException:
-        pass
+    except requests.RequestException as e:
+        print(f"\n  [!] API Error fetching category {category_title}: {e}")
+        
     return {"image_url": "", "commons_page": "", "commons_title": category_title, "wiki_description": "", "image_date": ""}
 
 def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
@@ -214,14 +206,10 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
     osm_id = element.get("id", "")
     unique_id = f"{osm_type}_{osm_id}"
     
-    # Check what the raw image tag is currently on OpenStreetMap
     raw_image_tag_value = tags.get("wikimedia_commons") or tags.get("image") or ""
-
-    # SAFEGUARD LOGIC: Did the image tag change? AND did we actually get an image last time?
     old_record = old_data.get(unique_id)
     
     if old_record and old_record.get("raw_image_tag") == raw_image_tag_value and old_record.get("image"):
-        # The tag hasn't changed and the image exists! Instantly reuse the old Wikimedia data.
         commons = {
             "wiki_description_en": old_record.get("wiki_desc_en", ""),
             "wiki_description_lv": old_record.get("wiki_desc_lv", ""),
@@ -232,7 +220,6 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
             "source_tag": old_record.get("image_source_tag", "")
         }
     else:
-        # It's a new location, the image tag changed, OR the cache was empty. Query Wikimedia.
         commons = resolve_wikimedia_image(tags)
 
     return {
@@ -253,24 +240,21 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
         "commons_page": commons.get("commons_page", ""),
         "commons_title": commons.get("commons_title", ""),
         "image_source_tag": commons.get("source_tag", ""),
-        "raw_image_tag": raw_image_tag_value, # Save this so we can check it next time!
+        "raw_image_tag": raw_image_tag_value,
     }
 
 def build_places_list(elements: List[Dict], old_data: Dict[str, Dict]) -> List[Dict]:
     places = []
     total = len(elements)
     
-    # 2 WORKERS LIMIT: Prevents Wikimedia from banning us
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-        # Submit tasks, passing the old data dict to each
-        futures = [executor.submit(process_single_element, el, old_data) for el in elements]
+    # Process sequentially to avoid Wikimedia connection drops
+    for i, el in enumerate(elements, 1):
+        result = process_single_element(el, old_data)
+        if result:
+            places.append(result)
         
-        for i, future in enumerate(concurrent.futures.as_completed(futures), 1):
-            result = future.result()
-            if result:
-                places.append(result)
-            
-            print(f"\rProcessing data: {i}/{total} ({(i/total)*100:.1f}%) complete...", end="", flush=True)
+        # Keep the progress indicator on one line
+        print(f"\rProcessing data: {i}/{total} ({(i/total)*100:.1f}%) complete...", end="", flush=True)
             
     print() 
     return places
