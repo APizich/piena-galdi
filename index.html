@@ -37,6 +37,8 @@
             #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; } /* Sidebar takes bottom half */
             h2 { font-size: 20px; margin-top: 0; }
         }
+        
+        .custom-demolished-icon { background: none; border: none; }
     </style>
 </head>
 <body>
@@ -71,6 +73,7 @@
         let greenCount = 0;
         let blueCount = 0;
         let layerControl = null;
+        let markersById = {}; // Stores marker references for deep linking
 
         // --- Custom Icons Setup ---
         const iconWithImage = L.icon({
@@ -102,7 +105,9 @@
                 osm_desc: "OSM Description",
                 wiki_desc: "Wikimedia Description",
                 default_name: "Milk churn stand",
-                demolished: "Demolished"
+                demolished: "Demolished",
+                share: "Share specific stand",
+                copied: "Link copied to clipboard!"
             },
             "lv": {
                 title: "Piena galdi Latvijā",
@@ -115,7 +120,9 @@
                 osm_desc: "OSM apraksts",
                 wiki_desc: "Wikimedia apraksts",
                 default_name: "Piena galds",
-                demolished: "Nojaukts"
+                demolished: "Nojaukts",
+                share: "Dalīties ar šo galdu",
+                copied: "Saite nokopēta!"
             }
         };
 
@@ -232,15 +239,36 @@
 
         function drawMarkers() {
             markerLayer.clearLayers();
+            markersById = {}; // Reset marker tracker
             
             mapData.forEach(stand => {
                 const hasImage = stand.image !== "";
+                const demolished = isDemolished(stand);
+                const baseImgUrl = hasImage ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
                 
-                const marker = L.marker([stand.lat, stand.lon], {
-                    icon: hasImage ? iconWithImage : iconNoImage
-                });
+                let markerIcon;
 
-                // Get name from description, fallback to default
+                // Create a divIcon with an overlaid Grey X if demolished
+                if (demolished) {
+                    markerIcon = L.divIcon({
+                        className: 'custom-demolished-icon',
+                        html: `
+                            <div style="position: relative; width: 24px; height: 24px;">
+                                <img src="${baseImgUrl}" style="width: 24px; height: 24px;">
+                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(128, 128, 128, 0.95); font-size: 30px; font-weight: bold; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white; pointer-events: none;">&times;</div>
+                            </div>
+                        `,
+                        iconSize: [24, 24], 
+                        iconAnchor: [12, 24],
+                        popupAnchor: [0, -24],
+                        tooltipAnchor: [12, -12]
+                    });
+                } else {
+                    markerIcon = hasImage ? iconWithImage : iconNoImage;
+                }
+
+                const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
+
                 let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
                 if (!standName || standName.trim() === "") {
                     standName = TEXT[currentLang].default_name;
@@ -249,12 +277,9 @@
                 marker.bindTooltip(standName);
 
                 let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
-                
-                // Add Demolished status to the marker popup if "yes"
-                if (isDemolished(stand)) {
+                if (demolished) {
                     popupHtml += `<span style="color: #888; font-size: 12px;">${TEXT[currentLang].demolished}</span><br>`;
                 }
-                
                 if (stand.image) {
                     popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
                     if (stand.image_date) {
@@ -272,6 +297,7 @@
                 });
 
                 markerLayer.addLayer(marker);
+                markersById[stand.osm_id] = marker; // Save for sharing logic
             });
         }
 
@@ -280,7 +306,6 @@
             const t = TEXT[currentLang];
             const detailsDiv = document.getElementById('details');
             
-            // Get name from description, fallback to default
             let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             if (!standName || standName.trim() === "") {
                 standName = TEXT[currentLang].default_name;
@@ -288,7 +313,6 @@
             
             let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
             
-            // Add Demolished status to the sidebar details under the name if "yes"
             if (isDemolished(stand)) {
                 html += `<div style="color: #888; font-size: 13px; margin-bottom: 15px;">${t.demolished}</div>`;
             } else {
@@ -315,7 +339,6 @@
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             const wikiDesc = stand[`wiki_desc_${currentLang}`];
 
-            // Only show the OSM description block if it is different from the title
             if (osmDesc && osmDesc !== standName) {
                 html += `<div class="tag-box"><strong>${t.osm_desc}:</strong><br>${osmDesc}</div>`;
             }
@@ -324,7 +347,35 @@
             }
 
             html += `<p style="font-size: 11px; color: #aaa; margin-top: 20px;">OSM: ${stand.osm_type}/${stand.osm_id}</p>`;
+            
+            // Add Share Button
+            html += `
+                <button onclick="shareStand('${stand.osm_id}')" style="margin-top: 10px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    ${t.share}
+                </button>
+            `;
+
             detailsDiv.innerHTML = html;
+        }
+
+        function shareStand(osmId) {
+            // Rebuild URL with the specific stand's OSM ID
+            const url = new URL(window.location.href);
+            url.searchParams.set('id', osmId);
+            const shareUrl = url.toString();
+            
+            // Use native mobile sharing if available, otherwise fallback to clipboard copy
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: TEXT[currentLang].title,
+                    url: shareUrl
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert(TEXT[currentLang].copied);
+                });
+            }
         }
 
         // --- Fetch Data on Load ---
@@ -337,6 +388,29 @@
                 blueCount = mapData.length - greenCount;
                 
                 changeLanguage(currentLang);
+
+                // --- Handle Deep Linking on Load ---
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedId = urlParams.get('id');
+                
+                if (sharedId && markersById[sharedId]) {
+                    const sharedStand = mapData.find(s => s.osm_id.toString() === sharedId);
+                    const marker = markersById[sharedId];
+                    
+                    if (sharedStand) {
+                        // Fly to marker and open popup
+                        map.setView([sharedStand.lat, sharedStand.lon], 14);
+                        marker.openPopup();
+                        
+                        // Populate sidebar details
+                        showDetails(sharedStand);
+                        
+                        // Scroll to top on mobile
+                        if (window.innerWidth <= 768) {
+                            document.getElementById('sidebar').scrollTop = 0;
+                        }
+                    }
+                }
             })
             .catch(error => console.error('Error loading data.json:', error));
 
