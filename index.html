@@ -55,7 +55,8 @@
             <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
             <p style="line-height: 1.8;">
                <span id="ui-green"></span><br>
-               <span id="ui-blue"></span>
+               <span id="ui-blue"></span><br>
+               <span id="ui-demolished"></span>
             </p>
         </div>
         
@@ -92,6 +93,23 @@
             tooltipAnchor: [12, -12]
         });
 
+        // --- Helper Function for Thin Demolished Overlay ---
+        function getDemolishedIconHTML(imgSrc, size) {
+            return `
+                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; vertical-align: middle;">
+                    <img src="${imgSrc}" style="width: ${size}px; height: ${size}px; display: block;">
+                    <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                        <!-- White background outline for visibility -->
+                        <line x1="4" y1="4" x2="20" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="20" y1="4" x2="4" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Thin grey cross -->
+                        <line x1="4" y1="4" x2="20" y2="20" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="20" y1="4" x2="4" y2="20" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            `;
+        }
+
         // --- Translations Dictionary ---
         const TEXT = {
             "en": {
@@ -99,6 +117,7 @@
                 intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
                 green: () => `<img src="piena-kanna-1.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>With Wikimedia image (${greenCount})</strong>`,
                 blue: () => `<img src="piena-kanna-2.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>No image (${blueCount})</strong>`,
+                demolished_legend: () => `${getDemolishedIconHTML('piena-kanna-1.png', 20)}<span style="display:inline-block; width:4px;"></span>${getDemolishedIconHTML('piena-kanna-2.png', 20)} <strong style="margin-left: 6px;">Demolished</strong>`,
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
                 picture_date: "Picture date",
@@ -106,7 +125,7 @@
                 wiki_desc: "Wikimedia Description",
                 default_name: "Milk churn stand",
                 demolished: "Demolished",
-                share: "Share specific stand",
+                share: "Share specific milk churn stand",
                 copied: "Link copied to clipboard!"
             },
             "lv": {
@@ -114,6 +133,7 @@
                 intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
                 green: () => `<img src="piena-kanna-1.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>Ar Wikimedia attēlu (${greenCount})</strong>`,
                 blue: () => `<img src="piena-kanna-2.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>Bez attēla (${blueCount})</strong>`,
+                demolished_legend: () => `${getDemolishedIconHTML('piena-kanna-1.png', 20)}<span style="display:inline-block; width:4px;"></span>${getDemolishedIconHTML('piena-kanna-2.png', 20)} <strong style="margin-left: 6px;">Nojaukts</strong>`,
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
                 picture_date: "Attēla datums",
@@ -121,7 +141,7 @@
                 wiki_desc: "Wikimedia apraksts",
                 default_name: "Piena galds",
                 demolished: "Nojaukts",
-                share: "Dalīties ar šo galdu",
+                share: "Dalīties ar šo piena galdu",
                 copied: "Saite nokopēta!"
             }
         };
@@ -226,6 +246,7 @@
             
             document.getElementById('ui-green').innerHTML = TEXT[lang].green();
             document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
+            document.getElementById('ui-demolished').innerHTML = TEXT[lang].demolished_legend();
             
             updateLayerControl(lang);
             
@@ -248,16 +269,10 @@
                 
                 let markerIcon;
 
-                // Create a divIcon with an overlaid Grey X if demolished
                 if (demolished) {
                     markerIcon = L.divIcon({
                         className: 'custom-demolished-icon',
-                        html: `
-                            <div style="position: relative; width: 24px; height: 24px;">
-                                <img src="${baseImgUrl}" style="width: 24px; height: 24px;">
-                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(128, 128, 128, 0.95); font-size: 30px; font-weight: bold; text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white; pointer-events: none;">&times;</div>
-                            </div>
-                        `,
+                        html: getDemolishedIconHTML(baseImgUrl, 24),
                         iconSize: [24, 24], 
                         iconAnchor: [12, 24],
                         popupAnchor: [0, -24],
@@ -359,12 +374,10 @@
         }
 
         function shareStand(osmId) {
-            // Rebuild URL with the specific stand's OSM ID
             const url = new URL(window.location.href);
             url.searchParams.set('id', osmId);
             const shareUrl = url.toString();
             
-            // Use native mobile sharing if available, otherwise fallback to clipboard copy
             if (navigator.share) {
                 navigator.share({
                     title: document.title,
@@ -398,14 +411,11 @@
                     const marker = markersById[sharedId];
                     
                     if (sharedStand) {
-                        // Fly to marker and open popup
                         map.setView([sharedStand.lat, sharedStand.lon], 14);
                         marker.openPopup();
                         
-                        // Populate sidebar details
                         showDetails(sharedStand);
                         
-                        // Scroll to top on mobile
                         if (window.innerWidth <= 768) {
                             document.getElementById('sidebar').scrollTop = 0;
                         }
