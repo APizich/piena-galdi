@@ -96,9 +96,10 @@
         });
 
         // --- Helper Function for Thin Demolished Overlay ---
-        function getDemolishedIconHTML(imgSrc, size) {
+        // Added marginLeft parameter to overlap transparent padding in the images
+        function getDemolishedIconHTML(imgSrc, size, marginLeft = 0) {
             return `
-                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; flex-shrink: 0;">
+                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; flex-shrink: 0; margin-left: ${marginLeft}px;">
                     <img src="${imgSrc}" style="width: ${size}px; height: ${size}px; display: block;">
                     <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
                         <!-- White background outline for visibility (smaller by 1/3) -->
@@ -119,8 +120,8 @@
                 intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
-                // Reduced gap to 1px for much closer icon placement
-                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; gap: 1px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20)}</span> <strong>Demolished</strong></div>`,
+                // Passing -8 for the margin-left of the second icon to pull them very close together
+                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Demolished</strong></div>`,
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
                 picture_date: "Picture date",
@@ -136,8 +137,8 @@
                 intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
-                // Reduced gap to 1px for much closer icon placement
-                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; gap: 1px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20)}</span> <strong>Nojaukts</strong></div>`,
+                // Passing -8 for the margin-left of the second icon to pull them very close together
+                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Nojaukts</strong></div>`,
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
                 picture_date: "Attēla datums",
