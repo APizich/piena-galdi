@@ -26,7 +26,7 @@
         #map { flex: 7; height: 100%; }
         #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         
-        .intro-text { margin-bottom: 20px; font-size: 14px; }
+        .intro-text { margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
         .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
 
@@ -52,10 +52,14 @@
         </h2>
         
         <div class="intro-text">
-            <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
+            <!-- Expandable Intro Text -->
+            <div id="intro-container">
+                <span id="ui-intro-short"></span><span id="ui-intro-more" style="display: none;"></span>
+                <a href="#" id="ui-read-more" onclick="toggleIntro(event)" style="color: #007bff; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px;">Lasīt vairāk...</a>
+            </div>
             
             <!-- ALIGNED LEGEND STRUCTURE -->
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
                <div id="ui-green"></div>
                <div id="ui-blue"></div>
                <div id="ui-demolished"></div>
@@ -76,7 +80,8 @@
         let greenCount = 0;
         let blueCount = 0;
         let layerControl = null;
-        let markersById = {}; // Stores marker references for deep linking
+        let markersById = {}; 
+        let isIntroExpanded = false;
 
         // --- Custom Icons Setup ---
         const iconWithImage = L.icon({
@@ -95,17 +100,13 @@
             tooltipAnchor: [12, -12]
         });
 
-        // --- Helper Function for Thin Demolished Overlay ---
-        // Added marginLeft parameter to overlap transparent padding in the images
         function getDemolishedIconHTML(imgSrc, size, marginLeft = 0) {
             return `
                 <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; flex-shrink: 0; margin-left: ${marginLeft}px;">
                     <img src="${imgSrc}" style="width: ${size}px; height: ${size}px; display: block;">
                     <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-                        <!-- White background outline for visibility (smaller by 1/3) -->
                         <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
                         <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <!-- Thin grey cross (smaller by 1/3) -->
                         <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
                         <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
                     </svg>
@@ -117,10 +118,12 @@
         const TEXT = {
             "en": {
                 title: "Milk Churn Stands in Latvia",
-                intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
+                intro_short: "Milk churn stands are an important part of the Latvian rural landscape and cultural heritage. They once served as essential waypoints for daily agricultural life and acted as social hubs where neighbors would meet and exchange news. Unfortunately, with changing agricultural practices and technologies, much like hayracks, these small architectural elements have been rapidly disappearing from our roadsides in recent years.",
+                intro_more: "<br><br>To preserve the memory of this unique aspect of the countryside, the idea of identifying and mapping milk churn stands began in 2022. The first step was the creation of the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>. It serves as a visual diary, documenting milk churn stands in various conditions - from carefully maintained structures to those heavily weathered by time.<br><br>The initiative quickly gained traction, encouraging locals and travelers alike to submit their own discoveries and share stories. Alongside the collection of photographs on Instagram, practical and lasting work was initiated: mapping the milk churn stands on OpenStreetMap (OSM). This map serves as a publicly accessible archive for anyone wishing to discover these nostalgic symbols of rural life.",
+                read_more: "Read more...",
+                read_less: "Show less...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
-                // Passing -8 for the margin-left of the second icon to pull them very close together
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Demolished</strong></div>`,
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
@@ -134,10 +137,12 @@
             },
             "lv": {
                 title: "Piena galdi Latvijā",
-                intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
+                intro_short: "Piena galdi ir svarīga Latvijas lauku ainavas un kultūrvēsturiskā mantojuma sastāvdaļa. Kādreiz tie bija neatņemama lauku ikdienas un sociālās dzīves pieturvieta, kur kaimiņiem satikties un apmainīties ar jaunumiem. Diemžēl, mainoties saimniekošanas paradumiem un tehnoloģijām, līdzīgi kā siena zārdi, šie mazie arhitektūras elementi pēdējos gados iet arvien mazumā un lēnām izzūd no mūsu ceļmalām.",
+                intro_more: "<br><br>Lai saglabātu liecības par šo unikālo lauku ainavas daļu, ideja par piena galdu apzināšanu un kartēšanu sākās 2022. gadā. Kā pirmais solis tika izveidots Instagram konts <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, kurā tiek dokumentēti un attēloti dažādos stāvokļos esošie piena galdi - sākot no rūpīgi uzturētiem līdz pat pavisam sabrukušiem vai laika zoba skartiem.<br><br>Šī iniciatīva ātri vien piesaistīja uzmanību, mudinot vietējos iedzīvotājus un ceļotājus iesūtīt savus atradumus un dalīties ar stāstiem. Paralēli fotogrāfiju apkopošanai Instagram kontā, tika uzsākts arī praktisks darbs - piena galdu atzīmēšana OpenStreetMap (OSM) kartēs. Šī karte kalpo kā publiski pieejams arhīvs ikvienam, kurš vēlas atklāt šos nostalģiskos lauku simbolus.",
+                read_more: "Lasīt vairāk...",
+                read_less: "Rādīt mazāk...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
-                // Passing -8 for the margin-left of the second icon to pull them very close together
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Nojaukts</strong></div>`,
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
@@ -150,6 +155,33 @@
                 copied: "Saite nokopēta!"
             }
         };
+
+        // --- Intro Expand/Collapse Logic ---
+        function toggleIntro(event) {
+            if (event) event.preventDefault();
+            isIntroExpanded = !isIntroExpanded;
+            updateIntroUI();
+        }
+
+        function closeIntro() {
+            if (isIntroExpanded) {
+                isIntroExpanded = false;
+                updateIntroUI();
+            }
+        }
+
+        function updateIntroUI() {
+            const moreText = document.getElementById('ui-intro-more');
+            const btn = document.getElementById('ui-read-more');
+            
+            if (isIntroExpanded) {
+                moreText.style.display = 'inline';
+                btn.innerText = TEXT[currentLang].read_less;
+            } else {
+                moreText.style.display = 'none';
+                btn.innerText = TEXT[currentLang].read_more;
+            }
+        }
 
         // --- Map Initialization ---
         const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -247,7 +279,11 @@
             
             document.title = TEXT[lang].title;
             document.getElementById('ui-title').innerText = TEXT[lang].title;
-            document.getElementById('ui-intro').innerHTML = TEXT[lang].intro;
+            
+            // Update Intro Strings
+            document.getElementById('ui-intro-short').innerHTML = TEXT[lang].intro_short;
+            document.getElementById('ui-intro-more').innerHTML = TEXT[lang].intro_more;
+            updateIntroUI(); 
             
             document.getElementById('ui-green').innerHTML = TEXT[lang].green();
             document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
@@ -265,7 +301,7 @@
 
         function drawMarkers() {
             markerLayer.clearLayers();
-            markersById = {}; // Reset marker tracker
+            markersById = {}; 
             
             mapData.forEach(stand => {
                 const hasImage = stand.image !== "";
@@ -310,6 +346,7 @@
                 marker.bindPopup(popupHtml);
 
                 marker.on('click', () => {
+                    closeIntro(); // Auto-closes the intro description when a marker is clicked
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
@@ -317,7 +354,7 @@
                 });
 
                 markerLayer.addLayer(marker);
-                markersById[stand.osm_id] = marker; // Save for sharing logic
+                markersById[stand.osm_id] = marker; 
             });
         }
 
