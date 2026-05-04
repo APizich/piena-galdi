@@ -53,11 +53,13 @@
         
         <div class="intro-text">
             <p id="ui-intro">Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.</p>
-            <p style="line-height: 1.8;">
-               <span id="ui-green"></span><br>
-               <span id="ui-blue"></span><br>
-               <span id="ui-demolished"></span>
-            </p>
+            
+            <!-- NEW ALIGNED LEGEND STRUCTURE -->
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+               <div id="ui-green"></div>
+               <div id="ui-blue"></div>
+               <div id="ui-demolished"></div>
+            </div>
         </div>
         
         <div id="details"></div>
@@ -96,15 +98,15 @@
         // --- Helper Function for Thin Demolished Overlay ---
         function getDemolishedIconHTML(imgSrc, size) {
             return `
-                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; vertical-align: middle;">
+                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; flex-shrink: 0;">
                     <img src="${imgSrc}" style="width: ${size}px; height: ${size}px; display: block;">
                     <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-                        <!-- White background outline for visibility -->
-                        <line x1="4" y1="4" x2="20" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <line x1="20" y1="4" x2="4" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <!-- Thin grey cross -->
-                        <line x1="4" y1="4" x2="20" y2="20" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-                        <line x1="20" y1="4" x2="4" y2="20" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                        <!-- White background outline for visibility (smaller by 1/3) -->
+                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Thin grey cross (smaller by 1/3) -->
+                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
                     </svg>
                 </div>
             `;
@@ -115,9 +117,9 @@
             "en": {
                 title: "Milk Churn Stands in Latvia",
                 intro: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
-                green: () => `<img src="piena-kanna-1.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>With Wikimedia image (${greenCount})</strong>`,
-                blue: () => `<img src="piena-kanna-2.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>No image (${blueCount})</strong>`,
-                demolished_legend: () => `${getDemolishedIconHTML('piena-kanna-1.png', 20)}<span style="display:inline-block; width:4px;"></span>${getDemolishedIconHTML('piena-kanna-2.png', 20)} <strong style="margin-left: 6px;">Demolished</strong>`,
+                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
+                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
+                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; gap: 2px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20)}</span> <strong>Demolished</strong></div>`,
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
                 picture_date: "Picture date",
@@ -131,9 +133,9 @@
             "lv": {
                 title: "Piena galdi Latvijā",
                 intro: "Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                green: () => `<img src="piena-kanna-1.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>Ar Wikimedia attēlu (${greenCount})</strong>`,
-                blue: () => `<img src="piena-kanna-2.png" style="height: 20px; vertical-align: middle; margin-right: 8px;"> <strong>Bez attēla (${blueCount})</strong>`,
-                demolished_legend: () => `${getDemolishedIconHTML('piena-kanna-1.png', 20)}<span style="display:inline-block; width:4px;"></span>${getDemolishedIconHTML('piena-kanna-2.png', 20)} <strong style="margin-left: 6px;">Nojaukts</strong>`,
+                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
+                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
+                demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; gap: 2px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20)}</span> <strong>Nojaukts</strong></div>`,
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
                 picture_date: "Attēla datums",
