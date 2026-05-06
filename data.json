@@ -2451,14 +2451,14 @@
     "osm_desc_default": "",
     "osm_desc_lv": "Piena galds Rožkalnu pagasta Augšmuktos",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": "[[File:Milk churn stand in Rožkalnu parish, Augšmukti.jpg|thumb|Milk churn stand in Rožkalnu parish, Augšmukti]]"
+    "wiki_desc_en": "Milk churn stand in Rožkalnu parish, Augšmukti",
+    "wiki_desc_lv": "Pamatīgs piena galds Rožkalnu pagasta Augšmuktos. Blakus novērotas izlietotas pirotehnikas kastes, kas liek domāt, ka piena galdiņš tiek izmantots kā salūta šaušanas punkts.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Milk_churn_stand_in_Ro%C5%BEkalnu_parish%2C_Aug%C5%A1mukti.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "image_date": "2024-03-01 13:26:41",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Ro%C5%BEkalnu_parish,_Aug%C5%A1mukti.jpg",
+    "commons_title": "File:Milk churn stand in Rožkalnu parish, Augšmukti.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Rožkalnu parish, Augšmukti.jpg"
   },
   {
     "osm_type": "node",
