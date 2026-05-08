@@ -24,17 +24,30 @@
         /* Default Desktop Layout (Side by Side) */
         body { margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; flex-direction: row; height: 100vh; color: #333; }
         #map { flex: 7; height: 100%; }
-        #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; }
+        #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
         
         .intro-text { margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
         .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
 
+        /* TABS CSS */
+        .tabs { display: flex; margin-bottom: 15px; border-bottom: 2px solid #ddd; flex-shrink: 0; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: none; cursor: pointer; font-size: 15px; font-weight: bold; color: #666; transition: 0.2s; }
+        .tab-btn:hover { color: #007bff; }
+        .tab-btn.active { color: #007bff; border-bottom: 2px solid #007bff; margin-bottom: -2px; }
+        
+        /* GALLERY CSS */
+        .gallery-grid { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+        .gallery-item { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .gallery-item img { width: 100%; height: auto; border-radius: 6px; object-fit: cover; max-height: 250px; cursor: pointer; border: 1px solid #eee; }
+        .gallery-item-info { margin-top: 10px; font-size: 13px; }
+        .gallery-item h4 { margin: 0 0 5px 0; font-size: 15px; }
+
         /* MOBILE LAYOUT (Stacked Vertically) */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            #map { flex: none; height: 50vh; width: 100%; } /* Map takes top half */
-            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; } /* Sidebar takes bottom half */
+            #map { flex: none; height: 50vh; width: 100%; }
+            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; }
             h2 { font-size: 20px; margin-top: 0; }
         }
         
@@ -46,27 +59,39 @@
     <div id="map"></div>
 
     <div id="sidebar">
-        <h2 style="display: flex; align-items: center; margin-top: 0;">
+        <h2 style="display: flex; align-items: center; margin-top: 0; flex-shrink: 0;">
             <img src="Milk_churn_stand_icon.png" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
             <span id="ui-title">Piena galdi Latvijā</span>
         </h2>
         
-        <div class="intro-text">
-            <!-- Expandable Intro Text -->
-            <div id="intro-container">
-                <span id="ui-intro-short"></span><span id="ui-intro-more" style="display: none;"></span>
-                <a href="#" id="ui-read-more" onclick="toggleIntro(event)" style="color: #007bff; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px;">Lasīt vairāk...</a>
+        <!-- Tabs Selection -->
+        <div class="tabs">
+            <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
+            <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Gallery</button>
+        </div>
+
+        <!-- INFO TAB CONTENT -->
+        <div id="tab-info" style="display: block;">
+            <div class="intro-text">
+                <div id="intro-container">
+                    <span id="ui-intro-short"></span><span id="ui-intro-more" style="display: none;"></span>
+                    <a href="#" id="ui-read-more" onclick="toggleIntro(event)" style="color: #007bff; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px;">Lasīt vairāk...</a>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
+                   <div id="ui-green"></div>
+                   <div id="ui-blue"></div>
+                   <div id="ui-demolished"></div>
+                </div>
             </div>
             
-            <!-- ALIGNED LEGEND STRUCTURE -->
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
-               <div id="ui-green"></div>
-               <div id="ui-blue"></div>
-               <div id="ui-demolished"></div>
-            </div>
+            <div id="details"></div>
         </div>
-        
-        <div id="details"></div>
+
+        <!-- GALLERY TAB CONTENT -->
+        <div id="tab-gallery" style="display: none; overflow-y: auto;">
+            <div id="gallery-container" class="gallery-grid"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -118,6 +143,8 @@
         const TEXT = {
             "en": {
                 title: "Milk Churn Stands in Latvia",
+                tab_info: "Information",
+                tab_gallery: "Gallery",
                 intro_short: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
                 intro_more: "<br><br>Milk churn stands are an important part of the Latvian rural landscape and cultural heritage. They once served as essential waypoints for daily agricultural life and acted as social hubs where neighbors would meet and exchange news. Unfortunately, with changing agricultural practices and technologies, much like hayracks, these small architectural elements have been rapidly disappearing from our roadsides in recent years.<br><br>To preserve the memory of this unique aspect of the countryside, the idea of identifying and mapping milk churn stands began in 2022. The first step was the creation of the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>. It serves as a visual diary, documenting milk churn stands in various conditions - from carefully maintained structures to those heavily weathered by time.<br><br>The initiative quickly gained traction, encouraging locals and travelers alike to submit their own discoveries and share stories. Alongside the collection of photographs on Instagram, practical and lasting work was initiated: mapping the milk churn stands on OpenStreetMap (OSM). This map serves as a publicly accessible archive for anyone wishing to discover these nostalgic symbols of rural life.",
                 read_more: "Read more...",
@@ -133,10 +160,13 @@
                 default_name: "Milk churn stand",
                 demolished: "Demolished",
                 share: "Share specific milk churn stand",
-                copied: "Link copied to clipboard!"
+                copied: "Link copied to clipboard!",
+                show_map: "Show on Map"
             },
             "lv": {
                 title: "Piena galdi Latvijā",
+                tab_info: "Informācija",
+                tab_gallery: "Galerija",
                 intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
                 intro_more: "<br><br>Piena galdi ir svarīga Latvijas lauku ainavas un kultūrvēsturiskā mantojuma sastāvdaļa. Kādreiz tie bija neatņemama lauku ikdienas un sociālās dzīves pieturvieta, kur kaimiņiem satikties un apmainīties ar jaunumiem. Diemžēl, mainoties saimniekošanas paradumiem un tehnoloģijām, līdzīgi kā siena zārdi, šie mazie arhitektūras elementi pēdējos gados iet arvien mazumā un lēnām izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo unikālo lauku ainavas daļu, ideja par piena galdu apzināšanu un kartēšanu sākās 2022. gadā. Kā pirmais solis tika izveidots Instagram konts <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, kurā tiek dokumentēti un attēloti dažādos stāvokļos esošie piena galdi - sākot no rūpīgi uzturētiem līdz pat pavisam sabrukušiem vai laika zoba skartiem.<br><br>Šī iniciatīva ātri vien piesaistīja uzmanību, mudinot vietējos iedzīvotājus un ceļotājus iesūtīt savus atradumus un dalīties ar stāstiem. Paralēli fotogrāfiju apkopošanai Instagram kontā, tika uzsākts arī praktisks darbs - piena galdu atzīmēšana OpenStreetMap (OSM) kartēs. Šī karte kalpo kā publiski pieejams arhīvs ikvienam, kurš vēlas atklāt šos nostalģiskos lauku simbolus.",
                 read_more: "Lasīt vairāk...",
@@ -152,9 +182,87 @@
                 default_name: "Piena galds",
                 demolished: "Nojaukts",
                 share: "Dalīties ar šo piena galdu",
-                copied: "Saite nokopēta!"
+                copied: "Saite nokopēta!",
+                show_map: "Parādīt kartē"
             }
         };
+
+        // --- Tabs Logic ---
+        function switchTab(tab) {
+            if (tab === 'info') {
+                document.getElementById('tab-info').style.display = 'block';
+                document.getElementById('tab-gallery').style.display = 'none';
+                document.getElementById('btn-tab-info').classList.add('active');
+                document.getElementById('btn-tab-gallery').classList.remove('active');
+            } else if (tab === 'gallery') {
+                document.getElementById('tab-info').style.display = 'none';
+                document.getElementById('tab-gallery').style.display = 'block';
+                document.getElementById('btn-tab-info').classList.remove('active');
+                document.getElementById('btn-tab-gallery').classList.add('active');
+                renderGallery(); // Ensure it renders translated content
+            }
+        }
+
+        // --- Gallery Logic ---
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            const t = TEXT[currentLang];
+            let html = '';
+            
+            // Filter only stands that have an image string
+            const standsWithImages = mapData.filter(s => s.image && s.image.trim() !== "");
+            
+            standsWithImages.forEach(stand => {
+                let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
+                if (!standName || standName.trim() === "") {
+                    standName = t.default_name;
+                }
+                
+                let demolishedHtml = '';
+                if (isDemolished(stand)) {
+                    demolishedHtml = `<div style="color: #dc3545; font-weight: bold; margin-bottom: 5px; font-size: 13px;">${t.demolished}</div>`;
+                }
+                
+                let dateHtml = '';
+                if (stand.image_date) {
+                    dateHtml = `<div style="color: #555; margin-bottom: 5px;"><strong>${t.picture_date}:</strong> ${stand.image_date}</div>`;
+                }
+
+                html += `
+                <div class="gallery-item">
+                    <img src="${stand.image}" alt="${standName}" onclick="zoomToStand('${stand.osm_id}')">
+                    <div class="gallery-item-info">
+                        <h4>${standName}</h4>
+                        ${demolishedHtml}
+                        ${dateHtml}
+                        <button onclick="zoomToStand('${stand.osm_id}')" style="margin-top: 5px; padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            ${t.show_map}
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function zoomToStand(osmId) {
+            switchTab('info'); // Switch back to the info map tab
+            const stand = mapData.find(s => s.osm_id.toString() === osmId.toString());
+            const marker = markersById[osmId];
+            
+            if (stand && marker) {
+                map.setView([stand.lat, stand.lon], 16); // Zoom in closely
+                marker.openPopup();
+                showDetails(stand);
+                
+                // On mobile, scroll to top so the map is visible
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').scrollTop = 0;
+                    window.scrollTo(0, 0); 
+                }
+            }
+        }
 
         // --- Intro Expand/Collapse Logic ---
         function toggleIntro(event) {
@@ -280,6 +388,10 @@
             document.title = TEXT[lang].title;
             document.getElementById('ui-title').innerText = TEXT[lang].title;
             
+            // Update Tab UI Names
+            document.getElementById('btn-tab-info').innerText = TEXT[lang].tab_info;
+            document.getElementById('btn-tab-gallery').innerText = TEXT[lang].tab_gallery;
+            
             // Update Intro Strings
             document.getElementById('ui-intro-short').innerHTML = TEXT[lang].intro_short;
             document.getElementById('ui-intro-more').innerHTML = TEXT[lang].intro_more;
@@ -293,6 +405,9 @@
             
             drawMarkers();
             if (lastClickedStand) showDetails(lastClickedStand);
+            
+            // Re-render gallery on language switch to translate fields
+            renderGallery();
         }
 
         function isDemolished(stand) {
@@ -346,7 +461,7 @@
                 marker.bindPopup(popupHtml);
 
                 marker.on('click', () => {
-                    closeIntro(); // Auto-closes the intro description when a marker is clicked
+                    closeIntro(); 
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
@@ -371,7 +486,7 @@
             let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
             
             if (isDemolished(stand)) {
-                html += `<div style="color: #888; font-size: 13px; margin-bottom: 15px;">${t.demolished}</div>`;
+                html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${t.demolished}</div>`;
             } else {
                 html += `<div style="margin-bottom: 15px;"></div>`; 
             }
@@ -453,7 +568,7 @@
                     const marker = markersById[sharedId];
                     
                     if (sharedStand) {
-                        map.setView([sharedStand.lat, sharedStand.lon], 14);
+                        map.setView([sharedStand.lat, sharedStand.lon], 16);
                         marker.openPopup();
                         
                         showDetails(sharedStand);
