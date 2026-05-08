@@ -210,8 +210,24 @@
             let html = '';
             
             // Filter only stands that have an image string
-            const standsWithImages = mapData.filter(s => s.image && s.image.trim() !== "");
+            let standsWithImages = mapData.filter(s => s.image && s.image.trim() !== "");
             
+            // Sort by image_date descending (newest first)
+            standsWithImages.sort((a, b) => {
+                const dateA = a.image_date ? new Date(a.image_date).getTime() : 0;
+                const dateB = b.image_date ? new Date(b.image_date).getTime() : 0;
+                
+                // If both dates parse cleanly to numbers, use numeric comparison
+                if (!isNaN(dateA) && !isNaN(dateB) && dateA !== 0 && dateB !== 0) {
+                    return dateB - dateA;
+                }
+                
+                // Fallback to string comparison for unparseable or mixed standard strings (like "YYYY-MM-DD")
+                const strA = a.image_date || "";
+                const strB = b.image_date || "";
+                return strB.localeCompare(strA);
+            });
+
             standsWithImages.forEach(stand => {
                 let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
                 if (!standName || standName.trim() === "") {
