@@ -40,7 +40,7 @@
         .gallery-controls { margin-bottom: 15px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-size: 13px; }
         .gallery-grid { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
         .gallery-item { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .gallery-item img { width: 100%; height: auto; border-radius: 6px; object-fit: cover; max-height: 250px; cursor: pointer; border: 1px solid #eee; }
+        .gallery-item img { width: 100%; height: auto; border-radius: 6px; object-fit: cover; max-height: 450px; cursor: pointer; border: 1px solid #eee; }
         .gallery-item-info { margin-top: 10px; font-size: 13px; }
         .gallery-item h4 { margin: 0 0 5px 0; font-size: 15px; }
 
@@ -71,11 +71,13 @@
             <span id="ui-title">Piena galdi Latvijā</span>
         </h2>
         
+        <!-- Tabs Selection -->
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
             <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Galerija</button>
         </div>
 
+        <!-- INFO TAB CONTENT -->
         <div id="tab-info" style="display: block;">
             <div class="intro-text">
                 <div id="intro-container">
@@ -93,6 +95,7 @@
             <div id="details"></div>
         </div>
 
+        <!-- GALLERY TAB CONTENT -->
         <div id="tab-gallery" style="display: none;">
             <div class="gallery-controls">
                 <label for="sort-select" id="ui-sort-label">Kārtot pēc:</label>
@@ -156,8 +159,8 @@
                 title: "Milk Churn Stands in Latvia",
                 tab_info: "Information",
                 tab_gallery: "Gallery",
-                intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap. Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.",
-                intro_more: "<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
+                intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap.",
+                intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
                 read_more: "Read more...",
                 read_less: "Show less...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
@@ -181,8 +184,8 @@
                 title: "Piena galdi Latvijā",
                 tab_info: "Informācija",
                 tab_gallery: "Galerija",
-                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā. Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.",
-                intro_more: "<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
+                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
+                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
                 read_more: "Lasīt vairāk...",
                 read_less: "Rādīt mazāk...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
@@ -341,18 +344,54 @@
             }
         }
 
-        // --- Map Initialization ---
+        // --- Map Layer Definitions ---
+        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        });
+
         const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         });
 
+        const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
+            layers: 'public:Orto_LKS',
+            format: 'image/jpeg',
+            transparent: false,
+            attribution: "&copy; LVM GEO / LĢIA"
+        });
+
+        // --- Map Initialization ---
         const map = L.map('map', {
             center: [56.8796, 24.6032],
             zoom: 7,
             layers: [osmStandard],
             zoomControl: false 
         });
+
+        // --- Layer Control Updates ---
+        function updateLayerControl(lang) {
+            if (layerControl) {
+                map.removeControl(layerControl);
+            }
+
+            let baseMaps;
+            if (lang === 'en') {
+                baseMaps = {
+                    "Light map (OSM)": cartoLight,
+                    "Standard OSM (colored)": osmStandard,
+                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
+                };
+            } else {
+                baseMaps = {
+                    "Gaišā karte (OSM)": cartoLight,
+                    "Standarta OSM": osmStandard,
+                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
+                };
+            }
+
+            layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        }
 
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
@@ -411,6 +450,8 @@
             document.getElementById('ui-blue').innerHTML = t.blue();
             document.getElementById('ui-demolished').innerHTML = t.demolished_legend();
             
+            updateLayerControl(lang);
+
             drawMarkers();
             if (lastClickedStand) showDetails(lastClickedStand);
             renderGallery();
@@ -446,6 +487,22 @@
                 let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || TEXT[currentLang].default_name;
                 
                 marker.bindTooltip(standName);
+                
+                // --- Popup code restored here ---
+                let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
+                if (demolished) {
+                    popupHtml += `<span style="color: #888; font-size: 12px;">${TEXT[currentLang].demolished}</span><br>`;
+                }
+                if (stand.image) {
+                    popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                    if (stand.image_date) {
+                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${TEXT[currentLang].picture_date}:</strong> ${stand.image_date}</span>`;
+                    }
+                }
+                popupHtml += `</div>`;
+                marker.bindPopup(popupHtml);
+                // --------------------------------
+
                 marker.on('click', () => {
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
