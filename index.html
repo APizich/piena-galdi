@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -22,9 +22,9 @@
     
     <style>
         /* Default Desktop Layout (Side by Side) */
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; flex-direction: row; height: 100vh; color: #333; }
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; flex-direction: row; height: 100vh; color: #333; overflow: hidden; }
         #map { flex: 7; height: 100%; }
-        #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
+        #sidebar { flex: 3; height: 100%; background-color: #f8f9fa; border-left: 1px solid #ccc; padding: 20px; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; z-index: 10; }
         
         .intro-text { margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
         .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
@@ -37,18 +37,24 @@
         .tab-btn.active { color: #007bff; border-bottom: 2px solid #007bff; margin-bottom: -2px; }
         
         /* GALLERY CSS */
+        .gallery-controls { margin-bottom: 15px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-size: 13px; }
         .gallery-grid { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
         .gallery-item { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .gallery-item img { width: 100%; height: auto; border-radius: 6px; object-fit: cover; max-height: 250px; cursor: pointer; border: 1px solid #eee; }
         .gallery-item-info { margin-top: 10px; font-size: 13px; }
         .gallery-item h4 { margin: 0 0 5px 0; font-size: 15px; }
 
-        /* MOBILE LAYOUT (Stacked Vertically) */
+        /* MOBILE RESIZER */
+        #resizer { display: none; height: 10px; background: #ddd; width: 100%; cursor: ns-resize; align-items: center; justify-content: center; flex-shrink: 0; }
+        #resizer::after { content: ""; width: 40px; height: 4px; background: #888; border-radius: 2px; }
+
+        /* MOBILE LAYOUT */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            #map { flex: none; height: 50vh; width: 100%; }
-            #sidebar { flex: none; height: 50vh; width: 100%; border-left: none; border-top: 2px solid #ccc; padding: 15px; }
-            h2 { font-size: 20px; margin-top: 0; }
+            #map { flex: none; height: 40vh; width: 100%; }
+            #sidebar { flex: 1; height: auto; width: 100%; border-left: none; padding: 15px; overflow-y: auto; }
+            #resizer { display: flex; }
+            h2 { font-size: 18px; margin-top: 0; }
         }
         
         .custom-demolished-icon { background: none; border: none; }
@@ -57,6 +63,7 @@
 <body>
 
     <div id="map"></div>
+    <div id="resizer"></div>
 
     <div id="sidebar">
         <h2 style="display: flex; align-items: center; margin-top: 0; flex-shrink: 0;">
@@ -64,13 +71,11 @@
             <span id="ui-title">Piena galdi Latvijā</span>
         </h2>
         
-        <!-- Tabs Selection -->
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
-            <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Gallery</button>
+            <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Galerija</button>
         </div>
 
-        <!-- INFO TAB CONTENT -->
         <div id="tab-info" style="display: block;">
             <div class="intro-text">
                 <div id="intro-container">
@@ -88,8 +93,14 @@
             <div id="details"></div>
         </div>
 
-        <!-- GALLERY TAB CONTENT -->
-        <div id="tab-gallery" style="display: none; overflow-y: auto;">
+        <div id="tab-gallery" style="display: none;">
+            <div class="gallery-controls">
+                <label for="sort-select" id="ui-sort-label">Kārtot pēc:</label>
+                <select id="sort-select" onchange="renderGallery()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="newest" selected id="ui-opt-newest">Jaunākie sākumā</option>
+                    <option value="oldest" id="ui-opt-oldest">Vecākie sākumā</option>
+                </select>
+            </div>
             <div id="gallery-container" class="gallery-grid"></div>
         </div>
     </div>
@@ -145,13 +156,16 @@
                 title: "Milk Churn Stands in Latvia",
                 tab_info: "Information",
                 tab_gallery: "Gallery",
-                intro_short: "This map shows milk churn stands in Latvia marked on Open Street Maps.",
-                intro_more: "<br><br>Milk churn stands are an important part of the Latvian rural landscape and cultural heritage. They once served as essential waypoints for daily agricultural life and acted as social hubs where neighbors would meet and exchange news. Unfortunately, with changing agricultural practices and technologies, much like hayracks, these small architectural elements have been rapidly disappearing from our roadsides in recent years.<br><br>To preserve the memory of this unique aspect of the countryside, the idea of identifying and mapping milk churn stands began in 2022. The first step was the creation of the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>. It serves as a visual diary, documenting milk churn stands in various conditions - from carefully maintained structures to those heavily weathered by time.<br><br>The initiative quickly gained traction, encouraging locals and travelers alike to submit their own discoveries and share stories. Alongside the collection of photographs on Instagram, practical and lasting work was initiated: mapping the milk churn stands on OpenStreetMap (OSM). This map serves as a publicly accessible archive for anyone wishing to discover these nostalgic symbols of rural life.",
+                intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap. Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.",
+                intro_more: "<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
                 read_more: "Read more...",
                 read_less: "Show less...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Demolished</strong></div>`,
+                sort_label: "Sort by:",
+                opt_newest: "Newest first",
+                opt_oldest: "Oldest first",
                 no_img: "No Wikimedia Commons image found.",
                 click_img: "Click image to open Wikimedia Commons",
                 picture_date: "Picture date",
@@ -167,13 +181,16 @@
                 title: "Piena galdi Latvijā",
                 tab_info: "Informācija",
                 tab_gallery: "Galerija",
-                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                intro_more: "<br><br>Piena galdi ir svarīga Latvijas lauku ainavas un kultūrvēsturiskā mantojuma sastāvdaļa. Kādreiz tie bija neatņemama lauku ikdienas un sociālās dzīves pieturvieta, kur kaimiņiem satikties un apmainīties ar jaunumiem. Diemžēl, mainoties saimniekošanas paradumiem un tehnoloģijām, līdzīgi kā siena zārdi, šie mazie arhitektūras elementi pēdējos gados iet arvien mazumā un lēnām izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo unikālo lauku ainavas daļu, ideja par piena galdu apzināšanu un kartēšanu sākās 2022. gadā. Kā pirmais solis tika izveidots Instagram konts <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, kurā tiek dokumentēti un attēloti dažādos stāvokļos esošie piena galdi - sākot no rūpīgi uzturētiem līdz pat pavisam sabrukušiem vai laika zoba skartiem.<br><br>Šī iniciatīva ātri vien piesaistīja uzmanību, mudinot vietējos iedzīvotājus un ceļotājus iesūtīt savus atradumus un dalīties ar stāstiem. Paralēli fotogrāfiju apkopošanai Instagram kontā, tika uzsākts arī praktisks darbs - piena galdu atzīmēšana OpenStreetMap (OSM) kartēs. Šī karte kalpo kā publiski pieejams arhīvs ikvienam, kurš vēlas atklāt šos nostalģiskos lauku simbolus.",
+                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā. Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.",
+                intro_more: "<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
                 read_more: "Lasīt vairāk...",
                 read_less: "Rādīt mazāk...",
                 green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
                 blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Nojaukts</strong></div>`,
+                sort_label: "Kārtot pēc:",
+                opt_newest: "Jaunākie sākumā",
+                opt_oldest: "Vecākie sākumā",
                 no_img: "Wikimedia attēls nav pieejams.",
                 click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
                 picture_date: "Attēla datums",
@@ -187,6 +204,37 @@
             }
         };
 
+        // --- Mobile Divider Logic ---
+        const resizer = document.getElementById('resizer');
+        const mapEl = document.getElementById('map');
+        const sidebarEl = document.getElementById('sidebar');
+
+        resizer.addEventListener('touchstart', initResize);
+        resizer.addEventListener('mousedown', initResize);
+
+        function initResize(e) {
+            window.addEventListener('mousemove', Resize);
+            window.addEventListener('mouseup', stopResize);
+            window.addEventListener('touchmove', Resize);
+            window.addEventListener('touchend', stopResize);
+        }
+
+        function Resize(e) {
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const height = (clientY / window.innerHeight) * 100;
+            if (height > 10 && height < 85) {
+                mapEl.style.height = height + 'vh';
+            }
+        }
+
+        function stopResize() {
+            window.removeEventListener('mousemove', Resize);
+            window.removeEventListener('mouseup', stopResize);
+            window.removeEventListener('touchmove', Resize);
+            window.removeEventListener('touchend', stopResize);
+            map.invalidateSize(); // Refreshes Leaflet map size
+        }
+
         // --- Tabs Logic ---
         function switchTab(tab) {
             if (tab === 'info') {
@@ -199,33 +247,28 @@
                 document.getElementById('tab-gallery').style.display = 'block';
                 document.getElementById('btn-tab-info').classList.remove('active');
                 document.getElementById('btn-tab-gallery').classList.add('active');
-                renderGallery(); // Ensure it renders translated content
+                renderGallery();
             }
         }
 
         // --- Gallery Logic ---
         function renderGallery() {
             const container = document.getElementById('gallery-container');
+            const sortVal = document.getElementById('sort-select').value;
             const t = TEXT[currentLang];
             let html = '';
             
-            // Filter only stands that have an image string
             let standsWithImages = mapData.filter(s => s.image && s.image.trim() !== "");
             
-            // Sort by image_date descending (newest first)
             standsWithImages.sort((a, b) => {
                 const dateA = a.image_date ? new Date(a.image_date).getTime() : 0;
                 const dateB = b.image_date ? new Date(b.image_date).getTime() : 0;
                 
-                // If both dates parse cleanly to numbers, use numeric comparison
-                if (!isNaN(dateA) && !isNaN(dateB) && dateA !== 0 && dateB !== 0) {
-                    return dateB - dateA;
+                if (sortVal === 'newest') {
+                    return dateB - dateA || b.osm_id - a.osm_id;
+                } else {
+                    return dateA - dateB || a.osm_id - b.osm_id;
                 }
-                
-                // Fallback to string comparison for unparseable or mixed standard strings (like "YYYY-MM-DD")
-                const strA = a.image_date || "";
-                const strB = b.image_date || "";
-                return strB.localeCompare(strA);
             });
 
             standsWithImages.forEach(stand => {
@@ -263,19 +306,17 @@
         }
 
         function zoomToStand(osmId) {
-            switchTab('info'); // Switch back to the info map tab
+            switchTab('info');
             const stand = mapData.find(s => s.osm_id.toString() === osmId.toString());
             const marker = markersById[osmId];
             
             if (stand && marker) {
-                map.setView([stand.lat, stand.lon], 16); // Zoom in closely
+                map.setView([stand.lat, stand.lon], 16);
                 marker.openPopup();
                 showDetails(stand);
                 
-                // On mobile, scroll to top so the map is visible
                 if (window.innerWidth <= 768) {
                     document.getElementById('sidebar').scrollTop = 0;
-                    window.scrollTo(0, 0); 
                 }
             }
         }
@@ -285,13 +326,6 @@
             if (event) event.preventDefault();
             isIntroExpanded = !isIntroExpanded;
             updateIntroUI();
-        }
-
-        function closeIntro() {
-            if (isIntroExpanded) {
-                isIntroExpanded = false;
-                updateIntroUI();
-            }
         }
 
         function updateIntroUI() {
@@ -308,20 +342,9 @@
         }
 
         // --- Map Initialization ---
-        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-        });
-
         const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
-        });
-
-        const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
-            layers: 'public:Orto_LKS',
-            format: 'image/jpeg',
-            transparent: false,
-            attribution: "&copy; LVM GEO / LĢIA"
         });
 
         const map = L.map('map', {
@@ -331,26 +354,22 @@
             zoomControl: false 
         });
 
-        // --- Search Engine (Geocoder) ---
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
-            placeholder: 'Meklēt / Search...',
+            placeholder: 'Meklēt...',
             collapsed: false 
         }).on('markgeocode', function(e) {
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
 
-        // --- Zoom Control ---
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
-        // --- Custom Combined Language & Instagram Map Control ---
         const actionControl = L.control({position: 'bottomleft'});
         actionControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             div.style.display = 'flex';
             div.style.backgroundColor = '#fff';
-            
             div.innerHTML = `
                 <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
                 <a href="https://www.instagram.com/pina_golds/" target="_blank" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
@@ -363,31 +382,6 @@
 
         const markerLayer = L.layerGroup().addTo(map);
 
-        // --- Dynamic Layer Control Updater ---
-        function updateLayerControl(lang) {
-            if (layerControl) {
-                map.removeControl(layerControl);
-            }
-
-            let baseMaps;
-            if (lang === 'en') {
-                baseMaps = {
-                    "Light map (OSM)": cartoLight,
-                    "Standard OSM (colored)": osmStandard,
-                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
-                };
-            } else {
-                baseMaps = {
-                    "Gaišā karte (OSM)": cartoLight,
-                    "Standarta OSM": osmStandard,
-                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
-                };
-            }
-
-            layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
-        }
-
-        // --- Core Functions ---
         function toggleLanguage() {
             if (currentLang === 'lv') {
                 changeLanguage('en');
@@ -400,29 +394,25 @@
 
         function changeLanguage(lang) {
             currentLang = lang;
+            const t = TEXT[lang];
             
-            document.title = TEXT[lang].title;
-            document.getElementById('ui-title').innerText = TEXT[lang].title;
+            document.title = t.title;
+            document.getElementById('ui-title').innerText = t.title;
+            document.getElementById('btn-tab-info').innerText = t.tab_info;
+            document.getElementById('btn-tab-gallery').innerText = t.tab_gallery;
+            document.getElementById('ui-intro-short').innerHTML = t.intro_short;
+            document.getElementById('ui-intro-more').innerHTML = t.intro_more;
+            document.getElementById('ui-sort-label').innerText = t.sort_label;
+            document.getElementById('ui-opt-newest').innerText = t.opt_newest;
+            document.getElementById('ui-opt-oldest').innerText = t.opt_oldest;
             
-            // Update Tab UI Names
-            document.getElementById('btn-tab-info').innerText = TEXT[lang].tab_info;
-            document.getElementById('btn-tab-gallery').innerText = TEXT[lang].tab_gallery;
-            
-            // Update Intro Strings
-            document.getElementById('ui-intro-short').innerHTML = TEXT[lang].intro_short;
-            document.getElementById('ui-intro-more').innerHTML = TEXT[lang].intro_more;
             updateIntroUI(); 
-            
-            document.getElementById('ui-green').innerHTML = TEXT[lang].green();
-            document.getElementById('ui-blue').innerHTML = TEXT[lang].blue();
-            document.getElementById('ui-demolished').innerHTML = TEXT[lang].demolished_legend();
-            
-            updateLayerControl(lang);
+            document.getElementById('ui-green').innerHTML = t.green();
+            document.getElementById('ui-blue').innerHTML = t.blue();
+            document.getElementById('ui-demolished').innerHTML = t.demolished_legend();
             
             drawMarkers();
             if (lastClickedStand) showDetails(lastClickedStand);
-            
-            // Re-render gallery on language switch to translate fields
             renderGallery();
         }
 
@@ -440,44 +430,23 @@
                 const baseImgUrl = hasImage ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
                 
                 let markerIcon;
-
                 if (demolished) {
                     markerIcon = L.divIcon({
                         className: 'custom-demolished-icon',
                         html: getDemolishedIconHTML(baseImgUrl, 24),
                         iconSize: [24, 24], 
                         iconAnchor: [12, 24],
-                        popupAnchor: [0, -24],
-                        tooltipAnchor: [12, -12]
+                        popupAnchor: [0, -24]
                     });
                 } else {
                     markerIcon = hasImage ? iconWithImage : iconNoImage;
                 }
 
                 const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
-
-                let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
-                if (!standName || standName.trim() === "") {
-                    standName = TEXT[currentLang].default_name;
-                }
+                let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || TEXT[currentLang].default_name;
                 
                 marker.bindTooltip(standName);
-
-                let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
-                if (demolished) {
-                    popupHtml += `<span style="color: #888; font-size: 12px;">${TEXT[currentLang].demolished}</span><br>`;
-                }
-                if (stand.image) {
-                    popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
-                    if (stand.image_date) {
-                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${TEXT[currentLang].picture_date}:</strong> ${stand.image_date}</span>`;
-                    }
-                }
-                popupHtml += `</div>`;
-                marker.bindPopup(popupHtml);
-
                 marker.on('click', () => {
-                    closeIntro(); 
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
@@ -494,13 +463,9 @@
             const t = TEXT[currentLang];
             const detailsDiv = document.getElementById('details');
             
-            let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
-            if (!standName || standName.trim() === "") {
-                standName = TEXT[currentLang].default_name;
-            }
+            let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
             
             let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
-            
             if (isDemolished(stand)) {
                 html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${t.demolished}</div>`;
             } else {
@@ -511,34 +476,22 @@
                 html += `
                 <div class="image-container">
                     <a href="${stand.commons_page || stand.image}" target="_blank">
-                        <img src="${stand.image}" alt="Image">
-                    </a>`;
-                
-                if (stand.image_date) {
-                    html += `<p style="font-size: 13px; text-align: center; color: #333; margin: 8px 0 0 0;"><strong>${t.picture_date}:</strong> ${stand.image_date}</p>`;
-                }
-                
-                html += `<p style="font-size: 11px; text-align: center; color: #666; margin-top: 5px;">${t.click_img}</p>
+                        <img src="${stand.image}" alt="Attēls">
+                    </a>
+                    ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${t.picture_date}:</strong> ${stand.image_date}</p>` : ''}
+                    <p style="font-size: 11px; text-align: center; color: #666;">${t.click_img}</p>
                 </div>`;
             } else {
                 html += `<p style="color: #888;"><em>${t.no_img}</em></p>`;
             }
 
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
-            const wikiDesc = stand[`wiki_desc_${currentLang}`];
-
             if (osmDesc && osmDesc !== standName) {
                 html += `<div class="tag-box"><strong>${t.osm_desc}:</strong><br>${osmDesc}</div>`;
             }
-            if (wikiDesc) {
-                html += `<div class="tag-box"><strong>${t.wiki_desc}:</strong><br>${wikiDesc}</div>`;
-            }
 
-            html += `<p style="font-size: 11px; color: #aaa; margin-top: 20px;">OSM: ${stand.osm_type}/${stand.osm_id}</p>`;
-            
-            // Add Share Button
             html += `
-                <button onclick="shareStand('${stand.osm_id}')" style="margin-top: 10px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <button onclick="shareStand('${stand.osm_id}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
                     ${t.share}
                 </button>
             `;
@@ -552,50 +505,27 @@
             const shareUrl = url.toString();
             
             if (navigator.share) {
-                navigator.share({
-                    title: document.title,
-                    text: TEXT[currentLang].title,
-                    url: shareUrl
-                }).catch(err => console.log('Error sharing:', err));
+                navigator.share({ title: document.title, url: shareUrl }).catch(err => console.log(err));
             } else {
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert(TEXT[currentLang].copied);
-                });
+                navigator.clipboard.writeText(shareUrl).then(() => alert(TEXT[currentLang].copied));
             }
         }
 
-        // --- Fetch Data on Load ---
         fetch('data.json')
             .then(response => response.json())
             .then(data => {
                 mapData = data;
-                
                 greenCount = mapData.filter(s => s.image !== "").length;
                 blueCount = mapData.length - greenCount;
-                
                 changeLanguage(currentLang);
 
-                // --- Handle Deep Linking on Load ---
                 const urlParams = new URLSearchParams(window.location.search);
                 const sharedId = urlParams.get('id');
-                
                 if (sharedId && markersById[sharedId]) {
-                    const sharedStand = mapData.find(s => s.osm_id.toString() === sharedId);
-                    const marker = markersById[sharedId];
-                    
-                    if (sharedStand) {
-                        map.setView([sharedStand.lat, sharedStand.lon], 16);
-                        marker.openPopup();
-                        
-                        showDetails(sharedStand);
-                        
-                        if (window.innerWidth <= 768) {
-                            document.getElementById('sidebar').scrollTop = 0;
-                        }
-                    }
+                    zoomToStand(sharedId);
                 }
             })
-            .catch(error => console.error('Error loading data.json:', error));
+            .catch(error => console.error('Error loading data:', error));
 
     </script>
 </body>
