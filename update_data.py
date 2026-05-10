@@ -48,29 +48,61 @@ def first_non_empty(*values: Optional[str]) -> str:
     return ""
 
 
-def url_is_alive(url: str) -> bool:
-    """Return True if a cached image URL still appears reachable.
+def check_url_status(url: str) -> str:
+    """
+    Check whether a cached image URL is still valid.
 
-    This is used only for cached Wikimedia image URLs from old data.json.
-    If the URL is dead, the script will try to resolve the image again from
-    the OSM wikimedia_commons/image tag. If that also fails, the image field
-    in the new data.json will be empty.
+    Returns:
+      "alive"   - URL is reachable.
+      "dead"    - URL is definitely gone, for example 404 or 410.
+      "unknown" - request failed, timed out, was blocked, or returned an uncertain status.
+
+    Important logic:
+    - Only "dead" should cause an old cached image URL to be removed/refreshed.
+    - "unknown" keeps the old cached URL, so working images do not disappear
+      because of temporary network/CDN/API problems.
     """
     if not url:
-        return False
+        return "dead"
 
     try:
-        response = session.head(url, allow_redirects=True, timeout=15)
+        response = session.get(
+            url,
+            stream=True,
+            allow_redirects=True,
+            timeout=20,
+            headers={"Range": "bytes=0-0"},
+        )
 
-        # Some servers or proxies do not support HEAD reliably.
-        # Fall back to a streamed GET in those cases.
-        if response.status_code in (403, 405):
-            response = session.get(url, stream=True, allow_redirects=True, timeout=15)
+        if 200 <= response.status_code < 400:
+            return "alive"
 
-        return 200 <= response.status_code < 400
+        if response.status_code in (404, 410):
+            return "dead"
+
+        return "unknown"
 
     except requests.RequestException:
-        return False
+        return "unknown"
+
+
+def atomic_write_json(data: List[Dict], output_file: str) -> None:
+    """
+    Safely write JSON by first writing a temporary file beside data.json.
+
+    Example:
+      data.json.tmp is written first.
+      If writing succeeds, it replaces data.json atomically.
+
+    This prevents data.json from becoming empty or partially written if the
+    script stops during the write operation.
+    """
+    tmp_file = output_file + ".tmp"
+
+    with open(tmp_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    os.replace(tmp_file, output_file)
 
 
 def normalize_commons_title(raw_value: str) -> str:
@@ -261,11 +293,17 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
 
     if old_record and old_record.get("raw_image_tag") == raw_image_tag_value and old_record.get("image"):
         old_image_url = old_record.get("image", "")
+        url_status = check_url_status(old_image_url)
 
-        if url_is_alive(old_image_url):
+        if url_status == "alive":
             use_cached_image = True
+        elif url_status == "dead":
+            print(f"\n  [!] Cached Wikimedia image is definitely dead, refreshing: {old_image_url}")
         else:
-            print(f"\n  [!] Cached Wikimedia image no longer works, refreshing: {old_image_url}")
+            # Unknown means temporary network/CDN/server uncertainty.
+            # Keep the cached URL so valid images do not disappear from data.json.
+            use_cached_image = True
+            print(f"\n  [!] Could not verify cached image, keeping old URL: {old_image_url}")
 
     if use_cached_image:
         commons = {
@@ -321,20 +359,6 @@ def build_places_list(elements: List[Dict], old_data: Dict[str, Dict]) -> List[D
 
     print()
     return places
-
-
-def atomic_write_json(data: List[Dict], output_file: str) -> None:
-    """Write JSON safely by first writing a temporary file beside data.json.
-
-    The temporary file is created in the same directory as data.json, for example
-    data.json.tmp. Only after a successful write is it moved over data.json.
-    """
-    tmp_file = output_file + ".tmp"
-
-    with open(tmp_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-    os.replace(tmp_file, output_file)
 
 
 if __name__ == "__main__":
