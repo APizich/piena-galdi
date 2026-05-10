@@ -34,9 +34,12 @@ def load_existing_data() -> Dict[str, Dict]:
         print("No existing data.json found. Building from scratch...")
         return {}
 
+
 def clean_html(raw_html: str) -> str:
-    if not raw_html: return ""
+    if not raw_html:
+        return ""
     return re.sub(re.compile(r"<.*?>"), "", raw_html).strip()
+
 
 def first_non_empty(*values: Optional[str]) -> str:
     for value in values:
@@ -44,10 +47,38 @@ def first_non_empty(*values: Optional[str]) -> str:
             return str(value).strip()
     return ""
 
+
+def url_is_alive(url: str) -> bool:
+    """Return True if a cached image URL still appears reachable.
+
+    This is used only for cached Wikimedia image URLs from old data.json.
+    If the URL is dead, the script will try to resolve the image again from
+    the OSM wikimedia_commons/image tag. If that also fails, the image field
+    in the new data.json will be empty.
+    """
+    if not url:
+        return False
+
+    try:
+        response = session.head(url, allow_redirects=True, timeout=15)
+
+        # Some servers or proxies do not support HEAD reliably.
+        # Fall back to a streamed GET in those cases.
+        if response.status_code in (403, 405):
+            response = session.get(url, stream=True, allow_redirects=True, timeout=15)
+
+        return 200 <= response.status_code < 400
+
+    except requests.RequestException:
+        return False
+
+
 def normalize_commons_title(raw_value: str) -> str:
-    if not raw_value: return ""
+    if not raw_value:
+        return ""
     value = raw_value.split(";", 1)[0].strip()
-    if not value: return ""
+    if not value:
+        return ""
 
     lower_value = value.lower()
     if lower_value in ["yes", "no"] or lower_value.startswith(("mapillary", "flickr", "google", "http://mapillary", "https://mapillary")):
@@ -60,32 +91,38 @@ def normalize_commons_title(raw_value: str) -> str:
             return title if title.startswith(("File:", "Category:")) else f"File:{title}"
         if "upload.wikimedia.org/" in value:
             filename = urllib.parse.unquote(value.rsplit("/", 1)[-1])
-            if filename: return filename if filename.startswith("File:") else f"File:{filename}"
+            if filename:
+                return filename if filename.startswith("File:") else f"File:{filename}"
         return ""
 
     value = urllib.parse.unquote(value)
     return value if value.startswith(("File:", "Category:")) else f"File:{value}"
 
+
 def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
     if not title:
         return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description": "", "image_date": ""}
 
-    time.sleep(1.0) # 1-second delay for sequential processing
+    time.sleep(1.0)  # 1-second delay for sequential processing
 
     params = {
-        "action": "query", "titles": title, "prop": "imageinfo",
-        "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
-        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
+        "action": "query",
+        "titles": title,
+        "prop": "imageinfo",
+        "iiprop": "url|extmetadata",
+        "iiextmetadatalanguage": lang,
+        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal",
+        "format": "json",
     }
     try:
         response = session.get(COMMONS_API_URL, params=params, timeout=20)
         response.raise_for_status()
         pages = response.json().get("query", {}).get("pages", {})
-        
+
         # Check if page is missing
         if "-1" in pages:
             print(f"\n  [!] Wikimedia says file does not exist: {title}")
-            
+
         for page_info in pages.values():
             info = page_info.get("imageinfo", [{}])[0]
             if info:
@@ -100,8 +137,9 @@ def get_commons_file_data(title: str, lang: str) -> Dict[str, str]:
                 }
     except requests.RequestException as e:
         print(f"\n  [!] API Error fetching {title}: {e}")
-        
+
     return {"image_url": "", "commons_page": "", "commons_title": title, "wiki_description": "", "image_date": ""}
+
 
 def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict[str, str]:
     if not category_title.startswith("Category:"):
@@ -110,10 +148,16 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
     time.sleep(1.0)
 
     params = {
-        "action": "query", "generator": "categorymembers", "gcmtitle": category_title,
-        "gcmtype": "file", "gcmlimit": 5, "prop": "imageinfo",
-        "iiprop": "url|extmetadata", "iiextmetadatalanguage": lang,
-        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal", "format": "json",
+        "action": "query",
+        "generator": "categorymembers",
+        "gcmtitle": category_title,
+        "gcmtype": "file",
+        "gcmlimit": 5,
+        "prop": "imageinfo",
+        "iiprop": "url|extmetadata",
+        "iiextmetadatalanguage": lang,
+        "iiextmetadatafilter": "ImageDescription|DateTimeOriginal",
+        "format": "json",
     }
     try:
         response = session.get(COMMONS_API_URL, params=params, timeout=20)
@@ -134,15 +178,17 @@ def get_first_file_from_commons_category(category_title: str, lang: str) -> Dict
                 }
     except requests.RequestException as e:
         print(f"\n  [!] API Error fetching category {category_title}: {e}")
-        
+
     return {"image_url": "", "commons_page": "", "commons_title": category_title, "wiki_description": "", "image_date": ""}
+
 
 def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
     candidates = [("wikimedia_commons", tags.get("wikimedia_commons", "")), ("image", tags.get("image", ""))]
 
     for source_tag, raw_value in candidates:
         title = normalize_commons_title(raw_value)
-        if not title: continue
+        if not title:
+            continue
 
         if title.startswith("Category:"):
             res_en = get_first_file_from_commons_category(title, "en")
@@ -159,6 +205,7 @@ def resolve_wikimedia_image(tags: Dict[str, str]) -> Dict[str, str]:
 
     return {"image_url": "", "commons_page": "", "commons_title": "", "wiki_description_en": "", "wiki_description_lv": "", "source_tag": "", "image_date": ""}
 
+
 def fetch_osm_elements() -> Tuple[List[Dict], Dict[str, str]]:
     query = """
     [out:json][timeout:90];
@@ -169,47 +216,58 @@ def fetch_osm_elements() -> Tuple[List[Dict], Dict[str, str]]:
     );
     out center tags;
     """
-    
+
     for endpoint in OVERPASS_ENDPOINTS:
         print(f"Trying Overpass server: {endpoint}...")
         try:
             response = requests.post(endpoint, data={"data": query}, headers={"User-Agent": USER_AGENT}, timeout=120)
             response.raise_for_status()
             data = response.json()
-            
+
             if "remark" in data:
                 print(f"  [!] Server is busy/error: {data['remark']}")
-                continue 
-                
+                continue
+
             elements = data.get("elements", [])
-            
+
             if len(elements) > 0:
                 return elements, {"ok": "true", "message": f"Fetched from {endpoint}"}
             else:
                 print("  [!] Server returned 0 elements. Trying next...")
-                
+
         except Exception as e:
             print(f"  [!] Connection failed: {e}")
             time.sleep(2)
-            
+
     return [], {"ok": "false", "message": "Failed to fetch from all Overpass endpoints."}
+
 
 def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional[Dict]:
     tags = element.get("tags", {})
     lat = element.get("lat", element.get("center", {}).get("lat"))
     lon = element.get("lon", element.get("center", {}).get("lon"))
 
-    if lat is None or lon is None: 
+    if lat is None or lon is None:
         return None
 
     osm_type = element.get("type", "")
     osm_id = element.get("id", "")
     unique_id = f"{osm_type}_{osm_id}"
-    
+
     raw_image_tag_value = tags.get("wikimedia_commons") or tags.get("image") or ""
     old_record = old_data.get(unique_id)
-    
+
+    use_cached_image = False
+
     if old_record and old_record.get("raw_image_tag") == raw_image_tag_value and old_record.get("image"):
+        old_image_url = old_record.get("image", "")
+
+        if url_is_alive(old_image_url):
+            use_cached_image = True
+        else:
+            print(f"\n  [!] Cached Wikimedia image no longer works, refreshing: {old_image_url}")
+
+    if use_cached_image:
         commons = {
             "wiki_description_en": old_record.get("wiki_desc_en", ""),
             "wiki_description_lv": old_record.get("wiki_desc_lv", ""),
@@ -217,7 +275,7 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
             "image_date": old_record.get("image_date", ""),
             "commons_page": old_record.get("commons_page", ""),
             "commons_title": old_record.get("commons_title", ""),
-            "source_tag": old_record.get("image_source_tag", "")
+            "source_tag": old_record.get("image_source_tag", ""),
         }
     else:
         commons = resolve_wikimedia_image(tags)
@@ -231,9 +289,9 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
         "name_default": first_non_empty(tags.get("name")),
         "name_lv": first_non_empty(tags.get("name:lv")),
         "name_en": first_non_empty(tags.get("name:en")),
-        "material": tags.get("material", ""),               
-        "demolished": tags.get("demolished", ""),           
-        "description": tags.get("description", ""),         
+        "material": tags.get("material", ""),
+        "demolished": tags.get("demolished", ""),
+        "description": tags.get("description", ""),
         "osm_desc_default": first_non_empty(tags.get("description"), tags.get("note"), tags.get("fixme")),
         "osm_desc_lv": first_non_empty(tags.get("description:lv"), tags.get("note:lv")),
         "osm_desc_en": first_non_empty(tags.get("description:en"), tags.get("note:en")),
@@ -247,21 +305,37 @@ def process_single_element(element: Dict, old_data: Dict[str, Dict]) -> Optional
         "raw_image_tag": raw_image_tag_value,
     }
 
+
 def build_places_list(elements: List[Dict], old_data: Dict[str, Dict]) -> List[Dict]:
     places = []
     total = len(elements)
-    
+
     # Process sequentially to avoid Wikimedia connection drops
     for i, el in enumerate(elements, 1):
         result = process_single_element(el, old_data)
         if result:
             places.append(result)
-        
+
         # Keep the progress indicator on one line
-        print(f"\rProcessing data: {i}/{total} ({(i/total)*100:.1f}%) complete...", end="", flush=True)
-            
-    print() 
+        print(f"\rProcessing data: {i}/{total} ({(i / total) * 100:.1f}%) complete...", end="", flush=True)
+
+    print()
     return places
+
+
+def atomic_write_json(data: List[Dict], output_file: str) -> None:
+    """Write JSON safely by first writing a temporary file beside data.json.
+
+    The temporary file is created in the same directory as data.json, for example
+    data.json.tmp. Only after a successful write is it moved over data.json.
+    """
+    tmp_file = output_file + ".tmp"
+
+    with open(tmp_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    os.replace(tmp_file, output_file)
+
 
 if __name__ == "__main__":
     print("Loading previous state...")
@@ -269,16 +343,15 @@ if __name__ == "__main__":
 
     print("Fetching OSM elements...")
     elements, status = fetch_osm_elements()
-    
+
     if status["ok"] == "true":
         print(f"Found {len(elements)} map objects. Comparing against previous data...")
         start_time = time.time()
-        
+
         places = build_places_list(elements, old_data)
-        
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(places, f, ensure_ascii=False, indent=2)
-            
+
+        atomic_write_json(places, DATA_FILE)
+
         elapsed = time.time() - start_time
         print(f"Success! Saved {len(places)} locations to data.json in {elapsed:.1f} seconds.")
     else:
