@@ -122,6 +122,38 @@
         let markersById = {}; 
         let isIntroExpanded = false;
 
+        // --- Safety Helpers ---
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function safeUrl(value) {
+            const url = String(value ?? "").trim();
+            if (!url) return "";
+
+            // Allow normal https links, protocol-relative https resources, and simple relative asset paths.
+            if (url.startsWith("https://")) return url;
+            if (url.startsWith("//")) return `https:${url}`;
+            if (/^[a-zA-Z0-9_./\-()%]+$/.test(url) && !url.includes("..")) return url;
+
+            return "";
+        }
+
+        function hasImage(stand) {
+            return Boolean(stand.image && stand.image.trim() !== "");
+        }
+
+        function getStandName(stand) {
+            const t = TEXT[currentLang];
+            const standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
+            return String(standName || t.default_name).trim() || t.default_name;
+        }
+
         // --- Custom Icons Setup ---
         const iconWithImage = L.icon({
             iconUrl: 'piena-kanna-1.png',
@@ -140,9 +172,13 @@
         });
 
         function getDemolishedIconHTML(imgSrc, size, marginLeft = 0) {
+            const safeImgSrc = safeUrl(imgSrc);
+            const safeSize = Number(size) || 20;
+            const safeMarginLeft = Number(marginLeft) || 0;
+
             return `
-                <div style="position: relative; display: inline-block; width: ${size}px; height: ${size}px; flex-shrink: 0; margin-left: ${marginLeft}px;">
-                    <img src="${imgSrc}" style="width: ${size}px; height: ${size}px; display: block;">
+                <div style="position: relative; display: inline-block; width: ${safeSize}px; height: ${safeSize}px; flex-shrink: 0; margin-left: ${safeMarginLeft}px;">
+                    <img src="${escapeHTML(safeImgSrc)}" alt="" style="width: ${safeSize}px; height: ${safeSize}px; display: block;">
                     <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
                         <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
                         <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
@@ -160,11 +196,11 @@
                 tab_info: "Information",
                 tab_gallery: "Gallery",
                 intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap.",
-                intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
+                intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
                 read_more: "Read more...",
                 read_less: "Show less...",
-                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
-                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
+                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>With Wikimedia image (${greenCount})</strong></div>`,
+                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>No image (${blueCount})</strong></div>`,
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Demolished</strong></div>`,
                 sort_label: "Sort by:",
                 opt_newest: "Newest first",
@@ -178,18 +214,19 @@
                 demolished: "Demolished",
                 share: "Share specific milk churn stand",
                 copied: "Link copied to clipboard!",
-                show_map: "Show on Map"
+                show_map: "Show on Map",
+                load_error: "Data could not be loaded. Please try again later."
             },
             "lv": {
                 title: "Piena galdi Latvijā",
                 tab_info: "Informācija",
                 tab_gallery: "Galerija",
                 intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
+                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
                 read_more: "Lasīt vairāk...",
                 read_less: "Rādīt mazāk...",
-                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
-                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
+                green: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-1.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Ar Wikimedia attēlu (${greenCount})</strong></div>`,
+                blue: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;"><img src="piena-kanna-2.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span> <strong>Bez attēla (${blueCount})</strong></div>`,
                 demolished_legend: () => `<div style="display: flex; align-items: center;"><span style="display: flex; width: 46px; justify-content: flex-start;">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span> <strong>Nojaukts</strong></div>`,
                 sort_label: "Kārtot pēc:",
                 opt_newest: "Jaunākie sākumā",
@@ -203,7 +240,8 @@
                 demolished: "Nojaukts",
                 share: "Dalīties ar šo piena galdu",
                 copied: "Saite nokopēta!",
-                show_map: "Parādīt kartē"
+                show_map: "Parādīt kartē",
+                load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk."
             }
         };
 
@@ -261,44 +299,49 @@
             const t = TEXT[currentLang];
             let html = '';
             
-            let standsWithImages = mapData.filter(s => s.image && s.image.trim() !== "");
+            let standsWithImages = mapData.filter(hasImage);
             
             standsWithImages.sort((a, b) => {
                 const dateA = a.image_date ? new Date(a.image_date).getTime() : 0;
                 const dateB = b.image_date ? new Date(b.image_date).getTime() : 0;
+                const osmIdA = Number(a.osm_id) || 0;
+                const osmIdB = Number(b.osm_id) || 0;
                 
                 if (sortVal === 'newest') {
-                    return dateB - dateA || b.osm_id - a.osm_id;
+                    return dateB - dateA || osmIdB - osmIdA;
                 } else {
-                    return dateA - dateB || a.osm_id - b.osm_id;
+                    return dateA - dateB || osmIdA - osmIdB;
                 }
             });
 
             standsWithImages.forEach(stand => {
-                let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
-                if (!standName || standName.trim() === "") {
-                    standName = t.default_name;
-                }
+                const standName = getStandName(stand);
+                const safeStandName = escapeHTML(standName);
+                const safeOsmId = escapeHTML(stand.osm_id);
+                const imageUrl = safeUrl(stand.image);
+                const safeImageDate = escapeHTML(stand.image_date);
                 
+                if (!imageUrl) return;
+
                 let demolishedHtml = '';
                 if (isDemolished(stand)) {
-                    demolishedHtml = `<div style="color: #dc3545; font-weight: bold; margin-bottom: 5px; font-size: 13px;">${t.demolished}</div>`;
+                    demolishedHtml = `<div style="color: #dc3545; font-weight: bold; margin-bottom: 5px; font-size: 13px;">${escapeHTML(t.demolished)}</div>`;
                 }
                 
                 let dateHtml = '';
                 if (stand.image_date) {
-                    dateHtml = `<div style="color: #555; margin-bottom: 5px;"><strong>${t.picture_date}:</strong> ${stand.image_date}</div>`;
+                    dateHtml = `<div style="color: #555; margin-bottom: 5px;"><strong>${escapeHTML(t.picture_date)}:</strong> ${safeImageDate}</div>`;
                 }
 
                 html += `
                 <div class="gallery-item">
-                    <img src="${stand.image}" alt="${standName}" onclick="zoomToStand('${stand.osm_id}')">
+                    <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" onclick="zoomToStand('${safeOsmId}')">
                     <div class="gallery-item-info">
-                        <h4>${standName}</h4>
+                        <h4>${safeStandName}</h4>
                         ${demolishedHtml}
                         ${dateHtml}
-                        <button onclick="zoomToStand('${stand.osm_id}')" style="margin-top: 5px; padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            ${t.show_map}
+                        <button onclick="zoomToStand('${safeOsmId}')" style="margin-top: 5px; padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            ${escapeHTML(t.show_map)}
                         </button>
                     </div>
                 </div>
@@ -310,7 +353,7 @@
 
         function zoomToStand(osmId) {
             switchTab('info');
-            const stand = mapData.find(s => s.osm_id.toString() === osmId.toString());
+            const stand = mapData.find(s => String(s.osm_id) === String(osmId));
             const marker = markersById[osmId];
             
             if (stand && marker) {
@@ -411,7 +454,7 @@
             div.style.backgroundColor = '#fff';
             div.innerHTML = `
                 <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
-                <a href="https://www.instagram.com/pina_golds/" target="_blank" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
+                <a href="https://www.instagram.com/pina_golds/" target="_blank" rel="noopener noreferrer" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
                     <img src="Instagram_icon.png" alt="Instagram" style="width: 20px; height: 20px;">
                 </a>
             `;
@@ -433,6 +476,8 @@
 
         function changeLanguage(lang) {
             currentLang = lang;
+            document.documentElement.lang = lang;
+
             const t = TEXT[lang];
             
             document.title = t.title;
@@ -458,7 +503,7 @@
         }
 
         function isDemolished(stand) {
-            return stand.demolished && stand.demolished.toString().toLowerCase() === "yes";
+            return stand.demolished && stand.demolished.toString().toLowerCase().trim() === "yes";
         }
 
         function drawMarkers() {
@@ -466,9 +511,9 @@
             markersById = {}; 
             
             mapData.forEach(stand => {
-                const hasImage = stand.image !== "";
+                const imageExists = hasImage(stand);
                 const demolished = isDemolished(stand);
-                const baseImgUrl = hasImage ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
+                const baseImgUrl = imageExists ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
                 
                 let markerIcon;
                 if (demolished) {
@@ -480,28 +525,32 @@
                         popupAnchor: [0, -24]
                     });
                 } else {
-                    markerIcon = hasImage ? iconWithImage : iconNoImage;
+                    markerIcon = imageExists ? iconWithImage : iconNoImage;
                 }
 
                 const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
-                let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || TEXT[currentLang].default_name;
+                const standName = getStandName(stand);
+                const safeStandName = escapeHTML(standName);
                 
-                marker.bindTooltip(standName);
+                marker.bindTooltip(safeStandName);
                 
-                // --- Popup code restored here ---
-                let popupHtml = `<div style="text-align:center;"><b>${standName}</b><br>`;
+                // --- Popup code ---
+                let popupHtml = `<div style="text-align:center;"><b>${safeStandName}</b><br>`;
                 if (demolished) {
-                    popupHtml += `<span style="color: #888; font-size: 12px;">${TEXT[currentLang].demolished}</span><br>`;
+                    popupHtml += `<span style="color: #888; font-size: 12px;">${escapeHTML(TEXT[currentLang].demolished)}</span><br>`;
                 }
-                if (stand.image) {
-                    popupHtml += `<img src="${stand.image}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                if (imageExists) {
+                    const imageUrl = safeUrl(stand.image);
+                    if (imageUrl) {
+                        popupHtml += `<img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                    }
                     if (stand.image_date) {
-                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${TEXT[currentLang].picture_date}:</strong> ${stand.image_date}</span>`;
+                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${escapeHTML(TEXT[currentLang].picture_date)}:</strong> ${escapeHTML(stand.image_date)}</span>`;
                     }
                 }
                 popupHtml += `</div>`;
                 marker.bindPopup(popupHtml);
-                // --------------------------------
+                // ------------------
 
                 marker.on('click', () => {
                     showDetails(stand);
@@ -519,37 +568,44 @@
             lastClickedStand = stand;
             const t = TEXT[currentLang];
             const detailsDiv = document.getElementById('details');
+            const standName = getStandName(stand);
+            const safeStandName = escapeHTML(standName);
             
-            let standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
-            
-            let html = `<h3 style="margin-bottom: 2px;">${standName}</h3>`;
+            let html = `<h3 style="margin-bottom: 2px;">${safeStandName}</h3>`;
             if (isDemolished(stand)) {
-                html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${t.demolished}</div>`;
+                html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${escapeHTML(t.demolished)}</div>`;
             } else {
                 html += `<div style="margin-bottom: 15px;"></div>`; 
             }
             
-            if (stand.image) {
-                html += `
-                <div class="image-container">
-                    <a href="${stand.commons_page || stand.image}" target="_blank">
-                        <img src="${stand.image}" alt="Attēls">
-                    </a>
-                    ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${t.picture_date}:</strong> ${stand.image_date}</p>` : ''}
-                    <p style="font-size: 11px; text-align: center; color: #666;">${t.click_img}</p>
-                </div>`;
+            if (hasImage(stand)) {
+                const imageUrl = safeUrl(stand.image);
+                const linkUrl = safeUrl(stand.commons_page || stand.image);
+
+                if (imageUrl) {
+                    html += `
+                    <div class="image-container">
+                        ${linkUrl ? `<a href="${escapeHTML(linkUrl)}" target="_blank" rel="noopener noreferrer">` : ''}
+                            <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}">
+                        ${linkUrl ? `</a>` : ''}
+                        ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</p>` : ''}
+                        <p style="font-size: 11px; text-align: center; color: #666;">${escapeHTML(t.click_img)}</p>
+                    </div>`;
+                } else {
+                    html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
+                }
             } else {
-                html += `<p style="color: #888;"><em>${t.no_img}</em></p>`;
+                html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
             }
 
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             if (osmDesc && osmDesc !== standName) {
-                html += `<div class="tag-box"><strong>${t.osm_desc}:</strong><br>${osmDesc}</div>`;
+                html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
             }
 
             html += `
-                <button onclick="shareStand('${stand.osm_id}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
-                    ${t.share}
+                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
+                    ${escapeHTML(t.share)}
                 </button>
             `;
 
@@ -563,16 +619,27 @@
             
             if (navigator.share) {
                 navigator.share({ title: document.title, url: shareUrl }).catch(err => console.log(err));
-            } else {
+            } else if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareUrl).then(() => alert(TEXT[currentLang].copied));
+            } else {
+                window.prompt(TEXT[currentLang].copied, shareUrl);
             }
         }
 
         fetch('data.json')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                if (!Array.isArray(data)) {
+                    throw new Error('data.json must contain an array.');
+                }
+
                 mapData = data;
-                greenCount = mapData.filter(s => s.image !== "").length;
+                greenCount = mapData.filter(hasImage).length;
                 blueCount = mapData.length - greenCount;
                 changeLanguage(currentLang);
 
@@ -582,7 +649,15 @@
                     zoomToStand(sharedId);
                 }
             })
-            .catch(error => console.error('Error loading data:', error));
+            .catch(error => {
+                console.error('Error loading data:', error);
+                const t = TEXT[currentLang];
+                const detailsDiv = document.getElementById('details');
+                const galleryContainer = document.getElementById('gallery-container');
+
+                detailsDiv.innerHTML = `<p style="color:#dc3545;"><strong>${escapeHTML(t.load_error)}</strong></p>`;
+                galleryContainer.innerHTML = `<p style="color:#dc3545;">${escapeHTML(t.load_error)}</p>`;
+            });
 
     </script>
 </body>
