@@ -1,980 +1,980 @@
 <!DOCTYPE html>
 <html lang="lv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Piena galdi Latvijā</title>
+    <title>Piena galdi Latvijā</title>
 
-    <link rel="icon" type="image/png" href="Milk_churn_stand_icon.png">
-    <link rel="apple-touch-icon" href="Milk_churn_stand_icon.png">
+    <link rel="icon" type="image/png" href="Milk_churn_stand_icon.png">
+    <link rel="apple-touch-icon" href="Milk_churn_stand_icon.png">
 
-    <meta name="description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
+    <meta name="description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
 
-    <meta property="og:title" content="Piena galdi Latvijā | Milk Churn Stands in Latvia">
-    <meta property="og:description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
-    <meta property="og:image" content="https://www.piena-galdi.lv/Milk_churn_stand_icon.png">
-    <meta property="og:url" content="https://www.piena-galdi.lv">
-    <meta property="og:type" content="website">
+    <meta property="og:title" content="Piena galdi Latvijā | Milk Churn Stands in Latvia">
+    <meta property="og:description" content="Šajā kartē redzami Open Street Maps atzīmētie piena galdi Latvijā.">
+    <meta property="og:image" content="https://www.piena-galdi.lv/Milk_churn_stand_icon.png">
+    <meta property="og:url" content="https://www.piena-galdi.lv">
+    <meta property="og:type" content="website">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
-            color: #333;
-            overflow: hidden;
-        }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
 
-        #map {
-            flex: 4;
-            height: 100%;
-        }
+        #map {
+            flex: 4;
+            height: 100%;
+        }
 
-        #sidebar {
-            flex: 1;
-            min-width: 360px;
-            max-width: 540px;
-            height: 100%;
-            background-color: #f8f9fa;
-            border-left: 1px solid #ccc;
-            padding: 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-        }
+        #sidebar {
+            flex: 1;
+            min-width: 360px;
+            max-width: 540px;
+            height: 100%;
+            background-color: #f8f9fa;
+            border-left: 1px solid #ccc;
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
 
-        .intro-text {
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        .intro-text {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
 
-        .image-container img {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 10px;
-        }
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
 
-        .tag-box {
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 13px;
-        }
+        .tag-box {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
 
-        .tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: #eef0f2;
-            padding: 4px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            gap: 4px;
-        }
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background: #eef0f2;
+            padding: 4px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            gap: 4px;
+        }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            color: #666;
-            transition: 0.2s;
-        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            color: #666;
+            transition: 0.2s;
+        }
 
-        .tab-btn:hover {
-            color: #007bff;
-            background: rgba(255,255,255,0.6);
-        }
+        .tab-btn:hover {
+            color: #007bff;
+            background: rgba(255,255,255,0.6);
+        }
 
-        .tab-btn.active {
-            color: #007bff;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-        }
+        .tab-btn.active {
+            color: #007bff;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
 
-        .stats-filter-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 18px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .stats-filter-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-        .stats-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
 
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 6px;
-            border-radius: 7px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 13px;
-        }
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 6px;
+            border-radius: 7px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 13px;
+        }
 
-        .filter-row:hover {
-            background: #f1f3f5;
-        }
+        .filter-row:hover {
+            background: #f1f3f5;
+        }
 
-        .filter-row input {
-            cursor: pointer;
-            margin: 0;
-        }
+        .filter-row input {
+            cursor: pointer;
+            margin: 0;
+        }
 
-        .filter-icon-slot {
-            display: flex;
-            width: 46px;
-            justify-content: flex-start;
-            align-items: center;
-            flex-shrink: 0;
-        }
+        .filter-icon-slot {
+            display: flex;
+            width: 46px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-shrink: 0;
+        }
 
-        .filter-label {
-            flex: 1;
-        }
+        .filter-label {
+            flex: 1;
+        }
 
-        .filter-count {
-            font-weight: bold;
-            color: #333;
-        }
+        .filter-count {
+            font-weight: bold;
+            color: #333;
+        }
 
-        .gallery-controls {
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            flex-wrap: wrap;
-        }
+        .gallery-controls {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
 
-        .visible-only-label {
-            margin-right: auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            user-select: none;
-        }
+        .visible-only-label {
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
 
-        .gallery-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 20px;
-        }
+        .gallery-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-bottom: 20px;
+        }
 
-        .gallery-item {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .gallery-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 6px;
-            object-fit: cover;
-            max-height: 450px;
-            cursor: pointer;
-            border: 1px solid #eee;
-        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            object-fit: cover;
+            max-height: 450px;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
 
-        .gallery-item-info {
-            margin-top: 10px;
-            font-size: 13px;
-        }
+        .gallery-item-info {
+            margin-top: 10px;
+            font-size: 13px;
+        }
 
-        .gallery-item h4 {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-        }
+        .gallery-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+        }
 
-        #resizer {
-            display: none;
-            height: 10px;
-            background: #ddd;
-            width: 100%;
-            cursor: ns-resize;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+        #resizer {
+            display: none;
+            height: 10px;
+            background: #ddd;
+            width: 100%;
+            cursor: ns-resize;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
-        #resizer::after {
-            content: "";
-            width: 40px;
-            height: 4px;
-            background: #888;
-            border-radius: 2px;
-        }
+        #resizer::after {
+            content: "";
+            width: 40px;
+            height: 4px;
+            background: #888;
+            border-radius: 2px;
+        }
 
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
 
-            #map {
-                flex: none;
-                height: 40vh;
-                width: 100%;
-            }
+            #map {
+                flex: none;
+                height: 40vh;
+                width: 100%;
+            }
 
-            #sidebar {
-                flex: 1;
-                height: auto;
-                width: 100%;
-                min-width: 0;
-                max-width: none;
-                border-left: none;
-                padding: 15px;
-                overflow-y: auto;
-            }
+            #sidebar {
+                flex: 1;
+                height: auto;
+                width: 100%;
+                min-width: 0;
+                max-width: none;
+                border-left: none;
+                padding: 15px;
+                overflow-y: auto;
+            }
 
-            #resizer {
-                display: flex;
-            }
+            #resizer {
+                display: flex;
+            }
 
-            h2 {
-                font-size: 18px;
-                margin-top: 0;
-            }
+            h2 {
+                font-size: 18px;
+                margin-top: 0;
+            }
 
-            .gallery-controls {
-                align-items: flex-start;
-                justify-content: flex-start;
-            }
+            .gallery-controls {
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
 
-            .visible-only-label {
-                width: 100%;
-                margin-right: 0;
-            }
-        }
+            .visible-only-label {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
 
-        .custom-demolished-icon {
-            background: none;
-            border: none;
-        }
-    </style>
+        .custom-demolished-icon {
+            background: none;
+            border: none;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="map"></div>
-    <div id="resizer"></div>
-
-    <div id="sidebar">
-        <h2 style="display: flex; align-items: center; margin-top: 0; flex-shrink: 0;">
-            <img src="Milk_churn_stand_icon.png" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
-            <span id="ui-title">Piena galdi Latvijā</span>
-        </h2>
-
-        <div class="tabs">
-            <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
-            <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Galerija</button>
-        </div>
-
-        <div id="tab-info" style="display: block;">
-            <div class="intro-text">
-                <div id="intro-container">
-                    <span id="ui-intro-short"></span><span id="ui-intro-more" style="display: none;"></span>
-                    <a href="#" id="ui-read-more" onclick="toggleIntro(event)" style="color: #007bff; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px;">Lasīt vairāk...</a>
-                </div>
-
-                <div class="stats-filter-card">
-                    <div id="ui-stats-title" class="stats-title"></div>
-                    <div id="ui-green"></div>
-                    <div id="ui-blue"></div>
-                    <div id="ui-demolished"></div>
-                </div>
-            </div>
-
-            <div id="details"></div>
-        </div>
-
-        <div id="tab-gallery" style="display: none;">
-            <div class="gallery-controls">
-                <label class="visible-only-label">
-                    <input type="checkbox" id="gallery-visible-only" onchange="setGalleryVisibleOnly(this.checked)">
-                    <span id="ui-visible-only">Tikai pašreizējā kartes skatā</span>
-                </label>
-
-                <label for="sort-select" id="ui-sort-label">Kārtot pēc:</label>
-                <select id="sort-select" onchange="renderGallery()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
-                    <option value="newest" selected id="ui-opt-newest">Jaunākie sākumā</option>
-                    <option value="oldest" id="ui-opt-oldest">Vecākie sākumā</option>
-                </select>
-            </div>
-            <div id="gallery-container" class="gallery-grid"></div>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
-    <script>
-        let currentLang = 'lv';
-        let mapData = [];
-        let lastClickedStand = null;
-        let greenCount = 0;
-        let blueCount = 0;
-        let demolishedCount = 0;
-        let layerControl = null;
-        let markersById = {};
-        let isIntroExpanded = false;
-        let activeTab = 'info';
-        let galleryOnlyCurrentView = false;
-
-        let standFilters = {
-            withImage: true,
-            withoutImage: true,
-            demolished: true
-        };
-
-        function escapeHTML(value) {
-            return String(value ?? "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-        }
-
-        function safeUrl(value) {
-            const url = String(value ?? "").trim();
-            if (!url) return "";
-
-            if (url.startsWith("https://")) return url;
-            if (url.startsWith("//")) return `https:${url}`;
-
-            if (/^[a-zA-Z0-9_./\-()%]+$/.test(url) && !url.includes("..")) return url;
-
-            return "";
-        }
-
-        function hasImage(stand) {
-            return Boolean(stand.image && stand.image.trim() !== "");
-        }
-
-        function isDemolished(stand) {
-            return Boolean(stand.demolished && stand.demolished.toString().toLowerCase().trim() === "yes");
-        }
-
-        function getStandName(stand) {
-            const t = TEXT[currentLang];
-            const standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
-            return String(standName || t.default_name).trim() || t.default_name;
-        }
-
-        function passesStandFilters(stand) {
-            if (isDemolished(stand)) return standFilters.demolished;
-            if (hasImage(stand)) return standFilters.withImage;
-            return standFilters.withoutImage;
-        }
-
-        const iconWithImage = L.icon({
-            iconUrl: 'piena-kanna-1.png',
-            iconSize: [24, 24],
-            iconAnchor: [12, 24],
-            popupAnchor: [0, -24],
-            tooltipAnchor: [12, -12]
-        });
-
-        const iconNoImage = L.icon({
-            iconUrl: 'piena-kanna-2.png',
-            iconSize: [24, 24],
-            iconAnchor: [12, 24],
-            popupAnchor: [0, -24],
-            tooltipAnchor: [12, -12]
-        });
-
-        function getDemolishedIconHTML(imgSrc, size, marginLeft = 0) {
-            const safeImgSrc = safeUrl(imgSrc);
-            const safeSize = Number(size) || 20;
-            const safeMarginLeft = Number(marginLeft) || 0;
-
-            return `
-                <div style="position: relative; display: inline-block; width: ${safeSize}px; height: ${safeSize}px; flex-shrink: 0; margin-left: ${safeMarginLeft}px;">
-                    <img src="${escapeHTML(safeImgSrc)}" alt="" style="width: ${safeSize}px; height: ${safeSize}px; display: block;">
-                    <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-                    </svg>
-                </div>
-            `;
-        }
-
-        const TEXT = {
-            en: {
-                title: "Milk Churn Stands in Latvia",
-                tab_info: "Information",
-                tab_gallery: "Gallery",
-                intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap.",
-                intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
-                read_more: "Read more...",
-                read_less: "Show less...",
-                sort_label: "Sort by:",
-                opt_newest: "Newest first",
-                opt_oldest: "Oldest first",
-                no_img: "No Wikimedia Commons image found.",
-                click_img: "Click image to open Wikimedia Commons",
-                picture_date: "Picture date",
-                osm_desc: "OSM Description",
-                default_name: "Milk churn stand",
-                demolished: "Demolished",
-                share: "Share specific milk churn stand",
-                copied: "Link copied to clipboard!",
-                show_map: "Show on map",
-                stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
-                with_image_label: "with photographs",
-                without_image_label: "without photographs",
-                demolished_label: "Demolished",
-                visible_only: "Only in current map view",
-                no_gallery_items: "No milk churn stands match the selected filters.",
-                load_error: "Data could not be loaded. Please try again later."
-            },
-            lv: {
-                title: "Piena galdi Latvijā",
-                tab_info: "Informācija",
-                tab_gallery: "Galerija",
-                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elements iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
-                read_more: "Lasīt vairāk...",
-                read_less: "Rādīt mazāk...",
-                sort_label: "Kārtot pēc:",
-                opt_newest: "Jaunākie sākumā",
-                opt_oldest: "Vecākie sākumā",
-                no_img: "Wikimedia attēls nav pieejams.",
-                click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
-                picture_date: "Attēla datums",
-                osm_desc: "OSM apraksts",
-                default_name: "Piena galds",
-                demolished: "Nojaukts",
-                share: "Dalīties ar šo piena galdu",
-                copied: "Saite nokopēta!",
-                show_map: "Parādīt kartē",
-                stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
-                with_image_label: "ar fotogrāfijām",
-                without_image_label: "bez fotogrāfijām",
-                demolished_label: "Nojaukts",
-                visible_only: "Tikai pašreizējā kartes skatā",
-                no_gallery_items: "Neviens piena galds neatbilst izvēlētajiem filtriem.",
-                load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk."
-            }
-        };
-
-        const resizer = document.getElementById('resizer');
-        const mapEl = document.getElementById('map');
-
-        resizer.addEventListener('touchstart', initResize);
-        resizer.addEventListener('mousedown', initResize);
-
-        function initResize(e) {
-            window.addEventListener('mousemove', resizeMapPanel);
-            window.addEventListener('mouseup', stopResize);
-            window.addEventListener('touchmove', resizeMapPanel);
-            window.addEventListener('touchend', stopResize);
-        }
-
-        function resizeMapPanel(e) {
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const height = (clientY / window.innerHeight) * 100;
-            if (height > 10 && height < 85) {
-                mapEl.style.height = height + 'vh';
-            }
-        }
-
-        function stopResize() {
-            window.removeEventListener('mousemove', resizeMapPanel);
-            window.removeEventListener('mouseup', stopResize);
-            window.removeEventListener('touchmove', resizeMapPanel);
-            window.removeEventListener('touchend', stopResize);
-            map.invalidateSize();
-        }
-
-        function switchTab(tab) {
-            activeTab = tab;
-
-            if (tab === 'info') {
-                document.getElementById('tab-info').style.display = 'block';
-                document.getElementById('tab-gallery').style.display = 'none';
-                document.getElementById('btn-tab-info').classList.add('active');
-                document.getElementById('btn-tab-gallery').classList.remove('active');
-            } else if (tab === 'gallery') {
-                document.getElementById('tab-info').style.display = 'none';
-                document.getElementById('tab-gallery').style.display = 'block';
-                document.getElementById('btn-tab-info').classList.remove('active');
-                document.getElementById('btn-tab-gallery').classList.add('active');
-                renderGallery();
-            }
-        }
-
-        function renderGallery() {
-            const container = document.getElementById('gallery-container');
-            const sortVal = document.getElementById('sort-select').value;
-            const t = TEXT[currentLang];
-            let html = '';
-
-            let standsWithImages = mapData
-                .filter(hasImage)
-                .filter(passesStandFilters);
-
-            if (galleryOnlyCurrentView) {
-                const bounds = map.getBounds();
-                standsWithImages = standsWithImages.filter(stand => bounds.contains([stand.lat, stand.lon]));
-            }
-
-            standsWithImages.sort((a, b) => {
-                const dateA = a.image_date ? new Date(a.image_date).getTime() : 0;
-                const dateB = b.image_date ? new Date(b.image_date).getTime() : 0;
-                const osmIdA = Number(a.osm_id) || 0;
-                const osmIdB = Number(b.osm_id) || 0;
-
-                if (sortVal === 'newest') {
-                    return dateB - dateA || osmIdB - osmIdA;
-                }
-
-                return dateA - dateB || osmIdA - osmIdB;
-            });
-
-            standsWithImages.forEach(stand => {
-                const standName = getStandName(stand);
-                const safeStandName = escapeHTML(standName);
-                const safeOsmId = escapeHTML(stand.osm_id);
-                const imageUrl = safeUrl(stand.image);
-
-                if (!imageUrl) return;
-
-                let demolishedHtml = '';
-                if (isDemolished(stand)) {
-                    demolishedHtml = `<div style="color: #dc3545; font-weight: bold; margin-bottom: 5px; font-size: 13px;">${escapeHTML(t.demolished)}</div>`;
-                }
-
-                let dateHtml = '';
-                if (stand.image_date) {
-                    dateHtml = `<div style="color: #555; margin-bottom: 5px;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</div>`;
-                }
-
-                html += `
-                    <div class="gallery-item">
-                        <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" onclick="zoomToStand('${safeOsmId}')">
-                        <div class="gallery-item-info">
-                            <h4>${safeStandName}</h4>
-                            ${demolishedHtml}
-                            ${dateHtml}
-                            <button onclick="zoomToStand('${safeOsmId}')" style="margin-top: 5px; padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                ${escapeHTML(t.show_map)}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            if (!html) {
-                html = `<p style="color:#666; font-size: 13px;">${escapeHTML(t.no_gallery_items)}</p>`;
-            }
-
-            container.innerHTML = html;
-        }
-
-        function zoomToStand(osmId) {
-            switchTab('info');
-
-            const stand = mapData.find(s => String(s.osm_id) === String(osmId));
-            const marker = markersById[osmId];
-
-            if (stand && marker) {
-                map.setView([stand.lat, stand.lon], 16);
-                marker.openPopup();
-                showDetails(stand);
-
-                if (window.innerWidth <= 768) {
-                    document.getElementById('sidebar').scrollTop = 0;
-                }
-            }
-        }
-
-        function toggleIntro(event) {
-            if (event) event.preventDefault();
-            isIntroExpanded = !isIntroExpanded;
-            updateIntroUI();
-        }
-
-        function updateIntroUI() {
-            const moreText = document.getElementById('ui-intro-more');
-            const btn = document.getElementById('ui-read-more');
-
-            if (isIntroExpanded) {
-                moreText.style.display = 'inline';
-                btn.innerText = TEXT[currentLang].read_less;
-            } else {
-                moreText.style.display = 'none';
-                btn.innerText = TEXT[currentLang].read_more;
-            }
-        }
-
-        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-        });
-
-        const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        });
-
-        const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
-            layers: 'public:Orto_LKS',
-            format: 'image/jpeg',
-            transparent: false,
-            attribution: "&copy; LVM GEO / LĢIA"
-        });
-
-        const map = L.map('map', {
-            center: [56.8796, 24.6032],
-            zoom: 7,
-            layers: [osmStandard],
-            zoomControl: false
-        });
-
-        function updateLayerControl(lang) {
-            if (layerControl) {
-                map.removeControl(layerControl);
-            }
-
-            const baseMaps = lang === 'en'
-                ? {
-                    "Light map (OSM)": cartoLight,
-                    "Standard OSM (colored)": osmStandard,
-                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
-                }
-                : {
-                    "Gaišā karte (OSM)": cartoLight,
-                    "Standarta OSM": osmStandard,
-                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
-                };
-
-            layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
-        }
-
-        const geocoder = L.Control.geocoder({
-            defaultMarkGeocode: false,
-            position: 'topleft',
-            placeholder: 'Meklēt...',
-            collapsed: false
-        }).on('markgeocode', function(e) {
-            map.fitBounds(e.geocode.bbox);
-        }).addTo(map);
-
-        L.control.zoom({ position: 'topleft' }).addTo(map);
-
-        const actionControl = L.control({ position: 'bottomleft' });
-        actionControl.onAdd = function () {
-            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-            div.style.display = 'flex';
-            div.style.backgroundColor = '#fff';
-            div.innerHTML = `
-                <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
-                <a href="https://www.instagram.com/pina_golds/" target="_blank" rel="noopener noreferrer" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
-                    <img src="Instagram_icon.png" alt="Instagram" style="width: 20px; height: 20px;">
-                </a>
-            `;
-            return div;
-        };
-        actionControl.addTo(map);
-
-        const markerLayer = L.layerGroup().addTo(map);
-
-        map.on('moveend', () => {
-            if (galleryOnlyCurrentView && activeTab === 'gallery') {
-                renderGallery();
-            }
-        });
-
-        function toggleLanguage() {
-            if (currentLang === 'lv') {
-                changeLanguage('en');
-                document.getElementById('langBtn').innerText = 'EN';
-            } else {
-                changeLanguage('lv');
-                document.getElementById('langBtn').innerText = 'LV';
-            }
-        }
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-
-            const t = TEXT[lang];
-
-            document.title = t.title;
-            document.getElementById('ui-title').innerText = t.title;
-            document.getElementById('btn-tab-info').innerText = t.tab_info;
-            document.getElementById('btn-tab-gallery').innerText = t.tab_gallery;
-            document.getElementById('ui-intro-short').innerHTML = t.intro_short;
-            document.getElementById('ui-intro-more').innerHTML = t.intro_more;
-            document.getElementById('ui-sort-label').innerText = t.sort_label;
-            document.getElementById('ui-opt-newest').innerText = t.opt_newest;
-            document.getElementById('ui-opt-oldest').innerText = t.opt_oldest;
-            document.getElementById('ui-visible-only').innerText = t.visible_only;
-            document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
-
-            updateIntroUI();
-            renderStatsAndFilters();
-            updateLayerControl(lang);
-
-            drawMarkers();
-            if (lastClickedStand && passesStandFilters(lastClickedStand)) {
-                showDetails(lastClickedStand);
-            }
-            renderGallery();
-        }
-
-        function renderStatsAndFilters() {
-            const t = TEXT[currentLang];
-
-            document.getElementById('ui-stats-title').innerText = t.stats_title();
-
-            document.getElementById('ui-green').innerHTML = `
-                <label class="filter-row">
-                    <input type="checkbox" ${standFilters.withImage ? 'checked' : ''} onchange="setStandFilter('withImage', this.checked)">
-                    <span class="filter-icon-slot"><img src="piena-kanna-1.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span>
-                    <span class="filter-label"><span class="filter-count">${escapeHTML(greenCount)}</span> ${escapeHTML(t.with_image_label)}</span>
-                </label>
-            `;
-
-            document.getElementById('ui-blue').innerHTML = `
-                <label class="filter-row">
-                    <input type="checkbox" ${standFilters.withoutImage ? 'checked' : ''} onchange="setStandFilter('withoutImage', this.checked)">
-                    <span class="filter-icon-slot"><img src="piena-kanna-2.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span>
-                    <span class="filter-label"><span class="filter-count">${escapeHTML(blueCount)}</span> ${escapeHTML(t.without_image_label)}</span>
-                </label>
-            `;
-
-            document.getElementById('ui-demolished').innerHTML = `
-                <label class="filter-row">
-                    <input type="checkbox" ${standFilters.demolished ? 'checked' : ''} onchange="setStandFilter('demolished', this.checked)">
-                    <span class="filter-icon-slot">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span>
-                    <span class="filter-label">${escapeHTML(t.demolished_label)}</span>
-                </label>
-            `;
-        }
-
-        function setStandFilter(filterName, checked) {
-            standFilters[filterName] = checked;
-
-            drawMarkers();
-            renderGallery();
-            renderStatsAndFilters();
-
-            if (lastClickedStand && !passesStandFilters(lastClickedStand)) {
-                lastClickedStand = null;
-                document.getElementById('details').innerHTML = '';
-            }
-        }
-
-        function setGalleryVisibleOnly(checked) {
-            galleryOnlyCurrentView = checked;
-            renderGallery();
-        }
-
-        function drawMarkers() {
-            markerLayer.clearLayers();
-            markersById = {};
-
-            mapData.filter(passesStandFilters).forEach(stand => {
-                const imageExists = hasImage(stand);
-                const demolished = isDemolished(stand);
-                const baseImgUrl = imageExists ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
-
-                let markerIcon;
-                if (demolished) {
-                    markerIcon = L.divIcon({
-                        className: 'custom-demolished-icon',
-                        html: getDemolishedIconHTML(baseImgUrl, 24),
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 24],
-                        popupAnchor: [0, -24]
-                    });
-                } else {
-                    markerIcon = imageExists ? iconWithImage : iconNoImage;
-                }
-
-                const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
-                const standName = getStandName(stand);
-                const safeStandName = escapeHTML(standName);
-
-                marker.bindTooltip(safeStandName);
-
-                let popupHtml = `<div style="text-align:center;"><b>${safeStandName}</b><br>`;
-
-                if (demolished) {
-                    popupHtml += `<span style="color: #888; font-size: 12px;">${escapeHTML(TEXT[currentLang].demolished)}</span><br>`;
-                }
-
-                if (imageExists) {
-                    const imageUrl = safeUrl(stand.image);
-                    if (imageUrl) {
-                        popupHtml += `<img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
-                    }
-
-                    if (stand.image_date) {
-                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${escapeHTML(TEXT[currentLang].picture_date)}:</strong> ${escapeHTML(stand.image_date)}</span>`;
-                    }
-                }
-
-                popupHtml += `</div>`;
-                marker.bindPopup(popupHtml);
-
-                marker.on('click', () => {
-                    showDetails(stand);
-                    if (window.innerWidth <= 768) {
-                        document.getElementById('sidebar').scrollTop = 0;
-                    }
-                });
-
-                markerLayer.addLayer(marker);
-                markersById[stand.osm_id] = marker;
-            });
-        }
-
-        function showDetails(stand) {
-            lastClickedStand = stand;
-
-            const t = TEXT[currentLang];
-            const detailsDiv = document.getElementById('details');
-            const standName = getStandName(stand);
-            const safeStandName = escapeHTML(standName);
-
-            let html = `<h3 style="margin-bottom: 2px;">${safeStandName}</h3>`;
-
-            if (isDemolished(stand)) {
-                html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${escapeHTML(t.demolished)}</div>`;
-            } else {
-                html += `<div style="margin-bottom: 15px;"></div>`;
-            }
-
-            if (hasImage(stand)) {
-                const imageUrl = safeUrl(stand.image);
-                const linkUrl = safeUrl(stand.commons_page || stand.image);
-
-                if (imageUrl) {
-                    html += `
-                        <div class="image-container">
-                            ${linkUrl ? `<a href="${escapeHTML(linkUrl)}" target="_blank" rel="noopener noreferrer">` : ''}
-                                <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}">
-                            ${linkUrl ? `</a>` : ''}
-                            ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</p>` : ''}
-                            <p style="font-size: 11px; text-align: center; color: #666;">${escapeHTML(t.click_img)}</p>
-                        </div>
-                    `;
-                } else {
-                    html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
-                }
-            } else {
-                html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
-            }
-
-            const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
-            if (osmDesc && osmDesc !== standName) {
-                html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
-            }
-
-            html += `
-                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
-                    ${escapeHTML(t.share)}
-                </button>
-            `;
-
-            detailsDiv.innerHTML = html;
-        }
-
-        function shareStand(osmId) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('id', osmId);
-            const shareUrl = url.toString();
-
-            if (navigator.share) {
-                navigator.share({ title: document.title, url: shareUrl }).catch(err => console.log(err));
-            } else if (navigator.clipboard) {
-                navigator.clipboard.writeText(shareUrl).then(() => alert(TEXT[currentLang].copied));
-            } else {
-                window.prompt(TEXT[currentLang].copied, shareUrl);
-            }
-        }
-
-        fetch('data.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error('data.json must contain an array.');
-                }
-
-                mapData = data;
-
-                greenCount = mapData.filter(hasImage).length;
-                blueCount = mapData.filter(stand => !hasImage(stand)).length;
-                demolishedCount = mapData.filter(isDemolished).length;
-
-                changeLanguage(currentLang);
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const sharedId = urlParams.get('id');
-
-                if (sharedId) {
-                    const sharedStand = mapData.find(s => String(s.osm_id) === String(sharedId));
-                    if (sharedStand && !passesStandFilters(sharedStand)) {
-                        if (isDemolished(sharedStand)) standFilters.demolished = true;
-                        else if (hasImage(sharedStand)) standFilters.withImage = true;
-                        else standFilters.withoutImage = true;
-
-                        renderStatsAndFilters();
-                        drawMarkers();
-                    }
-
-                    if (markersById[sharedId]) {
-                        zoomToStand(sharedId);
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error loading data:', error);
-
-                const t = TEXT[currentLang];
-                const detailsDiv = document.getElementById('details');
-                const galleryContainer = document.getElementById('gallery-container');
-
-                detailsDiv.innerHTML = `<p style="color:#dc3545;"><strong>${escapeHTML(t.load_error)}</strong></p>`;
-                galleryContainer.innerHTML = `<p style="color:#dc3545;">${escapeHTML(t.load_error)}</p>`;
-            });
-    </script>
+    <div id="map"></div>
+    <div id="resizer"></div>
+
+    <div id="sidebar">
+        <h2 style="display: flex; align-items: center; margin-top: 0; flex-shrink: 0;">
+            <img src="Milk_churn_stand_icon.png" alt="Piena galda ikona" style="height: 35px; margin-right: 10px;">
+            <span id="ui-title">Piena galdi Latvijā</span>
+        </h2>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
+            <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Galerija</button>
+        </div>
+
+        <div id="tab-info" style="display: block;">
+            <div class="intro-text">
+                <div id="intro-container">
+                    <span id="ui-intro-short"></span><span id="ui-intro-more" style="display: none;"></span>
+                    <a href="#" id="ui-read-more" onclick="toggleIntro(event)" style="color: #007bff; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px;">Lasīt vairāk...</a>
+                </div>
+
+                <div class="stats-filter-card">
+                    <div id="ui-stats-title" class="stats-title"></div>
+                    <div id="ui-green"></div>
+                    <div id="ui-blue"></div>
+                    <div id="ui-demolished"></div>
+                </div>
+            </div>
+
+            <div id="details"></div>
+        </div>
+
+        <div id="tab-gallery" style="display: none;">
+            <div class="gallery-controls">
+                <label class="visible-only-label">
+                    <input type="checkbox" id="gallery-visible-only" onchange="setGalleryVisibleOnly(this.checked)">
+                    <span id="ui-visible-only">Tikai pašreizējā kartes skatā</span>
+                </label>
+
+                <label for="sort-select" id="ui-sort-label">Kārtot pēc:</label>
+                <select id="sort-select" onchange="renderGallery()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="newest" selected id="ui-opt-newest">Jaunākie sākumā</option>
+                    <option value="oldest" id="ui-opt-oldest">Vecākie sākumā</option>
+                </select>
+            </div>
+            <div id="gallery-container" class="gallery-grid"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <script>
+        let currentLang = 'lv';
+        let mapData = [];
+        let lastClickedStand = null;
+        let greenCount = 0;
+        let blueCount = 0;
+        let demolishedCount = 0;
+        let layerControl = null;
+        let markersById = {};
+        let isIntroExpanded = false;
+        let activeTab = 'info';
+        let galleryOnlyCurrentView = false;
+
+        let standFilters = {
+            withImage: true,
+            withoutImage: true,
+            demolished: true
+        };
+
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function safeUrl(value) {
+            const url = String(value ?? "").trim();
+            if (!url) return "";
+
+            if (url.startsWith("https://")) return url;
+            if (url.startsWith("//")) return `https:${url}`;
+
+            if (/^[a-zA-Z0-9_./\-()%]+$/.test(url) && !url.includes("..")) return url;
+
+            return "";
+        }
+
+        function hasImage(stand) {
+            return Boolean(stand.image && stand.image.trim() !== "");
+        }
+
+        function isDemolished(stand) {
+            return Boolean(stand.demolished && stand.demolished.toString().toLowerCase().trim() === "yes");
+        }
+
+        function getStandName(stand) {
+            const t = TEXT[currentLang];
+            const standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
+            return String(standName || t.default_name).trim() || t.default_name;
+        }
+
+        function passesStandFilters(stand) {
+            if (isDemolished(stand)) return standFilters.demolished;
+            if (hasImage(stand)) return standFilters.withImage;
+            return standFilters.withoutImage;
+        }
+
+        const iconWithImage = L.icon({
+            iconUrl: 'piena-kanna-1.png',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -24],
+            tooltipAnchor: [12, -12]
+        });
+
+        const iconNoImage = L.icon({
+            iconUrl: 'piena-kanna-2.png',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -24],
+            tooltipAnchor: [12, -12]
+        });
+
+        function getDemolishedIconHTML(imgSrc, size, marginLeft = 0) {
+            const safeImgSrc = safeUrl(imgSrc);
+            const safeSize = Number(size) || 20;
+            const safeMarginLeft = Number(marginLeft) || 0;
+
+            return `
+                <div style="position: relative; display: inline-block; width: ${safeSize}px; height: ${safeSize}px; flex-shrink: 0; margin-left: ${safeMarginLeft}px;">
+                    <img src="${escapeHTML(safeImgSrc)}" alt="" style="width: ${safeSize}px; height: ${safeSize}px; display: block;">
+                    <svg viewBox="0 0 24 24" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="6.7" y1="6.7" x2="17.3" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="17.3" y1="6.7" x2="6.7" y2="17.3" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            `;
+        }
+
+        const TEXT = {
+            en: {
+                title: "Milk Churn Stands in Latvia",
+                tab_info: "Information",
+                tab_gallery: "Gallery",
+                intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap.",
+                intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.<br><br><div style='text-align: right;'>Vizma, Amanda and Artūrs</div>",
+                read_more: "Read more...",
+                read_less: "Show less...",
+                sort_label: "Sort by:",
+                opt_newest: "Newest first",
+                opt_oldest: "Oldest first",
+                no_img: "No Wikimedia Commons image found.",
+                click_img: "Click image to open Wikimedia Commons",
+                picture_date: "Picture date",
+                osm_desc: "OSM Description",
+                default_name: "Milk churn stand",
+                demolished: "Demolished",
+                share: "Share specific milk churn stand",
+                copied: "Link copied to clipboard!",
+                show_map: "Show on map",
+                stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
+                with_image_label: "with photographs",
+                without_image_label: "without photographs",
+                demolished_label: "Demolished",
+                visible_only: "Only in current map view",
+                no_gallery_items: "No milk churn stands match the selected filters.",
+                load_error: "Data could not be loaded. Please try again later."
+            },
+            lv: {
+                title: "Piena galdi Latvijā",
+                tab_info: "Informācija",
+                tab_gallery: "Galerija",
+                intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
+                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elements iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.<br><br><div style='text-align: right;'>Vizma, Amanda un Artūrs</div>",
+                read_more: "Lasīt vairāk...",
+                read_less: "Rādīt mazāk...",
+                sort_label: "Kārtot pēc:",
+                opt_newest: "Jaunākie sākumā",
+                opt_oldest: "Vecākie sākumā",
+                no_img: "Wikimedia attēls nav pieejams.",
+                click_img: "Noklikšķini uz attēla, lai atvērtu Wikimedia Commons",
+                picture_date: "Attēla datums",
+                osm_desc: "OSM apraksts",
+                default_name: "Piena galds",
+                demolished: "Nojaukts",
+                share: "Dalīties ar šo piena galdu",
+                copied: "Saite nokopēta!",
+                show_map: "Parādīt kartē",
+                stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
+                with_image_label: "ar fotogrāfijām",
+                without_image_label: "bez fotogrāfijām",
+                demolished_label: "Nojaukts",
+                visible_only: "Tikai pašreizējā kartes skatā",
+                no_gallery_items: "Neviens piena galds neatbilst izvēlētajiem filtriem.",
+                load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk."
+            }
+        };
+
+        const resizer = document.getElementById('resizer');
+        const mapEl = document.getElementById('map');
+
+        resizer.addEventListener('touchstart', initResize);
+        resizer.addEventListener('mousedown', initResize);
+
+        function initResize(e) {
+            window.addEventListener('mousemove', resizeMapPanel);
+            window.addEventListener('mouseup', stopResize);
+            window.addEventListener('touchmove', resizeMapPanel);
+            window.addEventListener('touchend', stopResize);
+        }
+
+        function resizeMapPanel(e) {
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const height = (clientY / window.innerHeight) * 100;
+            if (height > 10 && height < 85) {
+                mapEl.style.height = height + 'vh';
+            }
+        }
+
+        function stopResize() {
+            window.removeEventListener('mousemove', resizeMapPanel);
+            window.removeEventListener('mouseup', stopResize);
+            window.removeEventListener('touchmove', resizeMapPanel);
+            window.removeEventListener('touchend', stopResize);
+            map.invalidateSize();
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+
+            if (tab === 'info') {
+                document.getElementById('tab-info').style.display = 'block';
+                document.getElementById('tab-gallery').style.display = 'none';
+                document.getElementById('btn-tab-info').classList.add('active');
+                document.getElementById('btn-tab-gallery').classList.remove('active');
+            } else if (tab === 'gallery') {
+                document.getElementById('tab-info').style.display = 'none';
+                document.getElementById('tab-gallery').style.display = 'block';
+                document.getElementById('btn-tab-info').classList.remove('active');
+                document.getElementById('btn-tab-gallery').classList.add('active');
+                renderGallery();
+            }
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            const sortVal = document.getElementById('sort-select').value;
+            const t = TEXT[currentLang];
+            let html = '';
+
+            let standsWithImages = mapData
+                .filter(hasImage)
+                .filter(passesStandFilters);
+
+            if (galleryOnlyCurrentView) {
+                const bounds = map.getBounds();
+                standsWithImages = standsWithImages.filter(stand => bounds.contains([stand.lat, stand.lon]));
+            }
+
+            standsWithImages.sort((a, b) => {
+                const dateA = a.image_date ? new Date(a.image_date).getTime() : 0;
+                const dateB = b.image_date ? new Date(b.image_date).getTime() : 0;
+                const osmIdA = Number(a.osm_id) || 0;
+                const osmIdB = Number(b.osm_id) || 0;
+
+                if (sortVal === 'newest') {
+                    return dateB - dateA || osmIdB - osmIdA;
+                }
+
+                return dateA - dateB || osmIdA - osmIdB;
+            });
+
+            standsWithImages.forEach(stand => {
+                const standName = getStandName(stand);
+                const safeStandName = escapeHTML(standName);
+                const safeOsmId = escapeHTML(stand.osm_id);
+                const imageUrl = safeUrl(stand.image);
+
+                if (!imageUrl) return;
+
+                let demolishedHtml = '';
+                if (isDemolished(stand)) {
+                    demolishedHtml = `<div style="color: #dc3545; font-weight: bold; margin-bottom: 5px; font-size: 13px;">${escapeHTML(t.demolished)}</div>`;
+                }
+
+                let dateHtml = '';
+                if (stand.image_date) {
+                    dateHtml = `<div style="color: #555; margin-bottom: 5px;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</div>`;
+                }
+
+                html += `
+                    <div class="gallery-item">
+                        <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" onclick="zoomToStand('${safeOsmId}')">
+                        <div class="gallery-item-info">
+                            <h4>${safeStandName}</h4>
+                            ${demolishedHtml}
+                            ${dateHtml}
+                            <button onclick="zoomToStand('${safeOsmId}')" style="margin-top: 5px; padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                ${escapeHTML(t.show_map)}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (!html) {
+                html = `<p style="color:#666; font-size: 13px;">${escapeHTML(t.no_gallery_items)}</p>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function zoomToStand(osmId) {
+            switchTab('info');
+
+            const stand = mapData.find(s => String(s.osm_id) === String(osmId));
+            const marker = markersById[osmId];
+
+            if (stand && marker) {
+                map.setView([stand.lat, stand.lon], 16);
+                marker.openPopup();
+                showDetails(stand);
+
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').scrollTop = 0;
+                }
+            }
+        }
+
+        function toggleIntro(event) {
+            if (event) event.preventDefault();
+            isIntroExpanded = !isIntroExpanded;
+            updateIntroUI();
+        }
+
+        function updateIntroUI() {
+            const moreText = document.getElementById('ui-intro-more');
+            const btn = document.getElementById('ui-read-more');
+
+            if (isIntroExpanded) {
+                moreText.style.display = 'inline';
+                btn.innerText = TEXT[currentLang].read_less;
+            } else {
+                moreText.style.display = 'none';
+                btn.innerText = TEXT[currentLang].read_more;
+            }
+        }
+
+        const cartoLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        });
+
+        const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        });
+
+        const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
+            layers: 'public:Orto_LKS',
+            format: 'image/jpeg',
+            transparent: false,
+            attribution: "&copy; LVM GEO / LĢIA"
+        });
+
+        const map = L.map('map', {
+            center: [56.8796, 24.6032],
+            zoom: 7,
+            layers: [osmStandard],
+            zoomControl: false
+        });
+
+        function updateLayerControl(lang) {
+            if (layerControl) {
+                map.removeControl(layerControl);
+            }
+
+            const baseMaps = lang === 'en'
+                ? {
+                    "Light map (OSM)": cartoLight,
+                    "Standard OSM (colored)": osmStandard,
+                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
+                }
+                : {
+                    "Gaišā karte (OSM)": cartoLight,
+                    "Standarta OSM": osmStandard,
+                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
+                };
+
+            layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        }
+
+        const geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false,
+            position: 'topleft',
+            placeholder: 'Meklēt...',
+            collapsed: false
+        }).on('markgeocode', function(e) {
+            map.fitBounds(e.geocode.bbox);
+        }).addTo(map);
+
+        L.control.zoom({ position: 'topleft' }).addTo(map);
+
+        const actionControl = L.control({ position: 'bottomleft' });
+        actionControl.onAdd = function () {
+            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            div.style.display = 'flex';
+            div.style.backgroundColor = '#fff';
+            div.innerHTML = `
+                <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">LV</a>
+                <a href="https://www.instagram.com/pina_golds/" target="_blank" rel="noopener noreferrer" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
+                    <img src="Instagram_icon.png" alt="Instagram" style="width: 20px; height: 20px;">
+                </a>
+            `;
+            return div;
+        };
+        actionControl.addTo(map);
+
+        const markerLayer = L.layerGroup().addTo(map);
+
+        map.on('moveend', () => {
+            if (galleryOnlyCurrentView && activeTab === 'gallery') {
+                renderGallery();
+            }
+        });
+
+        function toggleLanguage() {
+            if (currentLang === 'lv') {
+                changeLanguage('en');
+                document.getElementById('langBtn').innerText = 'EN';
+            } else {
+                changeLanguage('lv');
+                document.getElementById('langBtn').innerText = 'LV';
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+
+            const t = TEXT[lang];
+
+            document.title = t.title;
+            document.getElementById('ui-title').innerText = t.title;
+            document.getElementById('btn-tab-info').innerText = t.tab_info;
+            document.getElementById('btn-tab-gallery').innerText = t.tab_gallery;
+            document.getElementById('ui-intro-short').innerHTML = t.intro_short;
+            document.getElementById('ui-intro-more').innerHTML = t.intro_more;
+            document.getElementById('ui-sort-label').innerText = t.sort_label;
+            document.getElementById('ui-opt-newest').innerText = t.opt_newest;
+            document.getElementById('ui-opt-oldest').innerText = t.opt_oldest;
+            document.getElementById('ui-visible-only').innerText = t.visible_only;
+            document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
+
+            updateIntroUI();
+            renderStatsAndFilters();
+            updateLayerControl(lang);
+
+            drawMarkers();
+            if (lastClickedStand && passesStandFilters(lastClickedStand)) {
+                showDetails(lastClickedStand);
+            }
+            renderGallery();
+        }
+
+        function renderStatsAndFilters() {
+            const t = TEXT[currentLang];
+
+            document.getElementById('ui-stats-title').innerText = t.stats_title();
+
+            document.getElementById('ui-green').innerHTML = `
+                <label class="filter-row">
+                    <input type="checkbox" ${standFilters.withImage ? 'checked' : ''} onchange="setStandFilter('withImage', this.checked)">
+                    <span class="filter-icon-slot"><img src="piena-kanna-1.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span>
+                    <span class="filter-label"><span class="filter-count">${escapeHTML(greenCount)}</span> ${escapeHTML(t.with_image_label)}</span>
+                </label>
+            `;
+
+            document.getElementById('ui-blue').innerHTML = `
+                <label class="filter-row">
+                    <input type="checkbox" ${standFilters.withoutImage ? 'checked' : ''} onchange="setStandFilter('withoutImage', this.checked)">
+                    <span class="filter-icon-slot"><img src="piena-kanna-2.png" alt="" style="height: 20px; width: 20px; flex-shrink: 0;"></span>
+                    <span class="filter-label"><span class="filter-count">${escapeHTML(blueCount)}</span> ${escapeHTML(t.without_image_label)}</span>
+                </label>
+            `;
+
+            document.getElementById('ui-demolished').innerHTML = `
+                <label class="filter-row">
+                    <input type="checkbox" ${standFilters.demolished ? 'checked' : ''} onchange="setStandFilter('demolished', this.checked)">
+                    <span class="filter-icon-slot">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span>
+                    <span class="filter-label">${escapeHTML(t.demolished_label)}</span>
+                </label>
+            `;
+        }
+
+        function setStandFilter(filterName, checked) {
+            standFilters[filterName] = checked;
+
+            drawMarkers();
+            renderGallery();
+            renderStatsAndFilters();
+
+            if (lastClickedStand && !passesStandFilters(lastClickedStand)) {
+                lastClickedStand = null;
+                document.getElementById('details').innerHTML = '';
+            }
+        }
+
+        function setGalleryVisibleOnly(checked) {
+            galleryOnlyCurrentView = checked;
+            renderGallery();
+        }
+
+        function drawMarkers() {
+            markerLayer.clearLayers();
+            markersById = {};
+
+            mapData.filter(passesStandFilters).forEach(stand => {
+                const imageExists = hasImage(stand);
+                const demolished = isDemolished(stand);
+                const baseImgUrl = imageExists ? 'piena-kanna-1.png' : 'piena-kanna-2.png';
+
+                let markerIcon;
+                if (demolished) {
+                    markerIcon = L.divIcon({
+                        className: 'custom-demolished-icon',
+                        html: getDemolishedIconHTML(baseImgUrl, 24),
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 24],
+                        popupAnchor: [0, -24]
+                    });
+                } else {
+                    markerIcon = imageExists ? iconWithImage : iconNoImage;
+                }
+
+                const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
+                const standName = getStandName(stand);
+                const safeStandName = escapeHTML(standName);
+
+                marker.bindTooltip(safeStandName);
+
+                let popupHtml = `<div style="text-align:center;"><b>${safeStandName}</b><br>`;
+
+                if (demolished) {
+                    popupHtml += `<span style="color: #888; font-size: 12px;">${escapeHTML(TEXT[currentLang].demolished)}</span><br>`;
+                }
+
+                if (imageExists) {
+                    const imageUrl = safeUrl(stand.image);
+                    if (imageUrl) {
+                        popupHtml += `<img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                    }
+
+                    if (stand.image_date) {
+                        popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${escapeHTML(TEXT[currentLang].picture_date)}:</strong> ${escapeHTML(stand.image_date)}</span>`;
+                    }
+                }
+
+                popupHtml += `</div>`;
+                marker.bindPopup(popupHtml);
+
+                marker.on('click', () => {
+                    showDetails(stand);
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').scrollTop = 0;
+                    }
+                });
+
+                markerLayer.addLayer(marker);
+                markersById[stand.osm_id] = marker;
+            });
+        }
+
+        function showDetails(stand) {
+            lastClickedStand = stand;
+
+            const t = TEXT[currentLang];
+            const detailsDiv = document.getElementById('details');
+            const standName = getStandName(stand);
+            const safeStandName = escapeHTML(standName);
+
+            let html = `<h3 style="margin-bottom: 2px;">${safeStandName}</h3>`;
+
+            if (isDemolished(stand)) {
+                html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${escapeHTML(t.demolished)}</div>`;
+            } else {
+                html += `<div style="margin-bottom: 15px;"></div>`;
+            }
+
+            if (hasImage(stand)) {
+                const imageUrl = safeUrl(stand.image);
+                const linkUrl = safeUrl(stand.commons_page || stand.image);
+
+                if (imageUrl) {
+                    html += `
+                        <div class="image-container">
+                            ${linkUrl ? `<a href="${escapeHTML(linkUrl)}" target="_blank" rel="noopener noreferrer">` : ''}
+                                <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}">
+                            ${linkUrl ? `</a>` : ''}
+                            ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</p>` : ''}
+                            <p style="font-size: 11px; text-align: center; color: #666;">${escapeHTML(t.click_img)}</p>
+                        </div>
+                    `;
+                } else {
+                    html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
+                }
+            } else {
+                html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
+            }
+
+            const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
+            if (osmDesc && osmDesc !== standName) {
+                html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
+            }
+
+            html += `
+                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
+                    ${escapeHTML(t.share)}
+                </button>
+            `;
+
+            detailsDiv.innerHTML = html;
+        }
+
+        function shareStand(osmId) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('id', osmId);
+            const shareUrl = url.toString();
+
+            if (navigator.share) {
+                navigator.share({ title: document.title, url: shareUrl }).catch(err => console.log(err));
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareUrl).then(() => alert(TEXT[currentLang].copied));
+            } else {
+                window.prompt(TEXT[currentLang].copied, shareUrl);
+            }
+        }
+
+        fetch('data.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!Array.isArray(data)) {
+                    throw new Error('data.json must contain an array.');
+                }
+
+                mapData = data;
+
+                greenCount = mapData.filter(hasImage).length;
+                blueCount = mapData.filter(stand => !hasImage(stand)).length;
+                demolishedCount = mapData.filter(isDemolished).length;
+
+                changeLanguage(currentLang);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedId = urlParams.get('id');
+
+                if (sharedId) {
+                    const sharedStand = mapData.find(s => String(s.osm_id) === String(sharedId));
+                    if (sharedStand && !passesStandFilters(sharedStand)) {
+                        if (isDemolished(sharedStand)) standFilters.demolished = true;
+                        else if (hasImage(sharedStand)) standFilters.withImage = true;
+                        else standFilters.withoutImage = true;
+
+                        renderStatsAndFilters();
+                        drawMarkers();
+                    }
+
+                    if (markersById[sharedId]) {
+                        zoomToStand(sharedId);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+
+                const t = TEXT[currentLang];
+                const detailsDiv = document.getElementById('details');
+                const galleryContainer = document.getElementById('gallery-container');
+
+                detailsDiv.innerHTML = `<p style="color:#dc3545;"><strong>${escapeHTML(t.load_error)}</strong></p>`;
+                galleryContainer.innerHTML = `<p style="color:#dc3545;">${escapeHTML(t.load_error)}</p>`;
+            });
+    </script>
 </body>
 </html>
