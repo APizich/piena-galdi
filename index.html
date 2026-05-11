@@ -449,7 +449,7 @@
                 share: "Share specific milk churn stand",
                 copied: "Link copied to clipboard!",
                 show_map: "Show on map",
-                stats_title: () => `There are currently ${greenCount + blueCount} milk churn stands on the map:`,
+                stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
                 with_image_label: "with photographs",
                 without_image_label: "without photographs",
                 demolished_label: "Demolished",
@@ -462,7 +462,7 @@
                 tab_info: "Informācija",
                 tab_gallery: "Galerija",
                 intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
-                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elementi iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
+                intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elements iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
                 read_more: "Lasīt vairāk...",
                 read_less: "Rādīt mazāk...",
                 sort_label: "Kārtot pēc:",
@@ -477,7 +477,7 @@
                 share: "Dalīties ar šo piena galdu",
                 copied: "Saite nokopēta!",
                 show_map: "Parādīt kartē",
-                stats_title: () => `Kartē pašlaik ir ${greenCount + blueCount} piena galdi:`,
+                stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
                 with_image_label: "ar fotogrāfijām",
                 without_image_label: "bez fotogrāfijām",
                 demolished_label: "Nojaukts",
@@ -940,8 +940,8 @@
 
                 mapData = data;
 
-                greenCount = mapData.filter(stand => hasImage(stand) && !isDemolished(stand)).length;
-                blueCount = mapData.filter(stand => !hasImage(stand) && !isDemolished(stand)).length;
+                greenCount = mapData.filter(hasImage).length;
+                blueCount = mapData.filter(stand => !hasImage(stand)).length;
                 demolishedCount = mapData.filter(isDemolished).length;
 
                 changeLanguage(currentLang);
