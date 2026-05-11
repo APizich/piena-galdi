@@ -449,10 +449,10 @@
                 share: "Share specific milk churn stand",
                 copied: "Link copied to clipboard!",
                 show_map: "Show on map",
-                stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
+                stats_title: () => `There are currently ${greenCount + blueCount} milk churn stands on the map:`,
                 with_image_label: "with photographs",
                 without_image_label: "without photographs",
-                demolished_label: "demolished",
+                demolished_label: "Demolished",
                 visible_only: "Only in current map view",
                 no_gallery_items: "No milk churn stands match the selected filters.",
                 load_error: "Data could not be loaded. Please try again later."
@@ -477,10 +477,10 @@
                 share: "Dalīties ar šo piena galdu",
                 copied: "Saite nokopēta!",
                 show_map: "Parādīt kartē",
-                stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
+                stats_title: () => `Kartē pašlaik ir ${greenCount + blueCount} piena galdi:`,
                 with_image_label: "ar fotogrāfijām",
                 without_image_label: "bez fotogrāfijām",
-                demolished_label: "nojaukts",
+                demolished_label: "Nojaukts",
                 visible_only: "Tikai pašreizējā kartes skatā",
                 no_gallery_items: "Neviens piena galds neatbilst izvēlētajiem filtriem.",
                 load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk."
@@ -778,7 +778,7 @@
                 <label class="filter-row">
                     <input type="checkbox" ${standFilters.demolished ? 'checked' : ''} onchange="setStandFilter('demolished', this.checked)">
                     <span class="filter-icon-slot">${getDemolishedIconHTML('piena-kanna-1.png', 20)}${getDemolishedIconHTML('piena-kanna-2.png', 20, -8)}</span>
-                    <span class="filter-label"><span class="filter-count">${escapeHTML(demolishedCount)}</span> ${escapeHTML(t.demolished_label)}</span>
+                    <span class="filter-label">${escapeHTML(t.demolished_label)}</span>
                 </label>
             `;
         }
