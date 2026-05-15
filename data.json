@@ -2297,7 +2297,7 @@
     "commons_page": "",
     "commons_title": "",
     "image_source_tag": "",
-    "raw_image_tag": ""
+    "raw_image_tag": "File:Milk churn stand in Rūbāni, \"Zvaigznīte\".jpg."
   },
   {
     "osm_type": "node",
@@ -2380,16 +2380,16 @@
     "demolished": "",
     "description": "",
     "osm_desc_default": "",
-    "osm_desc_lv": "",
+    "osm_desc_lv": "Piena galds Rūbānos",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": ""
+    "wiki_desc_en": "Milk churn stand in Rūbāni",
+    "wiki_desc_lv": "Milk churn stand in Rūbāni",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/5/59/Milk_churn_stand_in_R%C5%ABb%C4%81ni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "image_date": "2024",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_R%C5%ABb%C4%81ni.jpg",
+    "commons_title": "File:Milk churn stand in Rūbāni.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Rūbāni.jpg"
   },
   {
     "osm_type": "node",
@@ -2426,16 +2426,16 @@
     "demolished": "",
     "description": "",
     "osm_desc_default": "",
-    "osm_desc_lv": "",
+    "osm_desc_lv": "Piena galds Lazdukalna pagasta \"Kalnagalā\"",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": ""
+    "wiki_desc_en": "Milk churn stand in Lazdukalna parish \"Kalnagals\"",
+    "wiki_desc_lv": "Milk churn stand in Lazdukalna parish \"Kalnagals\"",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Milk_churn_stand_in_Lazdukalna_parish_%22Kalnagals%22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "image_date": "2024",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Lazdukalna_parish_%22Kalnagals%22.jpg",
+    "commons_title": "File:Milk churn stand in Lazdukalna parish \"Kalnagals\".jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk churn stand in Lazdukalna parish \"Kalnagals\".jpg"
   },
   {
     "osm_type": "node",
