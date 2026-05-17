@@ -254,6 +254,14 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* Ensure locate button perfectly matches layers button */
+        .leaflet-bar a#locate-btn {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+        }
+
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -306,10 +314,24 @@
                 margin: 10px !important;
             }
 
-            /* Make scale bar smaller on mobile phones */
+            /* Make scale bar significantly smaller on mobile phones */
             .leaflet-control-scale {
-                transform: scale(0.8);
+                transform: scale(0.55) !important;
                 transform-origin: bottom left;
+                margin-bottom: 5px !important;
+            }
+
+            /* Make map control buttons smaller on mobile */
+            .leaflet-touch .leaflet-bar a {
+                width: 34px !important;
+                height: 34px !important;
+                line-height: 34px !important;
+            }
+            
+            .leaflet-touch .leaflet-control-layers-toggle {
+                width: 34px !important;
+                height: 34px !important;
+                background-size: 18px 18px !important; 
             }
         }
     </style>
@@ -376,6 +398,7 @@
         let blueCount = 0;
         let demolishedCount = 0;
         let layerControl = null;
+        let locateControl = null;
         let markersById = {};
         let isIntroExpanded = false;
         let activeTab = 'info';
@@ -707,6 +730,9 @@
             if (layerControl) {
                 map.removeControl(layerControl);
             }
+            if (locateControl) {
+                map.removeControl(locateControl);
+            }
 
             const baseMaps = lang === 'en'
                 ? {
@@ -720,7 +746,33 @@
                     "Ortofoto (LĢIA, LVM GEO)": lvmOrto
                 };
 
+            // 1. Add Layers control first
             layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+            // 2. Add Locate control directly after, so it renders underneath the layers button
+            if (!locateControl) {
+                locateControl = L.control({ position: 'topright' });
+                locateControl.onAdd = function () {
+                    const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                    div.innerHTML = `
+                        <a href="#" id="locate-btn" title="" onclick="locateUser(event)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v3"></path>
+                                <path d="M12 19v3"></path>
+                                <path d="M2 12h3"></path>
+                                <path d="M19 12h3"></path>
+                            </svg>
+                        </a>
+                    `;
+                    return div;
+                };
+            }
+            locateControl.addTo(map);
+            
+            // Re-apply correct language translation to the locate button title
+            const locateBtn = document.getElementById('locate-btn');
+            if (locateBtn) locateBtn.title = TEXT[lang].my_location;
         }
 
         const geocoder = L.Control.geocoder({
@@ -734,25 +786,6 @@
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
-        
-        // Add Location button control matching exactly Leaflet layer button styling
-        const locateControl = L.control({ position: 'topright' });
-        locateControl.onAdd = function () {
-            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-            div.innerHTML = `
-                <a href="#" id="locate-btn" title="Mana atrašanās vieta" onclick="locateUser(event)" style="display: flex; align-items: center; justify-content: center; text-decoration: none; color: #444;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="4"></circle>
-                        <path d="M12 2v3"></path>
-                        <path d="M12 19v3"></path>
-                        <path d="M2 12h3"></path>
-                        <path d="M19 12h3"></path>
-                    </svg>
-                </a>
-            `;
-            return div;
-        };
-        locateControl.addTo(map);
 
         let userLocationMarker;
         window.locateUser = function(e) {
@@ -828,9 +861,6 @@
             document.getElementById('ui-opt-oldest').innerText = t.opt_oldest;
             document.getElementById('ui-visible-only').innerText = t.visible_only;
             document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
-            
-            const locateBtn = document.getElementById('locate-btn');
-            if(locateBtn) locateBtn.title = t.my_location;
 
             updateIntroUI();
             renderStatsAndFilters();
@@ -917,7 +947,10 @@
                 const standName = getStandName(stand);
                 const safeStandName = escapeHTML(standName);
 
-                marker.bindTooltip(safeStandName);
+                // Disable tooltips entirely for mobile users so they do not overlap with the popup
+                if (!L.Browser.mobile) {
+                    marker.bindTooltip(safeStandName);
+                }
 
                 let popupHtml = `<div style="text-align:center;"><b>${safeStandName}</b><br>`;
 
@@ -994,10 +1027,8 @@
                 html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
             }
 
-            // Target the specific wiki_desc keys from the JSON and render linebreaks properly
             const wikiDesc = stand[`wiki_desc_${currentLang}`] || stand.wiki_desc_lv || stand.wiki_desc_en;
             if (wikiDesc && wikiDesc.trim() !== '') {
-                // replace both literal '\n' string and actual newline characters just in case
                 const formattedDesc = escapeHTML(wikiDesc).replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 html += `<div class="desc-box">
                             <strong>${escapeHTML(t.desc_label)}:</strong><br><br>${formattedDesc}
