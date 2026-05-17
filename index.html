@@ -331,6 +331,17 @@
                 margin-bottom: 5px !important;
             }
 
+            /* Prevent search bar from overlapping the top-right layers button */
+            .leaflet-control-geocoder {
+                max-width: 55vw !important;
+            }
+            .leaflet-control-geocoder-form input {
+                max-width: 100% !important;
+            }
+            .leaflet-top.leaflet-right {
+                z-index: 1001; /* Ensure layers button stays clickable */
+            }
+
             /* Make map control buttons strictly uniform and smaller on mobile */
             .leaflet-touch .leaflet-bar a {
                 width: 34px !important;
@@ -343,7 +354,9 @@
                 height: 34px !important;
             }
             .leaflet-touch .leaflet-control-layers-toggle {
+                background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important;
                 background-size: 18px 18px !important; 
+                background-position: center !important;
             }
         }
     </style>
