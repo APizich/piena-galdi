@@ -331,15 +331,9 @@
                 margin-bottom: 5px !important;
             }
 
-            /* Prevent search bar from overlapping the top-right layers button */
-            .leaflet-control-geocoder {
-                max-width: 55vw !important;
-            }
-            .leaflet-control-geocoder-form input {
-                max-width: 100% !important;
-            }
+            /* Ensure layers button stays clickable when search bar is full width */
             .leaflet-top.leaflet-right {
-                z-index: 1001; /* Ensure layers button stays clickable */
+                z-index: 1001; 
             }
 
             /* Make map control buttons strictly uniform and smaller on mobile */
