@@ -39,8 +39,8 @@
 
         #sidebar {
             flex: 1;
-            min-width: 450px; /* Increased from 360px */
-            max-width: 600px; /* Increased from 540px */
+            min-width: 450px;
+            max-width: 600px;
             height: 100%;
             background-color: #f8f9fa;
             border-left: 1px solid #ccc;
@@ -295,15 +295,21 @@
                 margin-right: 0;
             }
             
-            /* Mobile tweaks for smaller popups */
             .popup-img {
                 width: 100px !important;
             }
+            
             .leaflet-popup-content {
                 width: max-content;
                 max-width: 220px !important;
                 font-size: 12px;
                 margin: 10px !important;
+            }
+
+            /* Make scale bar smaller on mobile phones */
+            .leaflet-control-scale {
+                transform: scale(0.8);
+                transform-origin: bottom left;
             }
         }
     </style>
@@ -412,8 +418,7 @@
 
         function getStandName(stand) {
             const t = TEXT[currentLang];
-            // Adjusted prioritizing so long 'description' doesn't override shorter names in the title
-            const standName = stand.name || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || stand.description || t.default_name;
+            const standName = stand.name || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
             return String(standName || t.default_name).trim() || t.default_name;
         }
 
@@ -485,7 +490,9 @@
                 visible_only: "Only in current map view",
                 no_gallery_items: "No milk churn stands match the selected filters.",
                 load_error: "Data could not be loaded. Please try again later.",
-                loc_error: "Could not determine your location."
+                loc_error: "Could not determine your location.",
+                my_location: "My location",
+                desc_label: "Description"
             },
             lv: {
                 title: "Piena galdi Latvijā",
@@ -514,7 +521,9 @@
                 visible_only: "Tikai pašreizējā kartes skatā",
                 no_gallery_items: "Neviens piena galds neatbilst izvēlētajiem filtriem.",
                 load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk.",
-                loc_error: "Nevarējām noteikt jūsu atrašanās vietu."
+                loc_error: "Nevarējām noteikt jūsu atrašanās vietu.",
+                my_location: "Mana atrašanās vieta",
+                desc_label: "Apraksts"
             }
         };
 
@@ -685,7 +694,6 @@
             attribution: "&copy; LVM GEO / LĢIA"
         });
         
-        // Zoom out further on Mobile devices
         const initialZoom = window.innerWidth <= 768 ? 6 : 7;
 
         const map = L.map('map', {
@@ -725,17 +733,21 @@
         }).addTo(map);
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
-
-        // Add Scale control (meters/kilometers)
-        L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
+        L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
         
-        // Add Location button control under Layers (topright)
+        // Add Location button control matching exactly Leaflet layer button styling
         const locateControl = L.control({ position: 'topright' });
         locateControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             div.innerHTML = `
-                <a href="#" title="Mana atrašanās vieta" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; background-color: #fff; color: #333; font-size: 18px;" onclick="locateUser(event)">
-                    📍
+                <a href="#" id="locate-btn" title="Mana atrašanās vieta" onclick="locateUser(event)" style="display: flex; align-items: center; justify-content: center; text-decoration: none; color: #444;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v3"></path>
+                        <path d="M12 19v3"></path>
+                        <path d="M2 12h3"></path>
+                        <path d="M19 12h3"></path>
+                    </svg>
                 </a>
             `;
             return div;
@@ -816,6 +828,9 @@
             document.getElementById('ui-opt-oldest').innerText = t.opt_oldest;
             document.getElementById('ui-visible-only').innerText = t.visible_only;
             document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
+            
+            const locateBtn = document.getElementById('locate-btn');
+            if(locateBtn) locateBtn.title = t.my_location;
 
             updateIntroUI();
             renderStatsAndFilters();
@@ -925,7 +940,7 @@
                 marker.bindPopup(popupHtml);
 
                 marker.on('click', () => {
-                    switchTab('info'); // Added logic to force return to Info pane if currently in Gallery
+                    switchTab('info');
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
@@ -979,10 +994,13 @@
                 html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
             }
 
-            // Expose the long wikimedia/OSM descriptions explicitly here
-            if (stand.description && stand.description !== standName) {
+            // Target the specific wiki_desc keys from the JSON and render linebreaks properly
+            const wikiDesc = stand[`wiki_desc_${currentLang}`] || stand.wiki_desc_lv || stand.wiki_desc_en;
+            if (wikiDesc && wikiDesc.trim() !== '') {
+                // replace both literal '\n' string and actual newline characters just in case
+                const formattedDesc = escapeHTML(wikiDesc).replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 html += `<div class="desc-box">
-                            <strong>Apraksts:</strong><br>${escapeHTML(stand.description)}
+                            <strong>${escapeHTML(t.desc_label)}:</strong><br><br>${formattedDesc}
                          </div>`;
             }
 
