@@ -39,8 +39,8 @@
 
         #sidebar {
             flex: 1;
-            min-width: 360px;
-            max-width: 540px;
+            min-width: 450px; /* Increased from 360px */
+            max-width: 600px; /* Increased from 540px */
             height: 100%;
             background-color: #f8f9fa;
             border-left: 1px solid #ccc;
@@ -71,6 +71,15 @@
             border-radius: 5px;
             margin-top: 10px;
             font-size: 13px;
+        }
+
+        .desc-box {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .tabs {
@@ -232,6 +241,19 @@
             border-radius: 2px;
         }
 
+        .custom-demolished-icon {
+            background: none;
+            border: none;
+        }
+        
+        .popup-img {
+            width: 150px;
+            height: auto;
+            margin-top: 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -272,11 +294,17 @@
                 width: 100%;
                 margin-right: 0;
             }
-        }
-
-        .custom-demolished-icon {
-            background: none;
-            border: none;
+            
+            /* Mobile tweaks for smaller popups */
+            .popup-img {
+                width: 100px !important;
+            }
+            .leaflet-popup-content {
+                width: max-content;
+                max-width: 220px !important;
+                font-size: 12px;
+                margin: 10px !important;
+            }
         }
     </style>
 </head>
@@ -384,7 +412,8 @@
 
         function getStandName(stand) {
             const t = TEXT[currentLang];
-            const standName = stand.description || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || t.default_name;
+            // Adjusted prioritizing so long 'description' doesn't override shorter names in the title
+            const standName = stand.name || stand[`osm_desc_${currentLang}`] || stand.osm_desc_default || stand.description || t.default_name;
             return String(standName || t.default_name).trim() || t.default_name;
         }
 
@@ -455,7 +484,8 @@
                 demolished_label: "Demolished",
                 visible_only: "Only in current map view",
                 no_gallery_items: "No milk churn stands match the selected filters.",
-                load_error: "Data could not be loaded. Please try again later."
+                load_error: "Data could not be loaded. Please try again later.",
+                loc_error: "Could not determine your location."
             },
             lv: {
                 title: "Piena galdi Latvijā",
@@ -483,7 +513,8 @@
                 demolished_label: "Nojaukts",
                 visible_only: "Tikai pašreizējā kartes skatā",
                 no_gallery_items: "Neviens piena galds neatbilst izvēlētajiem filtriem.",
-                load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk."
+                load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk.",
+                loc_error: "Nevarējām noteikt jūsu atrašanās vietu."
             }
         };
 
@@ -614,6 +645,7 @@
 
                 if (window.innerWidth <= 768) {
                     document.getElementById('sidebar').scrollTop = 0;
+                    window.scrollTo(0,0);
                 }
             }
         }
@@ -652,10 +684,13 @@
             transparent: false,
             attribution: "&copy; LVM GEO / LĢIA"
         });
+        
+        // Zoom out further on Mobile devices
+        const initialZoom = window.innerWidth <= 768 ? 6 : 7;
 
         const map = L.map('map', {
             center: [56.8796, 24.6032],
-            zoom: 7,
+            zoom: initialZoom,
             layers: [osmStandard],
             zoomControl: false
         });
@@ -690,6 +725,46 @@
         }).addTo(map);
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
+
+        // Add Scale control (meters/kilometers)
+        L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
+        
+        // Add Location button control under Layers (topright)
+        const locateControl = L.control({ position: 'topright' });
+        locateControl.onAdd = function () {
+            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            div.innerHTML = `
+                <a href="#" title="Mana atrašanās vieta" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; background-color: #fff; color: #333; font-size: 18px;" onclick="locateUser(event)">
+                    📍
+                </a>
+            `;
+            return div;
+        };
+        locateControl.addTo(map);
+
+        let userLocationMarker;
+        window.locateUser = function(e) {
+            if(e) e.preventDefault();
+            map.locate({setView: true, maxZoom: 14});
+        };
+
+        map.on('locationfound', function(e) {
+            if (!userLocationMarker) {
+                userLocationMarker = L.circleMarker(e.latlng, {
+                    radius: 7,
+                    color: '#fff',
+                    weight: 2,
+                    fillColor: '#007bff',
+                    fillOpacity: 1
+                }).addTo(map);
+            } else {
+                userLocationMarker.setLatLng(e.latlng);
+            }
+        });
+
+        map.on('locationerror', function(e) {
+            alert(TEXT[currentLang].loc_error);
+        });
 
         const actionControl = L.control({ position: 'bottomleft' });
         actionControl.onAdd = function () {
@@ -838,7 +913,7 @@
                 if (imageExists) {
                     const imageUrl = safeUrl(stand.image);
                     if (imageUrl) {
-                        popupHtml += `<img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" style="width:150px;height:auto;margin-top:8px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">`;
+                        popupHtml += `<img class="popup-img" src="${escapeHTML(imageUrl)}" alt="${safeStandName}">`;
                     }
 
                     if (stand.image_date) {
@@ -850,6 +925,7 @@
                 marker.bindPopup(popupHtml);
 
                 marker.on('click', () => {
+                    switchTab('info'); // Added logic to force return to Info pane if currently in Gallery
                     showDetails(stand);
                     if (window.innerWidth <= 768) {
                         document.getElementById('sidebar').scrollTop = 0;
@@ -901,6 +977,13 @@
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             if (osmDesc && osmDesc !== standName) {
                 html += `<div class="tag-box"><strong>${escapeHTML(t.osm_desc)}:</strong><br>${escapeHTML(osmDesc)}</div>`;
+            }
+
+            // Expose the long wikimedia/OSM descriptions explicitly here
+            if (stand.description && stand.description !== standName) {
+                html += `<div class="desc-box">
+                            <strong>Apraksts:</strong><br>${escapeHTML(stand.description)}
+                         </div>`;
             }
 
             html += `
