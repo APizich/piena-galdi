@@ -689,10 +689,10 @@
 
                 if (window.innerWidth <= 768) {
                     setTimeout(() => {
-                        const sidebar = document.getElementById('sidebar');
-                        const details = document.getElementById('details');
-                        if (sidebar && details) {
-                            sidebar.scrollTo({ top: details.offsetTop, behavior: 'smooth' });
+                        const standTitle = document.getElementById('stand-name-header');
+                        if (standTitle) {
+                            // Target exact title block to bring precisely to the top of view
+                            standTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
                     }, 100);
                 }
@@ -835,6 +835,7 @@
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             div.style.display = 'flex';
             div.style.backgroundColor = '#fff';
+            // Button starts out saying "EN" (so a user knows they can click it to switch to English)
             div.innerHTML = `
                 <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">EN</a>
                 <a href="https://www.instagram.com/pina_golds/" target="_blank" rel="noopener noreferrer" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
@@ -996,19 +997,23 @@
                 }
 
                 popupHtml += `</div>`;
-                marker.bindPopup(popupHtml);
+                
+                // Added autoPanPaddingTopLeft to ensure popup avoids search bar on top left
+                marker.bindPopup(popupHtml, {
+                    autoPanPaddingTopLeft: [10, 70],
+                    autoPanPaddingBottomRight: [10, 10]
+                });
 
                 marker.on('click', () => {
                     switchTab('info');
                     showDetails(stand);
-                    // Automatic scrolling behavior for mobile
+                    // Automatic scrolling behavior targeting the exact title for mobile
                     if (window.innerWidth <= 768) {
                         setTimeout(() => {
-                            const sidebar = document.getElementById('sidebar');
-                            const details = document.getElementById('details');
-                            if (sidebar && details) {
-                                // Scroll exactly to the top of the details panel
-                                sidebar.scrollTo({ top: details.offsetTop, behavior: 'smooth' });
+                            const standTitle = document.getElementById('stand-name-header');
+                            if (standTitle) {
+                                // Scroll exact title block to bring precisely to the top of view
+                                standTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
                             }
                         }, 100);
                     }
@@ -1027,8 +1032,8 @@
             const standName = getStandName(stand);
             const safeStandName = escapeHTML(standName);
 
-            // Adjusted margin-top to 0 so the title snaps perfectly to the top when scrolling
-            let html = `<h3 style="margin-top: 0; margin-bottom: 2px;">${safeStandName}</h3>`;
+            // Added an ID specifically for auto-scrolling on mobile
+            let html = `<h3 id="stand-name-header" style="margin-top: 0; margin-bottom: 2px;">${safeStandName}</h3>`;
 
             if (isDemolished(stand)) {
                 html += `<div style="color: #dc3545; font-size: 13px; font-weight: bold; margin-bottom: 15px;">${escapeHTML(t.demolished)}</div>`;
