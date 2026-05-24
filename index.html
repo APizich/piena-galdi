@@ -21,6 +21,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
 
     <style>
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -28,8 +36,11 @@
             display: flex;
             flex-direction: row;
             height: 100vh;
+            height: 100dvh;
+            width: 100%;
             color: #333;
             overflow: hidden;
+            overscroll-behavior: none;
         }
 
         #map {
@@ -694,14 +705,8 @@
                 marker.openPopup();
                 showDetails(stand);
 
-                if (window.innerWidth <= 768) {
-                    setTimeout(() => {
-                        const standTitle = document.getElementById('stand-name-header');
-                        if (standTitle) {
-                            // Target exact title block to bring precisely to the top of view
-                            standTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }, 100);
+                if (isMobileLayout()) {
+                    setTimeout(scrollMobileSidebarToDetails, 100);
                 }
             }
         }
@@ -955,6 +960,44 @@
             renderGallery();
         }
 
+        function isMobileLayout() {
+            return window.matchMedia('(max-width: 768px)').matches;
+        }
+
+        function keepMobileMapControlsVisible() {
+            if (!isMobileLayout()) return;
+
+            // A previous scrollIntoView() call could move the whole page on mobile browsers.
+            // Keep the document fixed at the top so Leaflet's search and layer buttons remain visible.
+            window.scrollTo(0, 0);
+
+            setTimeout(() => {
+                map.invalidateSize(false);
+                window.scrollTo(0, 0);
+            }, 50);
+        }
+
+        function scrollMobileSidebarToDetails() {
+            if (!isMobileLayout()) return;
+
+            const sidebar = document.getElementById('sidebar');
+            const details = document.getElementById('details');
+
+            if (sidebar && details) {
+                sidebar.scrollTo({
+                    top: Math.max(details.offsetTop - 8, 0),
+                    behavior: 'smooth'
+                });
+            }
+
+            keepMobileMapControlsVisible();
+        }
+
+        window.addEventListener('resize', () => {
+            keepMobileMapControlsVisible();
+            map.invalidateSize(false);
+        });
+
         function drawMarkers() {
             markerLayer.clearLayers();
             markersById = {};
@@ -1005,24 +1048,25 @@
 
                 popupHtml += `</div>`;
                 
-                // Added autoPanPaddingTopLeft to ensure popup avoids search bar on top left
                 marker.bindPopup(popupHtml, {
-                    autoPanPaddingTopLeft: [10, 70],
-                    autoPanPaddingBottomRight: [10, 10]
+                    maxWidth: isMobileLayout() ? 170 : 260,
+                    minWidth: isMobileLayout() ? 0 : 50,
+                    autoPan: true,
+                    autoPanPaddingTopLeft: isMobileLayout() ? [12, 54] : [10, 70],
+                    autoPanPaddingBottomRight: isMobileLayout() ? [12, 12] : [10, 10],
+                    keepInView: true
                 });
+
+                marker.on('popupopen', keepMobileMapControlsVisible);
+                marker.on('popupclose', keepMobileMapControlsVisible);
 
                 marker.on('click', () => {
                     switchTab('info');
                     showDetails(stand);
-                    // Automatic scrolling behavior targeting the exact title for mobile
-                    if (window.innerWidth <= 768) {
-                        setTimeout(() => {
-                            const standTitle = document.getElementById('stand-name-header');
-                            if (standTitle) {
-                                // Scroll exact title block to bring precisely to the top of view
-                                standTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }
-                        }, 100);
+                    // Scroll only the sidebar on mobile. Do not call scrollIntoView(),
+                    // because it can scroll the whole page and hide Leaflet controls.
+                    if (isMobileLayout()) {
+                        setTimeout(scrollMobileSidebarToDetails, 100);
                     }
                 });
 
