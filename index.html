@@ -981,13 +981,22 @@
             if (!isMobileLayout()) return;
 
             const sidebar = document.getElementById('sidebar');
-            const details = document.getElementById('details');
+            const title = document.getElementById('stand-name-header');
 
-            if (sidebar && details) {
+            if (sidebar && title) {
                 sidebar.scrollTo({
-                    top: Math.max(details.offsetTop - 8, 0),
-                    behavior: 'smooth'
+                    top: Math.max(title.offsetTop - 8, 0),
+                    behavior: 'auto'
                 });
+
+                // Repeat once after layout settles, because mobile image loading can shift the details panel.
+                setTimeout(() => {
+                    sidebar.scrollTo({
+                        top: Math.max(title.offsetTop - 8, 0),
+                        behavior: 'auto'
+                    });
+                    keepMobileMapControlsVisible();
+                }, 150);
             }
 
             keepMobileMapControlsVisible();
