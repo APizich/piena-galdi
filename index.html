@@ -983,21 +983,26 @@
             const sidebar = document.getElementById('sidebar');
             const title = document.getElementById('stand-name-header');
 
-            if (sidebar && title) {
+            function scrollTitleToTop() {
+                if (!sidebar || !title) return;
+
+                const sidebarRect = sidebar.getBoundingClientRect();
+                const titleRect = title.getBoundingClientRect();
+                const targetTop = sidebar.scrollTop + titleRect.top - sidebarRect.top - 8;
+
                 sidebar.scrollTo({
-                    top: Math.max(title.offsetTop - 8, 0),
+                    top: Math.max(targetTop, 0),
                     behavior: 'auto'
                 });
-
-                // Repeat once after layout settles, because mobile image loading can shift the details panel.
-                setTimeout(() => {
-                    sidebar.scrollTo({
-                        top: Math.max(title.offsetTop - 8, 0),
-                        behavior: 'auto'
-                    });
-                    keepMobileMapControlsVisible();
-                }, 150);
             }
+
+            scrollTitleToTop();
+
+            // Repeat once after layout settles, because mobile popup/map resizing can shift the details panel.
+            setTimeout(() => {
+                scrollTitleToTop();
+                keepMobileMapControlsVisible();
+            }, 150);
 
             keepMobileMapControlsVisible();
         }
