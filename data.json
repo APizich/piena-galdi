@@ -635,13 +635,13 @@
     "osm_desc_lv": "",
     "osm_desc_en": "",
     "wiki_desc_en": "Milk churn stand in Stoļerova, Stadiona street",
-    "wiki_desc_lv": "Piena galds Stoļerovā, Stadiona ielā. 2011. gada attēlos redzam, ka piena galda šajā vietā nav bijis, tātad tas uzstādīts vēlāk. Viens no nebūt ne tik daudzajiem eksemplāriem pie daudzzīvokļu mājām",
+    "wiki_desc_lv": "Piena galds Stoļerovā. Piena galdi pie daudzdzīvokļu mājām nemaz tik bieži nav sastopami.",
     "image": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Milk_churn_stand_in_Sto%C4%BCerova%2C_Stadiona_street.jpg",
     "image_date": "2026-04-28",
     "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Sto%C4%BCerova,_Stadiona_street.jpg",
     "commons_title": "File:Milk churn stand in Stoļerova, Stadiona street.jpg",
     "image_source_tag": "wikimedia_commons",
-    "raw_image_tag": "Milk churn stand in Stoļerova, Stadiona street.jpg|"
+    "raw_image_tag": "File:Milk churn stand in Stoļerova, Stadiona street.jpg"
   },
   {
     "osm_type": "node",
@@ -933,14 +933,14 @@
     "osm_desc_default": "",
     "osm_desc_lv": "Piena galds Meža Mičulīšos",
     "osm_desc_en": "",
-    "wiki_desc_en": "Piena galds Meža Mičulīšos. Nojaukts ap 2020. gadu.",
+    "wiki_desc_en": "Milk churn stand next to linden-tree alley in Latgale countryside, Latvia",
     "wiki_desc_lv": "Piena galds Meža Mičulīšos. Nojaukts ap 2020. gadu.",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Milk_churn_stand_next_to_linden-tree_alley.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Milk_churn_stand_next_to_linden-tree_alley.jpg",
     "image_date": "2017-07-05 21:13:03",
     "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_next_to_linden-tree_alley.jpg",
     "commons_title": "File:Milk churn stand next to linden-tree alley.jpg",
     "image_source_tag": "wikimedia_commons",
-    "raw_image_tag": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_next_to_linden-tree_alley.jpg"
+    "raw_image_tag": "File:Milk_churn_stand_next_to_linden-tree_alley.jpg"
   },
   {
     "osm_type": "node",
@@ -1002,14 +1002,14 @@
     "osm_desc_default": "",
     "osm_desc_lv": "Piena galds Pastaros",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": "https://commonsFile:Milk_churn_stand_nex_to_Pastari_bus_stop,_Stabulnieku_parish.jpg"
+    "wiki_desc_en": "Milk churn stand nex to Pastari bus stop, Stabulnieku parish",
+    "wiki_desc_lv": "Piena galds pie Pastaru autobusu pieturas Stabulnieku pagastā. Šeit pārsimts metru attālumā novērojami veseli 3 piena galdiņi.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/2/20/Milk_churn_stand_nex_to_Pastari_bus_stop%2C_Stabulnieku_parish.jpg",
+    "image_date": "2022-06-24 21:55:24",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_nex_to_Pastari_bus_stop,_Stabulnieku_parish.jpg",
+    "commons_title": "File:Milk churn stand nex to Pastari bus stop, Stabulnieku parish.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:Milk_churn_stand_nex_to_Pastari_bus_stop,_Stabulnieku_parish.jpg"
   },
   {
     "osm_type": "node",
@@ -1860,7 +1860,7 @@
     "commons_page": "https://commons.wikimedia.org/wiki/File:Second_milk_churn_stand_in_Zaseki.jpg",
     "commons_title": "File:Second milk churn stand in Zaseki.jpg",
     "image_source_tag": "wikimedia_commons",
-    "raw_image_tag": "Second milk churn stand in Zaseki.jpg"
+    "raw_image_tag": "File:Second milk churn stand in Zaseki.jpg"
   },
   {
     "osm_type": "node",
@@ -3401,7 +3401,7 @@
     "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_V%C4%ABksnas_parish_Poku%C4%BCeva.jpg",
     "commons_title": "File:Milk churn stand in Vīksnas parish Pokuļeva.jpg",
     "image_source_tag": "wikimedia_commons",
-    "raw_image_tag": "Milk churn stand in Vīksnas parish Pokuļeva.jpg"
+    "raw_image_tag": "File:Milk churn stand in Vīksnas parish Pokuļeva.jpg"
   },
   {
     "osm_type": "node",
