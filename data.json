@@ -4636,14 +4636,14 @@
     "osm_desc_default": "Piena galds pie A12 šosejas Cirmas pagastā",
     "osm_desc_lv": "",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": ""
+    "wiki_desc_en": "Milk churn stand by road A12 in Cirmas parish",
+    "wiki_desc_lv": "Koka piena galds pie A12 šosejas Cirmas pagastā, Ludzas novadā",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/a/a1/A12_Cirmas_pag_milk_churn_stand.jpg",
+    "image_date": "2026-06-07",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:A12_Cirmas_pag_milk_churn_stand.jpg",
+    "commons_title": "File:A12 Cirmas pag milk churn stand.jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "File:A12_Cirmas_pag_milk_churn_stand.jpg"
   },
   {
     "osm_type": "node",
