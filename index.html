@@ -804,12 +804,19 @@
             if (locateBtn) locateBtn.title = TEXT[lang].my_location;
         }
 
+        function clearSelectedStand() {
+            lastClickedStand = null;
+            map.closePopup();
+            document.getElementById('details').innerHTML = '';
+        }
+
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt...',
             collapsed: false
         }).on('markgeocode', function(e) {
+            clearSelectedStand();
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
 
