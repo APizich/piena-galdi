@@ -57,6 +57,17 @@
             height: 100%;
         }
 
+        /* 
+           FIX FOR BUG 1: Stacked / Sticky Tooltips
+           When the map is being dragged, Leaflet adds the .leaflet-dragging class.
+           This CSS rule completely disables mouse interactions on all markers 
+           during the drag, making it impossible to trigger new tooltips.
+        */
+        .leaflet-dragging .leaflet-marker-pane,
+        .leaflet-dragging .leaflet-marker-icon {
+            pointer-events: none !important;
+        }
+
         #sidebar {
             flex: 1;
             min-width: 450px;
@@ -445,7 +456,9 @@
         let isIntroExpanded = false;
         let activeTab = 'info';
         let galleryOnlyCurrentView = false;
+        
         let currentlyOpenPopupOsmId = null; 
+        let isSwitchingLanguage = false; // Lock to prevent popupclose wiping data during language change
 
         let standFilters = {
             withImage: true,
@@ -774,30 +787,19 @@
             zoomControl: false
         });
 
-        // -------------------------------------------------------------
-        // FIX FOR BUG 1: Stacked / Sticky Tooltips during map drag
-        // Disable pointer events on marker pane so mouseover is ignored
-        // while dragging, and forcibly close all existing tooltips.
-        // -------------------------------------------------------------
-        map.on('dragstart', function () {
-            map.getPanes().markerPane.style.pointerEvents = 'none';
-            for (let id in markersById) {
-                if (markersById[id].closeTooltip) {
-                    markersById[id].closeTooltip();
-                }
-            }
-        });
+        const markerLayer = L.layerGroup().addTo(map);
 
-        map.on('dragend', function () {
-            map.getPanes().markerPane.style.pointerEvents = 'auto';
-        });
-
-        map.on('zoomstart', function () {
-            for (let id in markersById) {
-                if (markersById[id].closeTooltip) {
-                    markersById[id].closeTooltip();
+        // -------------------------------------------------------------
+        // FIX FOR BUG 1: Force Close Tooltips Instantly on Mousedown
+        // Combined with the new CSS .leaflet-dragging rule, this 
+        // guarantees tooltips completely disappear when dragging starts.
+        // -------------------------------------------------------------
+        map.on('mousedown', function () {
+            markerLayer.eachLayer(function (layer) {
+                if (layer.closeTooltip) {
+                    layer.closeTooltip();
                 }
-            }
+            });
         });
 
         function updateLayerControl(lang) {
@@ -910,8 +912,6 @@
         };
         actionControl.addTo(map);
 
-        const markerLayer = L.layerGroup().addTo(map);
-
         map.on('moveend', () => {
             if (galleryOnlyCurrentView && activeTab === 'gallery') {
                 renderGallery();
@@ -927,6 +927,12 @@
         }
 
         function changeLanguage(lang) {
+            // -------------------------------------------------------------
+            // FIX FOR BUG 2: Engage language switch lock before clearing layers
+            // -------------------------------------------------------------
+            let savedPopupId = currentlyOpenPopupOsmId;
+            isSwitchingLanguage = true;
+
             currentLang = lang;
             document.documentElement.lang = lang;
 
@@ -963,27 +969,27 @@
                 langBtn.innerText = lang === 'lv' ? 'EN' : 'LV';
             }
 
-            // -------------------------------------------------------------
-            // FIX FOR BUG 2: Capture the popup ID *before* clearing layers 
-            // -------------------------------------------------------------
-            let savedPopupId = currentlyOpenPopupOsmId;
-
             updateIntroUI();
             renderStatsAndFilters();
             updateLayerControl(lang);
 
-            drawMarkers(); // This clears markerLayer and fires popupclose
+            // This clears markerLayer and fires 'popupclose' for the removed popup
+            drawMarkers(); 
             
             // Redraw active detail panel
             if (lastClickedStand && passesStandFilters(lastClickedStand)) {
                 showDetails(lastClickedStand);
             }
             
-            // Restore the popup using the saved ID
+            // Immediately open the newly generated popup with the matching ID
             if (savedPopupId && markersById[savedPopupId]) {
                 markersById[savedPopupId].openPopup();
+                currentlyOpenPopupOsmId = savedPopupId;
             }
             
+            // Remove the lock now that the refresh is finished
+            isSwitchingLanguage = false;
+
             renderGallery();
         }
 
@@ -1112,6 +1118,7 @@
                 const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
                 const standName = getStandName(stand);
                 const safeStandName = escapeHTML(standName);
+                const stringOsmId = String(stand.osm_id); // Cast strictly for dictionary storage
 
                 // Disable tooltips entirely for mobile users so they do not overlap with the popup
                 if (!L.Browser.mobile) {
@@ -1148,13 +1155,13 @@
 
                 // Track currently open popup to restore it after language change
                 marker.on('popupopen', (e) => {
-                    currentlyOpenPopupOsmId = stand.osm_id;
+                    currentlyOpenPopupOsmId = stringOsmId;
                     keepMobileMapControlsVisible();
                 });
                 
-                // Clear tracker if closed
+                // Clear tracker if closed (unless we are in the middle of a language refresh)
                 marker.on('popupclose', (e) => {
-                    if (currentlyOpenPopupOsmId === stand.osm_id) {
+                    if (!isSwitchingLanguage && currentlyOpenPopupOsmId === stringOsmId) {
                         currentlyOpenPopupOsmId = null;
                     }
                     keepMobileMapControlsVisible();
@@ -1171,7 +1178,7 @@
                 });
 
                 markerLayer.addLayer(marker);
-                markersById[stand.osm_id] = marker;
+                markersById[stringOsmId] = marker;
             });
         }
 
