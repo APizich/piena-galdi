@@ -560,6 +560,7 @@
                 default_name: "Milk churn stand",
                 demolished: "Demolished",
                 share: "Share specific milk churn stand",
+                osm_button: "Open this object in OpenStreetMap",
                 copied: "Link copied to clipboard!",
                 show_map: "Show on map",
                 stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
@@ -594,6 +595,7 @@
                 default_name: "Piena galds",
                 demolished: "Nojaukts",
                 share: "Dalīties ar šo piena galdu",
+                osm_button: "Atvērt šo objektu OpenStreetMap",
                 copied: "Saite nokopēta!",
                 show_map: "Parādīt kartē",
                 stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
@@ -927,9 +929,7 @@
         }
 
         function changeLanguage(lang) {
-            // -------------------------------------------------------------
-            // FIX FOR BUG 2: Engage language switch lock before clearing layers
-            // -------------------------------------------------------------
+            // Engage language switch lock before clearing layers
             let savedPopupId = currentlyOpenPopupOsmId;
             isSwitchingLanguage = true;
 
@@ -981,14 +981,20 @@
                 showDetails(lastClickedStand);
             }
             
-            // Immediately open the newly generated popup with the matching ID
+            // -------------------------------------------------------------
+            // FIX FOR BUG 2: Re-open the popup with a tiny timeout.
+            // This prevents Leaflet from canceling the action because the 
+            // old popup was actively playing its "closing" animation.
+            // -------------------------------------------------------------
             if (savedPopupId && markersById[savedPopupId]) {
-                markersById[savedPopupId].openPopup();
-                currentlyOpenPopupOsmId = savedPopupId;
+                setTimeout(() => {
+                    markersById[savedPopupId].openPopup();
+                    currentlyOpenPopupOsmId = savedPopupId;
+                    isSwitchingLanguage = false;
+                }, 50);
+            } else {
+                isSwitchingLanguage = false;
             }
-            
-            // Remove the lock now that the refresh is finished
-            isSwitchingLanguage = false;
 
             renderGallery();
         }
@@ -1233,10 +1239,17 @@
                          </div>`;
             }
 
+            // NEW FEATURE: Determine node or way for OSM URL
+            const osmType = stand.osm_type || 'node'; 
+            const osmUrl = `https://www.openstreetmap.org/${osmType}/${stand.osm_id}`;
+
             html += `
-                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
+                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; box-sizing: border-box;">
                     ${escapeHTML(t.share)}
                 </button>
+                <a href="${escapeHTML(osmUrl)}" target="_blank" rel="noopener noreferrer" style="display: block; margin-top: 10px; padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 5px; text-align: center; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box;">
+                    ${escapeHTML(t.osm_button)}
+                </a>
             `;
 
             detailsDiv.innerHTML = html;
