@@ -407,6 +407,9 @@
             </div>
 
             <div id="details"></div>
+            
+            <!-- Reference Links Footer -->
+            <div id="references" style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 12px; color: #666;"></div>
         </div>
 
         <div id="tab-gallery" style="display: none;">
@@ -442,6 +445,7 @@
         let isIntroExpanded = false;
         let activeTab = 'info';
         let galleryOnlyCurrentView = false;
+        let currentlyOpenPopupOsmId = null; // Variable to track currently open popup
 
         let standFilters = {
             withImage: true,
@@ -554,7 +558,10 @@
                 load_error: "Data could not be loaded. Please try again later.",
                 loc_error: "Could not determine your location.",
                 my_location: "My location",
-                desc_label: "Description"
+                desc_label: "Description",
+                references: "References & Copyright",
+                ref_osm: "Map data &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap contributors</a>",
+                ref_lvm: "Orthophoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a> / LĢIA"
             },
             lv: {
                 title: "Piena galdi Latvijā",
@@ -585,7 +592,10 @@
                 load_error: "Datus neizdevās ielādēt. Lūdzu, mēģiniet vēlreiz vēlāk.",
                 loc_error: "Nevarējām noteikt jūsu atrašanās vietu.",
                 my_location: "Mana atrašanās vieta",
-                desc_label: "Apraksts"
+                desc_label: "Apraksts",
+                references: "Atsauces un autortiesības",
+                ref_osm: "Kartes dati &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap veidotāji</a>",
+                ref_lvm: "Ortofoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a> / LĢIA"
             }
         };
 
@@ -764,6 +774,15 @@
             zoomControl: false
         });
 
+        // FIX FOR BUG 1: Close all sticky tooltips whenever map is moved, zoomed, or dragged.
+        map.on('movestart zoomstart dragstart', function () {
+            map.eachLayer(function (layer) {
+                if (layer.closeTooltip) {
+                    layer.closeTooltip();
+                }
+            });
+        });
+
         function updateLayerControl(lang) {
             if (layerControl) {
                 map.removeControl(layerControl);
@@ -908,6 +927,16 @@
             document.getElementById('ui-visible-only').innerText = t.visible_only;
             document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
             
+            // Populate Reference Links Footer
+            const refsDiv = document.getElementById('references');
+            if (refsDiv) {
+                refsDiv.innerHTML = `
+                    <div style="margin-bottom: 5px;"><strong>${escapeHTML(t.references)}</strong></div>
+                    <div style="margin-bottom: 3px;">${t.ref_osm}</div>
+                    <div>${t.ref_lvm}</div>
+                `;
+            }
+            
             const locateBtn = document.getElementById('locate-btn');
             if(locateBtn) locateBtn.title = t.my_location;
 
@@ -922,9 +951,17 @@
             updateLayerControl(lang);
 
             drawMarkers();
+            
+            // Redraw active detail panel
             if (lastClickedStand && passesStandFilters(lastClickedStand)) {
                 showDetails(lastClickedStand);
             }
+            
+            // FEATURE REQUEST 1 FIX: Re-open the popup if it was open before language switch
+            if (currentlyOpenPopupOsmId && markersById[currentlyOpenPopupOsmId]) {
+                markersById[currentlyOpenPopupOsmId].openPopup();
+            }
+            
             renderGallery();
         }
 
@@ -1087,8 +1124,19 @@
                     keepInView: true
                 });
 
-                marker.on('popupopen', keepMobileMapControlsVisible);
-                marker.on('popupclose', keepMobileMapControlsVisible);
+                // Track currently open popup to restore it after language change
+                marker.on('popupopen', (e) => {
+                    currentlyOpenPopupOsmId = stand.osm_id;
+                    keepMobileMapControlsVisible();
+                });
+                
+                // Clear tracker if closed
+                marker.on('popupclose', (e) => {
+                    if (currentlyOpenPopupOsmId === stand.osm_id) {
+                        currentlyOpenPopupOsmId = null;
+                    }
+                    keepMobileMapControlsVisible();
+                });
 
                 marker.on('click', () => {
                     switchTab('info');
