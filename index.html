@@ -1244,10 +1244,10 @@
             const osmUrl = `https://www.openstreetmap.org/${osmType}/${stand.osm_id}`;
 
             html += `
-                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; box-sizing: border-box;">
+                <button onclick="shareStand('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; box-sizing: border-box; font-family: inherit; font-size: 14px; line-height: normal;">
                     ${escapeHTML(t.share)}
                 </button>
-                <a href="${escapeHTML(osmUrl)}" target="_blank" rel="noopener noreferrer" style="display: block; margin-top: 10px; padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 5px; text-align: center; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box;">
+                <a href="${escapeHTML(osmUrl)}" target="_blank" rel="noopener noreferrer" style="display: block; margin-top: 10px; padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 5px; text-align: center; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 14px; line-height: normal;">
                     ${escapeHTML(t.osm_button)}
                 </a>
             `;
