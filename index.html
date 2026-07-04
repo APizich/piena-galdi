@@ -445,7 +445,7 @@
         let isIntroExpanded = false;
         let activeTab = 'info';
         let galleryOnlyCurrentView = false;
-        let currentlyOpenPopupOsmId = null; // Variable to track currently open popup
+        let currentlyOpenPopupOsmId = null; 
 
         let standFilters = {
             withImage: true,
@@ -774,13 +774,30 @@
             zoomControl: false
         });
 
-        // FIX FOR BUG 1: Close all sticky tooltips whenever map is moved, zoomed, or dragged.
-        map.on('movestart zoomstart dragstart', function () {
-            map.eachLayer(function (layer) {
-                if (layer.closeTooltip) {
-                    layer.closeTooltip();
+        // -------------------------------------------------------------
+        // FIX FOR BUG 1: Stacked / Sticky Tooltips during map drag
+        // Disable pointer events on marker pane so mouseover is ignored
+        // while dragging, and forcibly close all existing tooltips.
+        // -------------------------------------------------------------
+        map.on('dragstart', function () {
+            map.getPanes().markerPane.style.pointerEvents = 'none';
+            for (let id in markersById) {
+                if (markersById[id].closeTooltip) {
+                    markersById[id].closeTooltip();
                 }
-            });
+            }
+        });
+
+        map.on('dragend', function () {
+            map.getPanes().markerPane.style.pointerEvents = 'auto';
+        });
+
+        map.on('zoomstart', function () {
+            for (let id in markersById) {
+                if (markersById[id].closeTooltip) {
+                    markersById[id].closeTooltip();
+                }
+            }
         });
 
         function updateLayerControl(lang) {
@@ -946,20 +963,25 @@
                 langBtn.innerText = lang === 'lv' ? 'EN' : 'LV';
             }
 
+            // -------------------------------------------------------------
+            // FIX FOR BUG 2: Capture the popup ID *before* clearing layers 
+            // -------------------------------------------------------------
+            let savedPopupId = currentlyOpenPopupOsmId;
+
             updateIntroUI();
             renderStatsAndFilters();
             updateLayerControl(lang);
 
-            drawMarkers();
+            drawMarkers(); // This clears markerLayer and fires popupclose
             
             // Redraw active detail panel
             if (lastClickedStand && passesStandFilters(lastClickedStand)) {
                 showDetails(lastClickedStand);
             }
             
-            // FEATURE REQUEST 1 FIX: Re-open the popup if it was open before language switch
-            if (currentlyOpenPopupOsmId && markersById[currentlyOpenPopupOsmId]) {
-                markersById[currentlyOpenPopupOsmId].openPopup();
+            // Restore the popup using the saved ID
+            if (savedPopupId && markersById[savedPopupId]) {
+                markersById[savedPopupId].openPopup();
             }
             
             renderGallery();
