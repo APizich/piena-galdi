@@ -575,7 +575,7 @@
                 desc_label: "Description",
                 references: "References & Copyright",
                 ref_osm: "Map data &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap contributors</a>",
-                ref_lvm: "Orthophoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a> / LĢIA"
+                ref_google: "Satellite imagery &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>"
             },
             lv: {
                 title: "Piena galdi Latvijā",
@@ -610,7 +610,7 @@
                 desc_label: "Apraksts",
                 references: "Atsauces un autortiesības",
                 ref_osm: "Kartes dati &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap veidotāji</a>",
-                ref_lvm: "Ortofoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a> / LĢIA"
+                ref_google: "Satelītattēli &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>"
             }
         };
 
@@ -773,11 +773,10 @@
             attribution: '&copy; OpenStreetMap contributors'
         });
 
-        const lvmOrto = L.tileLayer.wms("https://lvmgeoserver.lvm.lv/geoserver/ows", {
-            layers: 'public:Orto_LKS',
-            format: 'image/jpeg',
-            transparent: false,
-            attribution: "&copy; LVM GEO / LĢIA"
+        // REPLACED LĢIA/LVM GEO LAYER WITH GOOGLE SATELLITE TILE LAYER
+        const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            attribution: '&copy; Google'
         });
         
         const initialZoom = window.innerWidth <= 768 ? 6 : 7;
@@ -816,12 +815,12 @@
                 ? {
                     "Light map (OSM)": cartoLight,
                     "Standard OSM (colored)": osmStandard,
-                    "Orthophoto (LĢIA, LVM GEO)": lvmOrto
+                    "Google Satellite": googleSat // UPDATED LAYER NAME EN
                 }
                 : {
                     "Gaišā karte (OSM)": cartoLight,
                     "Standarta OSM": osmStandard,
-                    "Ortofoto (LĢIA, LVM GEO)": lvmOrto
+                    "Google Satelīts": googleSat // UPDATED LAYER NAME LV
                 };
 
             // 1. Add Layers control first
@@ -956,7 +955,7 @@
                 refsDiv.innerHTML = `
                     <div style="margin-bottom: 5px;"><strong>${escapeHTML(t.references)}</strong></div>
                     <div style="margin-bottom: 3px;">${t.ref_osm}</div>
-                    <div>${t.ref_lvm}</div>
+                    <div>${t.ref_google}</div>
                 `;
             }
             
