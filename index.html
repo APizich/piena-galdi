@@ -59,9 +59,6 @@
 
         /* 
            FIX FOR BUG 1: Stacked / Sticky Tooltips
-           When the map is being dragged, Leaflet adds the .leaflet-dragging class.
-           This CSS rule completely disables mouse interactions on all markers 
-           during the drag, making it impossible to trigger new tooltips.
         */
         .leaflet-dragging .leaflet-marker-pane,
         .leaflet-dragging .leaflet-marker-icon {
@@ -125,15 +122,16 @@
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 10px 4px;
             border: none;
             background: transparent;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: #666;
             transition: 0.2s;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -253,6 +251,77 @@
             font-size: 15px;
         }
 
+        /* --- STORIES STYLES --- */
+        .stories-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .story-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .highlight-story {
+            box-shadow: 0 0 0 3px #ff9800, 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .story-title {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .story-author {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .story-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .story-images-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .story-images-grid img {
+            width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+
+        .story-map-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* ------------------------ */
+
         #resizer {
             display: none;
             height: 10px;
@@ -285,7 +354,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Ensure locate button perfectly matches layers button on all screens */
         .leaflet-control-layers-toggle, .leaflet-bar a#locate-btn {
             width: 36px !important;
             height: 36px !important;
@@ -338,7 +406,6 @@
                 margin-right: 0;
             }
             
-            /* Even smaller popups for mobile screens */
             .popup-img {
                 width: 80px !important;
                 margin-top: 4px;
@@ -355,19 +422,16 @@
                 font-size: 12px !important;
             }
 
-            /* Make scale bar significantly smaller and pin to right */
             .leaflet-control-scale {
                 transform: scale(0.55) !important;
                 transform-origin: bottom right;
                 margin-bottom: 5px !important;
             }
 
-            /* Ensure layers button stays clickable when search bar is full width */
             .leaflet-top.leaflet-right {
                 z-index: 1001; 
             }
 
-            /* Make map control buttons strictly uniform and smaller on mobile */
             .leaflet-touch .leaflet-bar a {
                 width: 34px !important;
                 height: 34px !important;
@@ -400,6 +464,7 @@
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-info" onclick="switchTab('info')">Info</button>
             <button class="tab-btn" id="btn-tab-gallery" onclick="switchTab('gallery')">Galerija</button>
+            <button class="tab-btn" id="btn-tab-stories" onclick="switchTab('stories')">Stāsti</button>
         </div>
 
         <div id="tab-info" style="display: block;">
@@ -419,7 +484,6 @@
 
             <div id="details"></div>
             
-            <!-- Reference Links Footer -->
             <div id="references" style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 12px; color: #666;"></div>
         </div>
 
@@ -438,6 +502,12 @@
             </div>
             <div id="gallery-container" class="gallery-grid"></div>
         </div>
+
+        <!-- NEW STORIES TAB -->
+        <div id="tab-stories" style="display: none;">
+            <div id="stories-container" class="stories-grid"></div>
+        </div>
+
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -446,6 +516,7 @@
     <script>
         let currentLang = 'lv';
         let mapData = [];
+        let storiesData = []; // Store loaded stories
         let lastClickedStand = null;
         let greenCount = 0;
         let blueCount = 0;
@@ -458,7 +529,7 @@
         let galleryOnlyCurrentView = false;
         
         let currentlyOpenPopupOsmId = null; 
-        let isSwitchingLanguage = false; // Lock to prevent popupclose wiping data during language change
+        let isSwitchingLanguage = false; 
 
         let standFilters = {
             withImage: true,
@@ -478,12 +549,9 @@
         function safeUrl(value) {
             const url = String(value ?? "").trim();
             if (!url) return "";
-
             if (url.startsWith("https://")) return url;
             if (url.startsWith("//")) return `https:${url}`;
-
             if (/^[a-zA-Z0-9_./\-()%]+$/.test(url) && !url.includes("..")) return url;
-
             return "";
         }
 
@@ -546,6 +614,7 @@
                 title: "Milk Churn Stands in Latvia",
                 tab_info: "Information",
                 tab_gallery: "Gallery",
+                tab_stories: "Stories",
                 intro_short: "This map shows milk churn stands in Latvia marked on OpenStreetMap.",
                 intro_more: "<br><br>Milk churn stands (also known as milk platforms or ramps) are a significant part of Latvia's landscape and cultural heritage.<br><br>Once, they were an essential daily stop for farmers, serving not only as a place to leave milk cans but also as a hub to meet neighbors and exchange news. For many children, these stands were the perfect place to hide from their parents. As agricultural technologies and habits have evolved, these small architectural elements are becoming less common and are disappearing from our roadsides.<br><br>To preserve evidence of this fading part of the rural landscape, a collection of photographs began in 2022 on the Instagram account <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, alongside research of publications and memories.<br><br>As the collection grew, the mapping of identified stands on OpenStreetMap (OSM) was initiated. This map serves as a public archive for history enthusiasts and anyone for whom these stands evoke warm childhood memories.",
                 read_more: "Read more...",
@@ -575,12 +644,16 @@
                 desc_label: "Description",
                 references: "References & Copyright",
                 ref_osm: "Map data &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap contributors</a>",
-                ref_google: "Satellite imagery &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>"
+                ref_google: "Satellite imagery &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                read_story: "Read memory story",
+                story_by: "Story by:",
+                no_stories: "No stories added yet."
             },
             lv: {
                 title: "Piena galdi Latvijā",
                 tab_info: "Informācija",
                 tab_gallery: "Galerija",
+                tab_stories: "Stāsti",
                 intro_short: "Šajā kartē ir redzami Open Street Maps atzīmētie piena galdi Latvijā.",
                 intro_more: "<br><br>Piena galdi (pazīstami arī kā piena steķi, piena rampas, piena savākšanas platformas) ir nozīmīga Latvijas ainavas un kultūrvēsturiskā mantojuma sastāvdaļa.<br><br>Kādreiz tie bija neatņemama lauksaimnieku ikdienas pieturvieta, kur ne tikai novietot piena kannas, bet arī satikt kaimiņus, apmainīties ar apkaimes jaunumiem. Daudziem bērniem piena galdiņš ir kalpojis par vietu, kur aizslīdēt no mājinieku acīm. Attīstoties saimniekošanas tehnoloģijām un ieradumiem, šie mazās arhitektūras elements iet mazumā un izzūd no mūsu ceļmalām.<br><br>Lai saglabātu liecības par šo aizejošo lauku ainavas daļu, 2022. gadā aizsākās piena galdu fotogrāfiju “kolekcionēšana” Instagram kontā <a href='https://www.instagram.com/pina_golds/' target='_blank' rel='noopener noreferrer' style='color:#007bff; text-decoration:none;'>@pina_golds</a>, paralēli pētot pieejamās publikācijas un cilvēku atmiņu stāstus par piena galdiņiem.<br><br>Piena galdu “saimniecībai” paplašinoties, tika uzsākta apzināto piena galdu atzīmēšana OpenStreetMap (OSM) kartē. Šī karte kalpo kā publiski pieejams arhīvs, kurā var ielūkoties gan lauksaimniecības vēstures entuziasti, gan katrs, kuram piena galdiņš saistās ar siltām bērnības atmiņām.",
                 read_more: "Lasīt vairāk...",
@@ -610,7 +683,10 @@
                 desc_label: "Apraksts",
                 references: "Atsauces un autortiesības",
                 ref_osm: "Kartes dati &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap veidotāji</a>",
-                ref_google: "Satelītattēli &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>"
+                ref_google: "Satelītattēli &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                read_story: "Lasīt atmiņu stāstu",
+                story_by: "Stāsta autors:",
+                no_stories: "Pašlaik nav pievienotu stāstu."
             }
         };
 
@@ -646,18 +722,18 @@
         function switchTab(tab) {
             activeTab = tab;
 
-            if (tab === 'info') {
-                document.getElementById('tab-info').style.display = 'block';
-                document.getElementById('tab-gallery').style.display = 'none';
-                document.getElementById('btn-tab-info').classList.add('active');
-                document.getElementById('btn-tab-gallery').classList.remove('active');
-            } else if (tab === 'gallery') {
-                document.getElementById('tab-info').style.display = 'none';
-                document.getElementById('tab-gallery').style.display = 'block';
-                document.getElementById('btn-tab-info').classList.remove('active');
-                document.getElementById('btn-tab-gallery').classList.add('active');
-                renderGallery();
-            }
+            // Toggle visibility
+            document.getElementById('tab-info').style.display = tab === 'info' ? 'block' : 'none';
+            document.getElementById('tab-gallery').style.display = tab === 'gallery' ? 'block' : 'none';
+            document.getElementById('tab-stories').style.display = tab === 'stories' ? 'block' : 'none';
+
+            // Toggle active classes
+            document.getElementById('btn-tab-info').classList.toggle('active', tab === 'info');
+            document.getElementById('btn-tab-gallery').classList.toggle('active', tab === 'gallery');
+            document.getElementById('btn-tab-stories').classList.toggle('active', tab === 'stories');
+
+            if (tab === 'gallery') renderGallery();
+            if (tab === 'stories') renderStories();
         }
 
         function renderGallery() {
@@ -684,7 +760,6 @@
                 if (sortVal === 'newest') {
                     return dateB - dateA || osmIdB - osmIdA;
                 }
-
                 return dateA - dateB || osmIdA - osmIdB;
             });
 
@@ -708,7 +783,7 @@
 
                 html += `
                     <div class="gallery-item">
-                        <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" onclick="zoomToStand('${safeOsmId}')">
+                        <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}" onclick="zoomToStand('${safeOsmId}')" loading="lazy">
                         <div class="gallery-item-info">
                             <h4>${safeStandName}</h4>
                             ${demolishedHtml}
@@ -726,6 +801,64 @@
             }
 
             container.innerHTML = html;
+        }
+
+        function renderStories() {
+            const container = document.getElementById('stories-container');
+            const t = TEXT[currentLang];
+            let html = '';
+
+            if (!storiesData || storiesData.length === 0) {
+                container.innerHTML = `<p style="color:#666; font-size: 13px; text-align: center;">${escapeHTML(t.no_stories)}</p>`;
+                return;
+            }
+
+            // Reverse order so newest are on top
+            [...storiesData].reverse().forEach(story => {
+                const title = (currentLang === 'en' && story.title_en) ? story.title_en : story.title_lv;
+                const text = (currentLang === 'en' && story.text_en) ? story.text_en : story.text_lv;
+                const safeOsmId = escapeHTML(story.osm_id);
+                
+                // Convert \n into html breaks
+                const formattedText = escapeHTML(text).replace(/\n/g, '<br>');
+
+                let imagesHtml = '';
+                if (story.images && story.images.length > 0) {
+                    imagesHtml = '<div class="story-images-grid">';
+                    story.images.forEach(imgUrl => {
+                        imagesHtml += `<img src="${escapeHTML(safeUrl(imgUrl))}" alt="${escapeHTML(title)}" loading="lazy">`;
+                    });
+                    imagesHtml += '</div>';
+                }
+
+                html += `
+                    <div class="story-card" id="story-${safeOsmId}">
+                        <h3 class="story-title">${escapeHTML(title)}</h3>
+                        ${story.author ? `<div class="story-author"><strong>${escapeHTML(t.story_by)}</strong> ${escapeHTML(story.author)}</div>` : ''}
+                        <div class="story-text">${formattedText}</div>
+                        ${imagesHtml}
+                        <button class="story-map-btn" onclick="zoomToStand('${safeOsmId}')">
+                            📍 ${escapeHTML(t.show_map)}
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function openStory(osmId) {
+            switchTab('stories');
+            // Give UI a moment to render before scrolling
+            setTimeout(() => {
+                const storyEl = document.getElementById(`story-${osmId}`);
+                if (storyEl) {
+                    storyEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Flash highlight effect
+                    storyEl.classList.add('highlight-story');
+                    setTimeout(() => storyEl.classList.remove('highlight-story'), 2000);
+                }
+            }, 100);
         }
 
         function zoomToStand(osmId) {
@@ -773,7 +906,6 @@
             attribution: '&copy; OpenStreetMap contributors'
         });
 
-        // REPLACED LĢIA/LVM GEO LAYER WITH GOOGLE SATELLITE TILE LAYER
         const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             attribution: '&copy; Google'
@@ -790,11 +922,6 @@
 
         const markerLayer = L.layerGroup().addTo(map);
 
-        // -------------------------------------------------------------
-        // FIX FOR BUG 1: Force Close Tooltips Instantly on Mousedown
-        // Combined with the new CSS .leaflet-dragging rule, this 
-        // guarantees tooltips completely disappear when dragging starts.
-        // -------------------------------------------------------------
         map.on('mousedown', function () {
             markerLayer.eachLayer(function (layer) {
                 if (layer.closeTooltip) {
@@ -815,18 +942,16 @@
                 ? {
                     "Light map (OSM)": cartoLight,
                     "Standard OSM (colored)": osmStandard,
-                    "Google Satellite": googleSat // UPDATED LAYER NAME EN
+                    "Google Satellite": googleSat 
                 }
                 : {
                     "Gaišā karte (OSM)": cartoLight,
                     "Standarta OSM": osmStandard,
-                    "Google Satelīts": googleSat // UPDATED LAYER NAME LV
+                    "Google Satelīts": googleSat
                 };
 
-            // 1. Add Layers control first
             layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
-            // 2. Add Locate control directly after, so it renders underneath the layers button
             if (!locateControl) {
                 locateControl = L.control({ position: 'topright' });
                 locateControl.onAdd = function () {
@@ -847,7 +972,6 @@
             }
             locateControl.addTo(map);
             
-            // Re-apply correct language translation to the locate button title
             const locateBtn = document.getElementById('locate-btn');
             if (locateBtn) locateBtn.title = TEXT[lang].my_location;
         }
@@ -869,8 +993,6 @@
         }).addTo(map);
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
-        
-        // Relocated the scale bar to bottom right
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
 
         let userLocationMarker;
@@ -902,7 +1024,6 @@
             const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             div.style.display = 'flex';
             div.style.backgroundColor = '#fff';
-            // Button starts out saying "EN" (so a user knows they can click it to switch to English)
             div.innerHTML = `
                 <a href="#" id="langBtn" style="display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center; font-weight: bold; text-decoration: none; color: #333; border-bottom: none; border-right: 1px solid #ccc;" onclick="toggleLanguage(); return false;">EN</a>
                 <a href="https://www.instagram.com/pina_golds/" target="_blank" rel="noopener noreferrer" title="Instagram" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; text-decoration: none; border-bottom: none;">
@@ -928,7 +1049,6 @@
         }
 
         function changeLanguage(lang) {
-            // Engage language switch lock before clearing layers
             let savedPopupId = currentlyOpenPopupOsmId;
             isSwitchingLanguage = true;
 
@@ -941,6 +1061,7 @@
             document.getElementById('ui-title').innerText = t.title;
             document.getElementById('btn-tab-info').innerText = t.tab_info;
             document.getElementById('btn-tab-gallery').innerText = t.tab_gallery;
+            document.getElementById('btn-tab-stories').innerText = t.tab_stories;
             document.getElementById('ui-intro-short').innerHTML = t.intro_short;
             document.getElementById('ui-intro-more').innerHTML = t.intro_more;
             document.getElementById('ui-sort-label').innerText = t.sort_label;
@@ -949,7 +1070,6 @@
             document.getElementById('ui-visible-only').innerText = t.visible_only;
             document.getElementById('gallery-visible-only').checked = galleryOnlyCurrentView;
             
-            // Populate Reference Links Footer
             const refsDiv = document.getElementById('references');
             if (refsDiv) {
                 refsDiv.innerHTML = `
@@ -962,7 +1082,6 @@
             const locateBtn = document.getElementById('locate-btn');
             if(locateBtn) locateBtn.title = t.my_location;
 
-            // Updated Button text logic: Show "EN" when current lang is 'lv', and "LV" when current lang is 'en'
             const langBtn = document.getElementById('langBtn');
             if(langBtn) {
                 langBtn.innerText = lang === 'lv' ? 'EN' : 'LV';
@@ -972,19 +1091,12 @@
             renderStatsAndFilters();
             updateLayerControl(lang);
 
-            // This clears markerLayer and fires 'popupclose' for the removed popup
             drawMarkers(); 
             
-            // Redraw active detail panel
             if (lastClickedStand && passesStandFilters(lastClickedStand)) {
                 showDetails(lastClickedStand);
             }
             
-            // -------------------------------------------------------------
-            // FIX FOR BUG 2: Re-open the popup with a tiny timeout.
-            // This prevents Leaflet from canceling the action because the 
-            // old popup was actively playing its "closing" animation.
-            // -------------------------------------------------------------
             if (savedPopupId && markersById[savedPopupId]) {
                 setTimeout(() => {
                     markersById[savedPopupId].openPopup();
@@ -996,6 +1108,7 @@
             }
 
             renderGallery();
+            renderStories();
         }
 
         function renderStatsAndFilters() {
@@ -1052,11 +1165,7 @@
 
         function keepMobileMapControlsVisible() {
             if (!isMobileLayout()) return;
-
-            // A previous scrollIntoView() call could move the whole page on mobile browsers.
-            // Keep the document fixed at the top so Leaflet's search and layer buttons remain visible.
             window.scrollTo(0, 0);
-
             setTimeout(() => {
                 map.invalidateSize(false);
                 window.scrollTo(0, 0);
@@ -1083,13 +1192,10 @@
             }
 
             scrollTitleToTop();
-
-            // Repeat once after layout settles, because mobile popup/map resizing can shift the details panel.
             setTimeout(() => {
                 scrollTitleToTop();
                 keepMobileMapControlsVisible();
             }, 150);
-
             keepMobileMapControlsVisible();
         }
 
@@ -1123,9 +1229,8 @@
                 const marker = L.marker([stand.lat, stand.lon], { icon: markerIcon });
                 const standName = getStandName(stand);
                 const safeStandName = escapeHTML(standName);
-                const stringOsmId = String(stand.osm_id); // Cast strictly for dictionary storage
+                const stringOsmId = String(stand.osm_id); 
 
-                // Disable tooltips entirely for mobile users so they do not overlap with the popup
                 if (!L.Browser.mobile) {
                     marker.bindTooltip(safeStandName);
                 }
@@ -1141,7 +1246,6 @@
                     if (imageUrl) {
                         popupHtml += `<img class="popup-img" src="${escapeHTML(imageUrl)}" alt="${safeStandName}">`;
                     }
-
                     if (stand.image_date) {
                         popupHtml += `<br><span style="font-size:11px;color:#666;"><strong>${escapeHTML(TEXT[currentLang].picture_date)}:</strong> ${escapeHTML(stand.image_date)}</span>`;
                     }
@@ -1158,13 +1262,11 @@
                     keepInView: true
                 });
 
-                // Track currently open popup to restore it after language change
                 marker.on('popupopen', (e) => {
                     currentlyOpenPopupOsmId = stringOsmId;
                     keepMobileMapControlsVisible();
                 });
                 
-                // Clear tracker if closed (unless we are in the middle of a language refresh)
                 marker.on('popupclose', (e) => {
                     if (!isSwitchingLanguage && currentlyOpenPopupOsmId === stringOsmId) {
                         currentlyOpenPopupOsmId = null;
@@ -1175,8 +1277,6 @@
                 marker.on('click', () => {
                     switchTab('info');
                     showDetails(stand);
-                    // Scroll only the sidebar on mobile. Do not call scrollIntoView(),
-                    // because it can scroll the whole page and hide Leaflet controls.
                     if (isMobileLayout()) {
                         setTimeout(scrollMobileSidebarToDetails, 100);
                     }
@@ -1195,7 +1295,6 @@
             const standName = getStandName(stand);
             const safeStandName = escapeHTML(standName);
 
-            // Added an ID specifically for auto-scrolling on mobile
             let html = `<h3 id="stand-name-header" style="margin-top: 0; margin-bottom: 2px;">${safeStandName}</h3>`;
 
             if (isDemolished(stand)) {
@@ -1224,6 +1323,15 @@
             } else {
                 html += `<p style="color: #888;"><em>${escapeHTML(t.no_img)}</em></p>`;
             }
+            
+            // IF A STORY EXISTS FOR THIS STAND, SHOW A BUTTON
+            if (storiesData && storiesData.some(s => String(s.osm_id) === String(stand.osm_id))) {
+                html += `
+                    <button onclick="openStory('${escapeHTML(stand.osm_id)}')" style="margin-top: 15px; padding: 10px; background-color: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; box-sizing: border-box; font-family: inherit; font-size: 14px; line-height: normal; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        📖 ${escapeHTML(t.read_story)}
+                    </button>
+                `;
+            }
 
             const osmDesc = stand[`osm_desc_${currentLang}`] || stand.osm_desc_default;
             if (osmDesc && osmDesc !== standName) {
@@ -1238,7 +1346,6 @@
                          </div>`;
             }
 
-            // NEW FEATURE: Determine node or way for OSM URL
             const osmType = stand.osm_type || 'node'; 
             const osmUrl = `https://www.openstreetmap.org/${osmType}/${stand.osm_id}`;
 
@@ -1268,55 +1375,51 @@
             }
         }
 
-        fetch('data.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // LOAD BOTH JSON FILES AT ONCE
+        Promise.all([
+            fetch('data.json').then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            }),
+            fetch('stories.json').then(res => res.ok ? res.json() : []).catch(() => []) // fails gracefully if no stories file yet
+        ])
+        .then(([data, stories]) => {
+            if (!Array.isArray(data)) throw new Error('data.json must contain an array.');
+
+            mapData = data;
+            storiesData = stories;
+
+            greenCount = mapData.filter(hasImage).length;
+            blueCount = mapData.filter(stand => !hasImage(stand)).length;
+            demolishedCount = mapData.filter(isDemolished).length;
+
+            changeLanguage(currentLang);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedId = urlParams.get('id');
+
+            if (sharedId) {
+                const sharedStand = mapData.find(s => String(s.osm_id) === String(sharedId));
+                if (sharedStand && !passesStandFilters(sharedStand)) {
+                    if (isDemolished(sharedStand)) standFilters.demolished = true;
+                    else if (hasImage(sharedStand)) standFilters.withImage = true;
+                    else standFilters.withoutImage = true;
+
+                    renderStatsAndFilters();
+                    drawMarkers();
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error('data.json must contain an array.');
+
+                if (markersById[sharedId]) {
+                    zoomToStand(sharedId);
                 }
-
-                mapData = data;
-
-                greenCount = mapData.filter(hasImage).length;
-                blueCount = mapData.filter(stand => !hasImage(stand)).length;
-                demolishedCount = mapData.filter(isDemolished).length;
-
-                changeLanguage(currentLang);
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const sharedId = urlParams.get('id');
-
-                if (sharedId) {
-                    const sharedStand = mapData.find(s => String(s.osm_id) === String(sharedId));
-                    if (sharedStand && !passesStandFilters(sharedStand)) {
-                        if (isDemolished(sharedStand)) standFilters.demolished = true;
-                        else if (hasImage(sharedStand)) standFilters.withImage = true;
-                        else standFilters.withoutImage = true;
-
-                        renderStatsAndFilters();
-                        drawMarkers();
-                    }
-
-                    if (markersById[sharedId]) {
-                        zoomToStand(sharedId);
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error loading data:', error);
-
-                const t = TEXT[currentLang];
-                const detailsDiv = document.getElementById('details');
-                const galleryContainer = document.getElementById('gallery-container');
-
-                detailsDiv.innerHTML = `<p style="color:#dc3545;"><strong>${escapeHTML(t.load_error)}</strong></p>`;
-                galleryContainer.innerHTML = `<p style="color:#dc3545;">${escapeHTML(t.load_error)}</p>`;
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading data:', error);
+            const t = TEXT[currentLang];
+            document.getElementById('details').innerHTML = `<p style="color:#dc3545;"><strong>${escapeHTML(t.load_error)}</strong></p>`;
+            document.getElementById('gallery-container').innerHTML = `<p style="color:#dc3545;">${escapeHTML(t.load_error)}</p>`;
+        });
     </script>
 </body>
 </html>
