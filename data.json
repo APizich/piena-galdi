@@ -2244,14 +2244,14 @@
     "osm_desc_default": "",
     "osm_desc_lv": "Piena galds Lielvārdes pagasta \"Bitēniem\"",
     "osm_desc_en": "",
-    "wiki_desc_en": "",
-    "wiki_desc_lv": "",
-    "image": "",
-    "image_date": "",
-    "commons_page": "",
-    "commons_title": "",
-    "image_source_tag": "",
-    "raw_image_tag": "Milk churn stand in Lielvārdes parish, \"Bitēni\".jpgMilk churn stand in Lielvārdes parish, \"Bitēni\".jpg"
+    "wiki_desc_en": "Milk churn stand in Lielvārdes parish, \"Bitēni\"",
+    "wiki_desc_lv": "Milk churn stand in Lielvārdes parish, \"Bitēni\"",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/4/47/Milk_churn_stand_in_Lielv%C4%81rdes_parish%2C_%22Bit%C4%93ni%22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "image_date": "2023-10-23",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Milk_churn_stand_in_Lielv%C4%81rdes_parish,_%22Bit%C4%93ni%22.jpg",
+    "commons_title": "File:Milk churn stand in Lielvārdes parish, \"Bitēni\".jpg",
+    "image_source_tag": "wikimedia_commons",
+    "raw_image_tag": "Milk churn stand in Lielvārdes parish, \"Bitēni\".jpg"
   },
   {
     "osm_type": "node",
