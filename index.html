@@ -398,7 +398,7 @@
                 desc_label: "Description",
                 references: "References & Copyright",
                 ref_osm: "Map data &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap contributors</a>",
-                ref_google: "Satellite imagery &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                ref_google: "Satellite imagery & Street View &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
                 read_story: "Read memory story",
                 no_stories: "No stories added yet."
             },
@@ -438,7 +438,7 @@
                 desc_label: "Apraksts",
                 references: "Atsauces un autortiesības",
                 ref_osm: "Kartes dati &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap veidotāji</a>",
-                ref_google: "Satelītattēli &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                ref_google: "Satelītattēli un Street View &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
                 read_story: "Lasīt atmiņu stāstu",
                 no_stories: "Pašlaik nav pievienotu stāstu."
             }
@@ -793,7 +793,7 @@
 
         const searchControl = new window.GeoSearch.GeoSearchControl({
             provider: searchProvider,
-            style: 'button',
+            style: 'bar', /* Changed from 'button' to 'bar' to match original look */
             position: 'topleft',
             showMarker: false,
             autoComplete: true,
