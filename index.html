@@ -61,13 +61,13 @@
             position: relative;
         }
 
-        /* --- GEOCODER DROPDOWN FIXES --- */
+        /* --- GEOCODER DROPDOWN FULL ADDRESS FIXES --- */
         .leaflet-control-geocoder-form input {
             width: 250px !important;
         }
         .leaflet-control-geocoder-alternatives {
             z-index: 10000 !important;
-            max-width: 300px;
+            max-width: 350px !important; /* Wider to accommodate full Latvian addresses */
             max-height: 300px;
             overflow-y: auto;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
@@ -75,9 +75,10 @@
         .leaflet-control-geocoder-alternatives li a {
             font-size: 13px !important;
             line-height: 1.4 !important;
-            white-space: normal !important; 
+            white-space: normal !important; /* Forces long addresses to wrap to the next line */
+            padding: 8px 10px !important; 
         }
-        /* ------------------------------- */
+        /* -------------------------------------------- */
 
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
@@ -801,31 +802,58 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        // --- ORIGINAL GEOCODER RESTORED & FIXED ---
+        // --- ORIGINAL GEOCODER RESTORED & FULL ADDRESS FIX APPLIED ---
+        const nativeNominatim = L.Control.Geocoder.nominatim({
+            geocodingQueryParams: {
+                countrycodes: 'lv',
+                limit: 5,
+                'accept-language': 'lv'
+            }
+        });
+
+        let geocodeTimeout;
+
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt...',
             collapsed: false,
             suggestMinLength: 4, 
-            suggestTimeout: 800, // CRITICAL: Prevents OpenStreetMap from blocking your IP for rapid typing
-            geocoder: L.Control.Geocoder.nominatim({
-                geocodingQueryParams: {
-                    countrycodes: 'lv',
-                    limit: 5,
-                    'accept-language': 'lv'
+            geocoder: {
+                geocode: function(query, cb, context) {
+                    // We use the plugin's approved connection to avoid being blocked by OSM
+                    nativeNominatim.geocode(query, function(results) {
+                        // We intercept the results and force the name to be the FULL address
+                        const fixedResults = results.map(r => {
+                            const fullAddress = (r.properties && r.properties.display_name) ? r.properties.display_name : r.name;
+                            return {
+                                name: fullAddress, // Stops the 5 identical "Griezes" issue
+                                html: '<span style="font-size: 13px;">' + escapeHTML(fullAddress) + '</span>',
+                                bbox: r.bbox,
+                                center: r.center,
+                                properties: r.properties
+                            };
+                        });
+                        cb.call(context, fixedResults);
+                    }, context);
                 },
-                htmlTemplate: function(r) {
-                    // OVERRIDE: Stops the plugin from awkwardly chopping up the address.
-                    // Forces it to display the clean, full address string exactly as OpenStreetMap returns it.
-                    return '<span style="font-size: 13px;">' + escapeHTML(r.name) + '</span>';
+                suggest: function(query, cb, context) {
+                    clearTimeout(geocodeTimeout);
+                    if (query.trim().length < 4) {
+                        cb.call(context, []);
+                        return;
+                    }
+                    // Wait 800ms before sending the request to avoid rapid-typing IP bans
+                    geocodeTimeout = setTimeout(() => {
+                        this.geocode(query, cb, context);
+                    }, 800);
                 }
-            })
+            }
         }).on('markgeocode', function(e) {
             clearSelectedStand();
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
-        // ------------------------------------------
+        // -------------------------------------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
