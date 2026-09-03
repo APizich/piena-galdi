@@ -61,26 +61,6 @@
             position: relative;
         }
 
-        /* --- GEOCODER DROPDOWN FULL ADDRESS FIXES --- */
-        .leaflet-control-geocoder-form input {
-            width: 250px !important;
-        }
-        .leaflet-control-geocoder-alternatives {
-            z-index: 10000 !important;
-            max-width: 350px !important; /* Wider to accommodate full Latvian addresses */
-            max-height: 300px;
-            overflow-y: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
-        }
-        .leaflet-control-geocoder-alternatives li a {
-            font-size: 13px !important;
-            line-height: 1.4 !important;
-            white-space: normal !important; /* Forces long addresses to wrap to the next line */
-            padding: 8px 10px !important; 
-            display: block !important;
-        }
-        /* -------------------------------------------- */
-
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
             display: none;
@@ -714,7 +694,7 @@
         function updateSearchPlaceholder() {
             const searchInput = document.querySelector('.leaflet-control-geocoder-form input');
             if (searchInput) {
-                searchInput.placeholder = TEXT[currentLang].search_placeholder;
+                searchInput.placeholder = TEXT[currentLang].search_placeholder || 'Meklēt...';
             }
         }
 
@@ -803,54 +783,17 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        // --- CUSTOM GEOCODER WITH FULL ADDRESS FIX ---
-        const customNominatim = {
-            geocode: function(query, cb, context) {
-                // Email parameter acts as an identifier to bypass OSM blocking anonymous requests
-                const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&countrycodes=lv&limit=5&addressdetails=1&email=info@piena-galdi.lv';
-                
-                fetch(url, {
-                    headers: { 'Accept-Language': 'lv' }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    const results = data.map(item => {
-                        const fullAddress = item.display_name;
-                        return {
-                            name: fullAddress, // Shows full address in search box after selection
-                            html: '<span style="font-size: 13px; line-height: 1.4; display: block; white-space: normal; padding: 4px 0;">' + escapeHTML(fullAddress) + '</span>', // Shows full address in dropdown
-                            bbox: L.latLngBounds(
-                                [item.boundingbox[0], item.boundingbox[2]], 
-                                [item.boundingbox[1], item.boundingbox[3]]
-                            ),
-                            center: L.latLng(item.lat, item.lon)
-                        };
-                    });
-                    cb.call(context, results);
-                })
-                .catch(err => {
-                    console.error("Geocoding failed:", err);
-                    cb.call(context, []);
-                });
-            },
-            suggest: function(query, cb, context) {
-                return this.geocode(query, cb, context);
-            }
-        };
-
+        // --- ORIGINAL GEOCODER RESTORED EXACTLY AS IN YOUR FIRST SCRIPT ---
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt...',
-            collapsed: false,
-            suggestMinLength: 4, 
-            suggestTimeout: 800, 
-            geocoder: customNominatim
+            collapsed: false
         }).on('markgeocode', function(e) {
             clearSelectedStand();
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
-        // ---------------------------------------------
+        // ------------------------------------------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
