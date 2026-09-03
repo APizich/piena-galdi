@@ -77,6 +77,7 @@
             line-height: 1.4 !important;
             white-space: normal !important; /* Forces long addresses to wrap to the next line */
             padding: 8px 10px !important; 
+            display: block !important;
         }
         /* -------------------------------------------- */
 
@@ -802,31 +803,54 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        // --- ORIGINAL GEOCODER RESTORED & FULL ADDRESS FIX APPLIED ---
+        // --- CUSTOM GEOCODER WITH FULL ADDRESS FIX ---
+        const customNominatim = {
+            geocode: function(query, cb, context) {
+                // Email parameter acts as an identifier to bypass OSM blocking anonymous requests
+                const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&countrycodes=lv&limit=5&addressdetails=1&email=info@piena-galdi.lv';
+                
+                fetch(url, {
+                    headers: { 'Accept-Language': 'lv' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    const results = data.map(item => {
+                        const fullAddress = item.display_name;
+                        return {
+                            name: fullAddress, // Shows full address in search box after selection
+                            html: '<span style="font-size: 13px; line-height: 1.4; display: block; white-space: normal; padding: 4px 0;">' + escapeHTML(fullAddress) + '</span>', // Shows full address in dropdown
+                            bbox: L.latLngBounds(
+                                [item.boundingbox[0], item.boundingbox[2]], 
+                                [item.boundingbox[1], item.boundingbox[3]]
+                            ),
+                            center: L.latLng(item.lat, item.lon)
+                        };
+                    });
+                    cb.call(context, results);
+                })
+                .catch(err => {
+                    console.error("Geocoding failed:", err);
+                    cb.call(context, []);
+                });
+            },
+            suggest: function(query, cb, context) {
+                return this.geocode(query, cb, context);
+            }
+        };
+
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt...',
             collapsed: false,
             suggestMinLength: 4, 
-            suggestTimeout: 800, // CRITICAL: Prevents OpenStreetMap from blocking your IP for rapid typing
-            geocoder: L.Control.Geocoder.nominatim({
-                geocodingQueryParams: {
-                    countrycodes: 'lv',
-                    limit: 5,
-                    'accept-language': 'lv'
-                },
-                htmlTemplate: function(r) {
-                    // OVERRIDE: Stops the plugin from awkwardly chopping up the address.
-                    // Forces it to display the clean, full address string exactly as OpenStreetMap returns it.
-                    return '<span style="font-size: 13px;">' + escapeHTML(r.name) + '</span>';
-                }
-            })
+            suggestTimeout: 800, 
+            geocoder: customNominatim
         }).on('markgeocode', function(e) {
             clearSelectedStand();
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
-        // -------------------------------------------------------------
+        // ---------------------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
