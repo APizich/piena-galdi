@@ -7,7 +7,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-8NR328JDG4');
     </script>
     <meta charset="UTF-8">
@@ -26,8 +25,12 @@
     <meta property="og:url" content="https://www.piena-galdi.lv">
     <meta property="og:type" content="website">
 
+    <!-- Leaflet & GeoSearch CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.1/dist/geosearch.css">
+
+    <!-- Google Maps API for Street View Overlay -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOozmUYyvawBlr1fDG3VZtBtUHSF7YqUk&libraries=geometry"></script>
 
     <style>
         html {
@@ -55,11 +58,52 @@
         #map {
             flex: 4;
             height: 100%;
+            position: relative;
         }
 
-        /* 
-           FIX FOR BUG 1: Stacked / Sticky Tooltips
-        */
+        /* --- STREET VIEW OVERLAY STYLES --- */
+        #sv-overlay {
+            display: none;
+            position: absolute;
+            top: 2%;
+            left: 2%;
+            width: 96%;
+            height: 96%;
+            z-index: 10000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: #000;
+        }
+        #sv-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10001;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: background 0.2s;
+        }
+        #sv-close-btn:hover {
+            background: #fff;
+        }
+        #sv-viewer {
+            width: 100%;
+            height: 100%;
+        }
+        /* ---------------------------------- */
+
         .leaflet-dragging .leaflet-marker-pane,
         .leaflet-dragging .leaflet-marker-icon {
             pointer-events: none !important;
@@ -80,424 +124,88 @@
             z-index: 10;
         }
 
-        .intro-text {
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        .intro-text { margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
+        .image-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 10px; }
+        .tag-box { background: #e9ecef; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
+        .desc-box { background: #e9ecef; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; line-height: 1.5; }
 
-        .image-container img {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 10px;
-        }
+        .tabs { display: flex; margin-bottom: 15px; background: #eef0f2; padding: 4px; border-radius: 10px; flex-shrink: 0; gap: 4px; }
+        .tab-btn { flex: 1; padding: 10px 4px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; color: #666; transition: 0.2s; text-align: center; }
+        .tab-btn:hover { color: #007bff; background: rgba(255,255,255,0.6); }
+        .tab-btn.active { color: #007bff; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
 
-        .tag-box {
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 13px;
-        }
+        .stats-filter-card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin-top: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stats-title { font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+        .filter-row { display: flex; align-items: center; gap: 8px; padding: 7px 6px; border-radius: 7px; cursor: pointer; user-select: none; font-size: 13px; }
+        .filter-row:hover { background: #f1f3f5; }
+        .filter-row input { cursor: pointer; margin: 0; }
+        .filter-icon-slot { display: flex; width: 46px; justify-content: flex-start; align-items: center; flex-shrink: 0; }
+        .filter-label { flex: 1; }
+        .filter-count { font-weight: bold; color: #333; }
 
-        .desc-box {
-            background: #e9ecef;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        .gallery-controls { margin-bottom: 15px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-size: 13px; flex-wrap: wrap; }
+        .visible-only-label { margin-right: auto; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+        .gallery-grid { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+        .gallery-item { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .gallery-item img { width: 100%; height: auto; border-radius: 6px; object-fit: cover; max-height: 450px; cursor: pointer; border: 1px solid #eee; }
+        .gallery-item-info { margin-top: 10px; font-size: 13px; }
+        .gallery-item h4 { margin: 0 0 5px 0; font-size: 15px; }
 
-        .tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: #eef0f2;
-            padding: 4px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            gap: 4px;
-        }
+        .stories-grid { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+        .story-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; }
+        .highlight-story { box-shadow: 0 0 0 3px #ff9800, 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); }
+        .story-header { display: flex; align-items: center; cursor: pointer; user-select: none; }
+        .story-thumbnail { width: 60px; height: 60px; border-radius: 6px; object-fit: cover; flex-shrink: 0; margin-right: 15px; border: 1px solid #eee; }
+        .story-header-info { flex: 1; }
+        .story-title { margin: 0 0 6px 0; font-size: 15px; color: #333; line-height: 1.3; }
+        .story-meta { font-size: 12px; color: #666; display: flex; flex-wrap: wrap; gap: 12px; }
+        .story-meta-item { display: flex; align-items: center; gap: 4px; }
+        .story-toggle-icon { font-size: 14px; color: #999; transition: transform 0.3s; margin-left: 10px; }
+        .story-card.expanded .story-toggle-icon { transform: rotate(180deg); }
+        .story-content { margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        .story-text { font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 15px; }
+        .story-images-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .story-images-grid img { width: 100%; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); object-fit: cover; }
+        .story-map-btn { background-color: #28a745; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px 4px;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            color: #666;
-            transition: 0.2s;
-            text-align: center;
-        }
+        #resizer { display: none; height: 10px; background: #ddd; width: 100%; cursor: ns-resize; align-items: center; justify-content: center; flex-shrink: 0; }
+        #resizer::after { content: ""; width: 40px; height: 4px; background: #888; border-radius: 2px; }
+        .custom-demolished-icon { background: none; border: none; }
+        .popup-img { width: 150px; height: auto; margin-top: 8px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        .tab-btn:hover {
-            color: #007bff;
-            background: rgba(255,255,255,0.6);
-        }
-
-        .tab-btn.active {
-            color: #007bff;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-        }
-
-        .stats-filter-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 18px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .stats-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 6px;
-            border-radius: 7px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 13px;
-        }
-
-        .filter-row:hover {
-            background: #f1f3f5;
-        }
-
-        .filter-row input {
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .filter-icon-slot {
-            display: flex;
-            width: 46px;
-            justify-content: flex-start;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .filter-label {
-            flex: 1;
-        }
-
-        .filter-count {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .gallery-controls {
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            flex-wrap: wrap;
-        }
-
-        .visible-only-label {
-            margin-right: auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .gallery-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 20px;
-        }
-
-        .gallery-item {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 6px;
-            object-fit: cover;
-            max-height: 450px;
-            cursor: pointer;
-            border: 1px solid #eee;
-        }
-
-        .gallery-item-info {
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .gallery-item h4 {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-        }
-
-        /* --- COLLAPSIBLE STORIES STYLES --- */
-        .stories-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 20px;
-        }
-
-        .story-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .highlight-story {
-            box-shadow: 0 0 0 3px #ff9800, 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .story-header {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .story-thumbnail {
-            width: 60px;
-            height: 60px;
-            border-radius: 6px;
-            object-fit: cover;
-            flex-shrink: 0;
-            margin-right: 15px;
-            border: 1px solid #eee;
-        }
-
-        .story-header-info {
-            flex: 1;
-        }
-
-        .story-title {
-            margin: 0 0 6px 0;
-            font-size: 15px;
-            color: #333;
-            line-height: 1.3;
-        }
-
-        .story-meta {
-            font-size: 12px;
-            color: #666;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        .story-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .story-toggle-icon {
-            font-size: 14px;
-            color: #999;
-            transition: transform 0.3s;
-            margin-left: 10px;
-        }
-        
-        .story-card.expanded .story-toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .story-content {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .story-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #444;
-            margin-bottom: 15px;
-        }
-
-        .story-images-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .story-images-grid img {
-            width: 100%;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            object-fit: cover;
-        }
-
-        .story-map-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        /* ------------------------ */
-
-        #resizer {
-            display: none;
-            height: 10px;
-            background: #ddd;
-            width: 100%;
-            cursor: ns-resize;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        #resizer::after {
-            content: "";
-            width: 40px;
-            height: 4px;
-            background: #888;
-            border-radius: 2px;
-        }
-
-        .custom-demolished-icon {
-            background: none;
-            border: none;
-        }
-        
-        .popup-img {
-            width: 150px;
-            height: auto;
-            margin-top: 8px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .leaflet-control-layers-toggle, .leaflet-bar a#locate-btn {
-            width: 36px !important;
-            height: 36px !important;
-        }
-        .leaflet-bar a#locate-btn {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            color: #444;
-        }
+        .leaflet-control-layers-toggle, .leaflet-bar a#locate-btn { width: 36px !important; height: 36px !important; }
+        .leaflet-bar a#locate-btn { display: flex !important; align-items: center; justify-content: center; color: #444; }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            #map {
-                flex: none;
-                height: 40vh;
-                width: 100%;
-            }
-
-            #sidebar {
-                flex: 1;
-                height: auto;
-                width: 100%;
-                min-width: 0;
-                max-width: none;
-                border-left: none;
-                padding: 15px;
-                overflow-y: auto;
-            }
-
-            #resizer {
-                display: flex;
-            }
-
-            h2 {
-                font-size: 18px;
-                margin-top: 0;
-            }
-
-            .gallery-controls {
-                align-items: flex-start;
-                justify-content: flex-start;
-            }
-
-            .visible-only-label {
-                width: 100%;
-                margin-right: 0;
-            }
+            body { flex-direction: column; }
+            #map { flex: none; height: 40vh; width: 100%; }
+            #sidebar { flex: 1; height: auto; width: 100%; min-width: 0; max-width: none; border-left: none; padding: 15px; overflow-y: auto; }
+            #resizer { display: flex; }
+            h2 { font-size: 18px; margin-top: 0; }
+            .gallery-controls { align-items: flex-start; justify-content: flex-start; }
+            .visible-only-label { width: 100%; margin-right: 0; }
+            .popup-img { width: 80px !important; margin-top: 4px; }
+            .leaflet-popup-content { width: max-content; max-width: 180px !important; font-size: 11px !important; margin: 8px !important; }
+            .leaflet-popup-content b { font-size: 12px !important; }
+            .leaflet-control-scale { transform: scale(0.55) !important; transform-origin: bottom right; margin-bottom: 5px !important; }
+            .leaflet-top.leaflet-right { z-index: 1001; }
+            .leaflet-touch .leaflet-bar a { width: 34px !important; height: 34px !important; line-height: 34px !important; }
+            .leaflet-touch .leaflet-control-layers-toggle, .leaflet-touch .leaflet-bar a#locate-btn { width: 34px !important; height: 34px !important; }
+            .leaflet-touch .leaflet-control-layers-toggle { background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important; background-size: 18px 18px !important; background-position: center !important; }
             
-            .popup-img {
-                width: 80px !important;
-                margin-top: 4px;
-            }
-            
-            .leaflet-popup-content {
-                width: max-content;
-                max-width: 180px !important;
-                font-size: 11px !important;
-                margin: 8px !important;
-            }
-
-            .leaflet-popup-content b {
-                font-size: 12px !important;
-            }
-
-            .leaflet-control-scale {
-                transform: scale(0.55) !important;
-                transform-origin: bottom right;
-                margin-bottom: 5px !important;
-            }
-
-            .leaflet-top.leaflet-right {
-                z-index: 1001; 
-            }
-
-            .leaflet-touch .leaflet-bar a {
-                width: 34px !important;
-                height: 34px !important;
-                line-height: 34px !important;
-            }
-            .leaflet-touch .leaflet-control-layers-toggle,
-            .leaflet-touch .leaflet-bar a#locate-btn {
-                width: 34px !important;
-                height: 34px !important;
-            }
-            .leaflet-touch .leaflet-control-layers-toggle {
-                background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important;
-                background-size: 18px 18px !important; 
-                background-position: center !important;
-            }
+            #sv-overlay { top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 20px); }
         }
     </style>
 </head>
 <body>
 
-    <div id="map"></div>
+    <div id="map">
+        <!-- Google Street View Overlay -->
+        <div id="sv-overlay">
+            <button id="sv-close-btn" onclick="closeStreetView()" title="Aizvērt / Close">✕</button>
+            <div id="sv-viewer"></div>
+        </div>
+    </div>
     <div id="resizer"></div>
 
     <div id="sidebar">
@@ -551,16 +259,16 @@
         <div id="tab-stories" style="display: none;">
             <div id="stories-container" class="stories-grid"></div>
         </div>
-
     </div>
 
+    <!-- Leaflet & GeoSearch JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.11.1/dist/bundle.min.js"></script>
 
     <script>
         let currentLang = 'lv';
         let mapData = [];
-        let storiesData = []; // Store loaded stories
+        let storiesData = [];
         let lastClickedStand = null;
         let greenCount = 0;
         let blueCount = 0;
@@ -674,6 +382,8 @@
                 demolished: "Demolished",
                 share: "Share specific milk churn stand",
                 osm_button: "Open this object in OpenStreetMap",
+                sv_button: "Open Google Street View",
+                search_placeholder: "Search...",
                 copied: "Link copied to clipboard!",
                 show_map: "Show on map",
                 stats_title: () => `There are currently ${mapData.length} milk churn stands on the map:`,
@@ -712,6 +422,8 @@
                 demolished: "Nojaukts",
                 share: "Dalīties ar šo piena galdu",
                 osm_button: "Atvērt šo objektu OpenStreetMap",
+                sv_button: "Atvērt Google Street View",
+                search_placeholder: "Meklēt...",
                 copied: "Saite nokopēta!",
                 show_map: "Parādīt kartē",
                 stats_title: () => `Kartē pašlaik ir ${mapData.length} piena galdi:`,
@@ -843,7 +555,6 @@
             container.innerHTML = html;
         }
 
-        // --- NEW STORIES RENDERING LOGIC ---
         function renderStories() {
             const container = document.getElementById('stories-container');
             const t = TEXT[currentLang];
@@ -854,16 +565,14 @@
                 return;
             }
 
-            // Normal sequence: rendering exactly as written in the JSON
             storiesData.forEach(story => {
                 const title = (currentLang === 'en' && story.title_en) ? story.title_en : story.title_lv;
                 const text = (currentLang === 'en' && story.text_en) ? story.text_en : story.text_lv;
-                const safeId = escapeHTML(story.id); // Base DOM operations on explicit ID
+                const safeId = escapeHTML(story.id); 
                 const safeOsmId = escapeHTML(story.osm_id); 
                 
                 const formattedText = escapeHTML(text).replace(/\n/g, '<br>');
 
-                // Dynamic Picture Check for Collapsed Mode Thumbnail
                 let thumbnailHtml = '';
                 let imagesHtml = '';
                 
@@ -878,7 +587,6 @@
                     imagesHtml += '</div>';
                 }
 
-                // Check if specific milk churn stand OSM ID exists
                 let mapButtonHtml = '';
                 if (safeOsmId) {
                     mapButtonHtml = `
@@ -928,7 +636,6 @@
         function openStory(osmId) {
             switchTab('stories');
             
-            // Find which story belongs to this map marker
             const story = storiesData.find(s => String(s.osm_id) === String(osmId));
             if (!story) return;
             
@@ -937,7 +644,6 @@
                 const content = document.getElementById(`story-content-${story.id}`);
                 
                 if (card && content) {
-                    // Force expand if it's currently collapsed
                     if (content.style.display === 'none') {
                         content.style.display = 'block';
                         card.classList.add('expanded');
@@ -948,7 +654,6 @@
                 }
             }, 100);
         }
-        // ----------------------------------------
 
         function zoomToStand(osmId) {
             switchTab('info');
@@ -983,6 +688,13 @@
             } else {
                 moreText.style.display = 'none';
                 btn.innerText = TEXT[currentLang].read_more;
+            }
+        }
+
+        function updateSearchPlaceholder() {
+            const searchInput = document.querySelector('.leaflet-control-geosearch form input');
+            if (searchInput) {
+                searchInput.placeholder = TEXT[currentLang].search_placeholder;
             }
         }
 
@@ -1071,15 +783,32 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        const geocoder = L.Control.geocoder({
-            defaultMarkGeocode: false,
+        // --- NEW GEOSEARCH INTEGRATION ---
+        const searchProvider = new window.GeoSearch.OpenStreetMapProvider({
+            params: {
+                limit: 5,
+                countrycodes: 'lv'
+            }
+        });
+
+        const searchControl = new window.GeoSearch.GeoSearchControl({
+            provider: searchProvider,
+            style: 'button',
             position: 'topleft',
-            placeholder: 'Meklēt...',
-            collapsed: false
-        }).on('markgeocode', function(e) {
+            showMarker: false,
+            autoComplete: true,
+            autoCompleteDelay: 250,
+            retainZoomLevel: false,
+            animateZoom: true,
+            updateMap: true,
+            searchLabel: 'Meklēt...'
+        });
+        map.addControl(searchControl);
+
+        map.on('geosearch/showlocation', function (e) {
             clearSelectedStand();
-            map.fitBounds(e.geocode.bbox);
-        }).addTo(map);
+        });
+        // ---------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
@@ -1176,6 +905,7 @@
                 langBtn.innerText = lang === 'lv' ? 'EN' : 'LV';
             }
 
+            updateSearchPlaceholder();
             updateIntroUI();
             renderStatsAndFilters();
             updateLayerControl(lang);
@@ -1376,6 +1106,30 @@
             });
         }
 
+        // --- OPEN GOOGLE STREET VIEW LOGIC ---
+        function openStreetView(panoId, heading) {
+            const overlay = document.getElementById('sv-overlay');
+            overlay.style.display = 'block';
+            
+            new google.maps.StreetViewPanorama(document.getElementById('sv-viewer'), {
+                pano: panoId,
+                pov: {
+                    heading: heading,
+                    pitch: 0
+                },
+                zoom: 1,
+                addressControl: false,
+                fullscreenControl: false,
+                linksControl: true,
+                panControl: true,
+                enableCloseButton: false 
+            });
+        }
+
+        function closeStreetView() {
+            document.getElementById('sv-overlay').style.display = 'none';
+        }
+
         function showDetails(stand) {
             lastClickedStand = stand;
 
@@ -1444,9 +1198,36 @@
                 <a href="${escapeHTML(osmUrl)}" target="_blank" rel="noopener noreferrer" style="display: block; margin-top: 10px; padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 5px; text-align: center; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 14px; line-height: normal;">
                     ${escapeHTML(t.osm_button)}
                 </a>
+                <div id="sv-btn-container"></div>
             `;
 
             detailsDiv.innerHTML = html;
+
+            // --- STREET VIEW BACKGROUND CHECK LOGIC ---
+            if (typeof google !== 'undefined' && google.maps && google.maps.StreetViewService) {
+                const svService = new google.maps.StreetViewService();
+                const standPos = new google.maps.LatLng(stand.lat, stand.lon);
+                
+                svService.getPanorama({
+                    location: standPos,
+                    radius: 50,
+                    source: google.maps.StreetViewSource.OUTDOOR
+                }).then(({ data }) => {
+                    const panoPos = data.location.latLng;
+                    const heading = google.maps.geometry.spherical.computeHeading(panoPos, standPos);
+                    
+                    const svBtnContainer = document.getElementById('sv-btn-container');
+                    if (svBtnContainer) {
+                        svBtnContainer.innerHTML = `
+                            <button onclick="openStreetView('${data.location.pano}', ${heading})" style="display: block; margin-top: 10px; padding: 10px; background-color: #198754; color: white; border: none; border-radius: 5px; text-align: center; font-weight: bold; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 14px; line-height: normal; cursor: pointer; text-decoration: none;">
+                                ${escapeHTML(TEXT[currentLang].sv_button)}
+                            </button>
+                        `;
+                    }
+                }).catch(() => {
+                    // Hidden implicitly if ZERO_RESULTS or OVER_QUERY_LIMIT
+                });
+            }
         }
 
         function shareStand(osmId) {
