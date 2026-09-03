@@ -62,6 +62,9 @@
         }
 
         /* --- GEOCODER DROPDOWN FIXES --- */
+        .leaflet-control-geocoder-form input {
+            width: 250px !important;
+        }
         .leaflet-control-geocoder-alternatives {
             z-index: 10000 !important;
             max-width: 300px;
@@ -72,7 +75,7 @@
         .leaflet-control-geocoder-alternatives li a {
             font-size: 13px !important;
             line-height: 1.4 !important;
-            white-space: normal !important; /* Allows long addresses to wrap properly */
+            white-space: normal !important; 
         }
         /* ------------------------------- */
 
@@ -798,54 +801,31 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        // --- CUSTOM GEOCODER LOGIC FIX ---
-        let geocodeTimeout;
-
-        const customNominatimProvider = {
-            geocode: function(query, cb, context) {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=lv&limit=5`;
-                fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        const results = data.map(item => ({
-                            name: item.display_name, // Forces the UI to show the full, accurate Latvian address string
-                            bbox: L.latLngBounds(
-                                [item.boundingbox[0], item.boundingbox[2]], 
-                                [item.boundingbox[1], item.boundingbox[3]]
-                            ),
-                            center: L.latLng(item.lat, item.lon)
-                        }));
-                        cb.call(context, results);
-                    })
-                    .catch(() => cb.call(context, [])); // Stops the spinner instantly on an error
-            },
-            suggest: function(query, cb, context) {
-                clearTimeout(geocodeTimeout);
-                
-                // Enforce the 4-character minimum
-                if (!query || query.trim().length < 4) {
-                    cb.call(context, []);
-                    return;
-                }
-                
-                // Wait 800ms after the user stops typing to avoid triggering OpenStreetMap's spam block
-                geocodeTimeout = setTimeout(() => {
-                    this.geocode(query, cb, context);
-                }, 800); 
-            }
-        };
-
+        // --- ORIGINAL GEOCODER RESTORED & FIXED ---
         const geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             position: 'topleft',
             placeholder: 'Meklēt...',
             collapsed: false,
-            geocoder: customNominatimProvider
+            suggestMinLength: 4, 
+            suggestTimeout: 800, // CRITICAL: Prevents OpenStreetMap from blocking your IP for rapid typing
+            geocoder: L.Control.Geocoder.nominatim({
+                geocodingQueryParams: {
+                    countrycodes: 'lv',
+                    limit: 5,
+                    'accept-language': 'lv'
+                },
+                htmlTemplate: function(r) {
+                    // OVERRIDE: Stops the plugin from awkwardly chopping up the address.
+                    // Forces it to display the clean, full address string exactly as OpenStreetMap returns it.
+                    return '<span style="font-size: 13px;">' + escapeHTML(r.name) + '</span>';
+                }
+            })
         }).on('markgeocode', function(e) {
             clearSelectedStand();
             map.fitBounds(e.geocode.bbox);
         }).addTo(map);
-        // ---------------------------------
+        // ------------------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
