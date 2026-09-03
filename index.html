@@ -61,23 +61,26 @@
             position: relative;
         }
 
-        /* --- SEARCH BAR PLACEMENT FIX --- */
+        /* --- BULLETPROOF SEARCH BAR PLACEMENT FIX --- */
         .leaflet-control-geosearch.bar {
-            position: relative !important;
-            display: block !important;
-            clear: both !important;
-            margin: 10px !important;
-            left: 0 !important;
-            top: 0 !important;
+            position: absolute !important;
+            top: 10px !important;
+            left: 10px !important;
+            margin: 0 !important; 
             transform: none !important;
-            width: 300px !important;
-            max-width: calc(100vw - 70px) !important;
+            width: 320px !important;
+            min-width: 0 !important; 
             z-index: 1000 !important;
         }
         .leaflet-control-geosearch.bar form {
             margin: 0 !important;
+            width: 100% !important;
         }
-        /* -------------------------------- */
+        /* Push the standard top-left controls (zoom, etc.) down */
+        .leaflet-top.leaflet-left {
+            margin-top: 60px !important;
+        }
+        /* ------------------------------------------- */
 
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
@@ -211,7 +214,7 @@
             .leaflet-touch .leaflet-control-layers-toggle, .leaflet-touch .leaflet-bar a#locate-btn { width: 34px !important; height: 34px !important; }
             .leaflet-touch .leaflet-control-layers-toggle { background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important; background-size: 18px 18px !important; background-position: center !important; }
             
-            .leaflet-control-geosearch.bar { max-width: calc(100vw - 60px) !important; }
+            .leaflet-control-geosearch.bar { width: calc(100vw - 20px) !important; max-width: none !important; }
             #sv-overlay { top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 20px); }
         }
     </style>
