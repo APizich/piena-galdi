@@ -61,6 +61,22 @@
             position: relative;
         }
 
+        /* --- SEARCH BAR PLACEMENT FIX --- */
+        .leaflet-control-geosearch.bar {
+            position: absolute !important;
+            top: 10px !important;
+            left: 10px !important;
+            margin: 0 !important;
+            width: 300px !important;
+            max-width: calc(100vw - 80px) !important;
+            z-index: 1000 !important;
+        }
+        
+        .leaflet-top.leaflet-left {
+            margin-top: 50px !important;
+        }
+        /* -------------------------------- */
+
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
             display: none;
@@ -193,6 +209,9 @@
             .leaflet-touch .leaflet-control-layers-toggle, .leaflet-touch .leaflet-bar a#locate-btn { width: 34px !important; height: 34px !important; }
             .leaflet-touch .leaflet-control-layers-toggle { background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important; background-size: 18px 18px !important; background-position: center !important; }
             
+            .leaflet-control-geosearch.bar { max-width: calc(100vw - 60px) !important; }
+            .leaflet-top.leaflet-left { margin-top: 48px !important; }
+
             #sv-overlay { top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 20px); }
         }
     </style>
@@ -791,9 +810,18 @@
             }
         });
 
+        // Intercept search to enforce 4-character minimum requirement
+        const originalSearch = searchProvider.search.bind(searchProvider);
+        searchProvider.search = async function(options) {
+            if (!options.query || String(options.query).trim().length < 4) {
+                return [];
+            }
+            return originalSearch(options);
+        };
+
         const searchControl = new window.GeoSearch.GeoSearchControl({
             provider: searchProvider,
-            style: 'bar', /* Changed from 'button' to 'bar' to match original look */
+            style: 'bar',
             position: 'topleft',
             showMarker: false,
             autoComplete: true,
