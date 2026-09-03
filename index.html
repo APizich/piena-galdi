@@ -25,9 +25,9 @@
     <meta property="og:url" content="https://www.piena-galdi.lv">
     <meta property="og:type" content="website">
 
-    <!-- Leaflet & GeoSearch CSS -->
+    <!-- Leaflet & Original Geocoder CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.1/dist/geosearch.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
 
     <!-- Google Maps API for Street View Overlay -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOozmUYyvawBlr1fDG3VZtBtUHSF7YqUk&libraries=geometry"></script>
@@ -60,31 +60,6 @@
             height: 100%;
             position: relative;
         }
-
-        /* --- BULLETPROOF SEARCH BAR PLACEMENT FIX --- */
-        /* The geosearch plugin uses left: 0; right: 0; margin: auto; to center it. We must explicitly override ALL of these. */
-        .leaflet-control-geosearch.bar {
-            position: absolute !important;
-            top: 10px !important;
-            left: 10px !important;
-            right: auto !important; /* CRITICAL: Kills the plugin's centering */
-            bottom: auto !important;
-            margin: 0 !important;   /* CRITICAL: Kills the plugin's centering */
-            width: 300px !important;
-            max-width: calc(100vw - 20px) !important;
-            z-index: 1000 !important;
-        }
-
-        .leaflet-control-geosearch.bar form {
-            margin: 0 !important;
-            width: 100% !important;
-        }
-
-        /* Push the standard top-left controls (zoom) down to perfectly fit under the search bar */
-        .leaflet-top.leaflet-left {
-            top: 55px !important; 
-        }
-        /* ------------------------------------------- */
 
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
@@ -218,7 +193,6 @@
             .leaflet-touch .leaflet-control-layers-toggle, .leaflet-touch .leaflet-bar a#locate-btn { width: 34px !important; height: 34px !important; }
             .leaflet-touch .leaflet-control-layers-toggle { background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png') !important; background-size: 18px 18px !important; background-position: center !important; }
             
-            .leaflet-control-geosearch.bar { width: calc(100vw - 20px) !important; max-width: none !important; }
             #sv-overlay { top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 20px); }
         }
     </style>
@@ -287,9 +261,9 @@
         </div>
     </div>
 
-    <!-- Leaflet & GeoSearch JS -->
+    <!-- Leaflet & Original Geocoder JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-geosearch@3.11.1/dist/bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
     <script>
         let currentLang = 'lv';
@@ -718,7 +692,7 @@
         }
 
         function updateSearchPlaceholder() {
-            const searchInput = document.querySelector('.leaflet-control-geosearch form input');
+            const searchInput = document.querySelector('.leaflet-control-geocoder-form input');
             if (searchInput) {
                 searchInput.placeholder = TEXT[currentLang].search_placeholder;
             }
@@ -809,41 +783,23 @@
             document.getElementById('details').innerHTML = '';
         }
 
-        // --- NEW GEOSEARCH INTEGRATION ---
-        const searchProvider = new window.GeoSearch.OpenStreetMapProvider({
-            params: {
-                limit: 5,
-                countrycodes: 'lv'
-            }
-        });
-
-        // Intercept search to enforce 4-character minimum requirement
-        const originalSearch = searchProvider.search.bind(searchProvider);
-        searchProvider.search = async function(options) {
-            if (!options.query || String(options.query).trim().length < 4) {
-                return [];
-            }
-            return originalSearch(options);
-        };
-
-        const searchControl = new window.GeoSearch.GeoSearchControl({
-            provider: searchProvider,
-            style: 'bar',
+        // --- ORIGINAL GEOCODER RESTORED WITH AUTOCOMPLETE CONFIGURATION ---
+        const geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false,
             position: 'topleft',
-            showMarker: false,
-            autoComplete: true,
-            autoCompleteDelay: 250,
-            retainZoomLevel: false,
-            animateZoom: true,
-            updateMap: true,
-            searchLabel: 'Meklēt...'
-        });
-        map.addControl(searchControl);
-
-        map.on('geosearch/showlocation', function (e) {
+            placeholder: 'Meklēt...',
+            collapsed: false,
+            suggestMinLength: 4, 
+            geocoder: L.Control.Geocoder.nominatim({
+                geocodingQueryParams: {
+                    countrycodes: 'lv'
+                }
+            })
+        }).on('markgeocode', function(e) {
             clearSelectedStand();
-        });
-        // ---------------------------------
+            map.fitBounds(e.geocode.bbox);
+        }).addTo(map);
+        // ------------------------------------------------------------------
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
         L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map);
