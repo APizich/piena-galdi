@@ -61,6 +61,14 @@
             position: relative;
         }
 
+        /* --- GEOCODER DROPDOWN FIXES --- */
+        .leaflet-control-geocoder-alternatives {
+            z-index: 10000 !important;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+        }
+        /* ------------------------------- */
+
         /* --- STREET VIEW OVERLAY STYLES --- */
         #sv-overlay {
             display: none;
@@ -790,9 +798,12 @@
             placeholder: 'Meklēt...',
             collapsed: false,
             suggestMinLength: 4, 
+            suggestTimeout: 800, // CRITICAL: 800ms debounce prevents OSM servers from blocking rapid typing
             geocoder: L.Control.Geocoder.nominatim({
                 geocodingQueryParams: {
-                    countrycodes: 'lv'
+                    countrycodes: 'lv',
+                    limit: 5,
+                    'accept-language': 'lv'
                 }
             })
         }).on('markgeocode', function(e) {
