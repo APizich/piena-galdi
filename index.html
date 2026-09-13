@@ -399,6 +399,7 @@
                 references: "References & Copyright",
                 ref_osm: "Map data &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap contributors</a>",
                 ref_google: "Satellite imagery & Street View &copy; <a href='https://www.google.com/intl/en/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                ref_lvm: "Orthophoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a>, <a href='https://www.lgia.gov.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LĢIA</a>",
                 read_story: "Read memory story",
                 no_stories: "No stories added yet."
             },
@@ -439,6 +440,7 @@
                 references: "Atsauces un autortiesības",
                 ref_osm: "Kartes dati &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank' style='color:#007bff; text-decoration:none;'>OpenStreetMap veidotāji</a>",
                 ref_google: "Satelītattēli un Street View &copy; <a href='https://www.google.com/intl/lv/help/terms_maps/' target='_blank' style='color:#007bff; text-decoration:none;'>Google</a>",
+                ref_lvm: "Ortofoto &copy; <a href='https://www.lvmgeo.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LVM GEO</a>, <a href='https://www.lgia.gov.lv/' target='_blank' style='color:#007bff; text-decoration:none;'>LĢIA</a>",
                 read_story: "Lasīt atmiņu stāstu",
                 no_stories: "Pašlaik nav pievienotu stāstu."
             }
@@ -706,6 +708,14 @@
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         });
+        
+        const lvmOrto = L.tileLayer.wms('https://geoserver.lvmgeo.lv/wms62531a9bfcfa4015856924e94076a178?', {
+            layers: 'ortofoto',
+            format: 'image/jpeg',
+            transparent: false,
+            maxZoom: 20,
+            attribution: '&copy; LVM GEO, LĢIA'
+        });
 
         const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 20,
@@ -743,12 +753,14 @@
                 ? {
                     "Light map (OSM)": cartoLight,
                     "Standard OSM (colored)": osmStandard,
-                    "Google Satellite": googleSat 
+                    "Google Satellite": googleSat,
+                    "LVM Orthophoto": lvmOrto
                 }
                 : {
                     "Gaišā karte (OSM)": cartoLight,
                     "Standarta OSM": osmStandard,
-                    "Google Satelīts": googleSat
+                    "Google Satelīts": googleSat,
+                    "LVM Ortofoto": lvmOrto
                 };
 
             layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
@@ -878,7 +890,8 @@
                 refsDiv.innerHTML = `
                     <div style="margin-bottom: 5px;"><strong>${escapeHTML(t.references)}</strong></div>
                     <div style="margin-bottom: 3px;">${t.ref_osm}</div>
-                    <div>${t.ref_google}</div>
+                    <div style="margin-bottom: 3px;">${t.ref_google}</div>
+                    <div>${t.ref_lvm}</div>
                 `;
             }
             
