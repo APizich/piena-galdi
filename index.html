@@ -710,7 +710,7 @@
         });
         
         const lvmOrto = L.tileLayer.wms('https://geoserver.lvmgeo.lv/wms62531a9bfcfa4015856924e94076a178?', {
-            layers: 'ortofoto',
+            layers: 'Orto_LKS',
             format: 'image/jpeg',
             transparent: false,
             maxZoom: 20,
@@ -1154,7 +1154,7 @@
                             ${linkUrl ? `<a href="${escapeHTML(linkUrl)}" target="_blank" rel="noopener noreferrer">` : ''}
                                 <img src="${escapeHTML(imageUrl)}" alt="${safeStandName}">
                             ${linkUrl ? `</a>` : ''}
-                            ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${escapeHTML(t.picture_date)}:</strong> ${escapeHTML(stand.image_date)}</p>` : ''}
+                            ${stand.image_date ? `<p style="font-size: 13px; text-align: center; margin: 8px 0;"><strong>${escapeHTML(t.picture_date)}:</strong>${escapeHTML(stand.image_date)}</p>` : ''}
                             <p style="font-size: 11px; text-align: center; color: #666;">${escapeHTML(t.click_img)}</p>
                         </div>
                     `;
